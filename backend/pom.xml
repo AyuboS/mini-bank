@@ -22,7 +22,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <springdoc.version>2.9.0</springdoc.version>
         <jjwt.version>0.12.7</jjwt.version>
-        <logstash-encoder.version>8.1</logstash-encoder.version>
+        <logstash-encoder.version>9.0</logstash-encoder.version>
         <spotbugs-plugin.version>4.9.6.0</spotbugs-plugin.version>
         <checkstyle-plugin.version>3.6.0</checkstyle-plugin.version>
         <jacoco.version>0.8.13</jacoco.version>

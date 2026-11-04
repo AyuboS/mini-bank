@@ -5,7 +5,7 @@
 # ---------------------------------------------------------------------------
 # Dependencies are resolved in their own layer, keyed on the POM alone. Editing
 # a source file then rebuilds in seconds instead of re-downloading Maven Central.
-FROM eclipse-temurin:21-jdk-alpine AS builder
+FROM eclipse-temurin:25-jdk-alpine AS builder
 
 WORKDIR /build
 
@@ -26,7 +26,7 @@ RUN ./mvnw -B -q clean package -DskipTests -Dcheckstyle.skip=true -Dspotbugs.ski
 # Runtime stage
 # ---------------------------------------------------------------------------
 # A JRE, not a JDK: no compiler, no build tools, a smaller attack surface.
-FROM eclipse-temurin:21-jre-alpine AS runtime
+FROM eclipse-temurin:25-jre-alpine AS runtime
 
 # curl is used by the compose healthcheck; tini reaps zombies and forwards
 # signals so that SIGTERM reaches the JVM and graceful shutdown actually runs.

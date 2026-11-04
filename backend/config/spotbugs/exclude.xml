@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+    <!--
+      JPA entities and Spring components legitimately hold references to mutable
+      objects (dates, injected collaborators). SpotBugs' EI_EXPOSE_REP family
+      flags every such getter/setter, which is noise for a persistence model.
+    -->
+    <Match>
+        <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2,EI_EXPOSE_STATIC_REP2,MS_EXPOSE_REP"/>
+    </Match>
+
+    <!-- Lombok-generated equals/hashCode and builders trip these. -->
+    <Match>
+        <Bug pattern="NP_NONNULL_RETURN_VIOLATION,RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE,NP_METHOD_PARAMETER_TIGHTENS_ANNOTATION"/>
+    </Match>
+
+    <!-- Test sources are not shipped. -->
+    <Match>
+        <Source name="~.*[\\/]src[\\/]test[\\/].*"/>
+    </Match>
+</FindBugsFilter>

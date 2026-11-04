@@ -1,0 +1,32 @@
+# Local development. The values below are for a throwaway database on your own machine.
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/minibank}
+    username: ${DB_USERNAME:minibank}
+    password: ${DB_PASSWORD:minibank}
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+
+minibank:
+  security:
+    jwt:
+      # DEVELOPMENT ONLY. This value is public in the repository, which is exactly why the
+      # application refuses to start with it under the prod profile.
+      secret: ${JWT_SECRET:dev-only-secret-do-not-use-anywhere-else-0123456789}
+  seed:
+    # Creates the demo users and accounts described in the README, if they are absent.
+    enabled: true
+
+  # No SMS gateway and no mail relay locally, so codes and links go to the console and the OTP is
+  # echoed back in the API response. StartupSecurityCheck refuses to boot the prod profile this way.
+  notifications:
+    expose-codes: true
+
+logging:
+  level:
+    com.minibank: DEBUG
+    # Uncomment to inspect the SQL Hibernate actually emits, for example when hunting N+1 queries.
+    # org.hibernate.SQL: DEBUG
+    # org.hibernate.orm.jdbc.bind: TRACE

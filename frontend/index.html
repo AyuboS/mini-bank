@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="description" content="MBank — money that moves the way you expect" />
+    <meta name="theme-color" content="#F4F5F7" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0A0B0F" media="(prefers-color-scheme: dark)" />
+    <meta name="color-scheme" content="light dark" />
+
+    <!--
+      One family, and a complete system stack behind it.
+
+      Inter, at five weights. A financial interface needs real tabular numerals
+      far more than it needs a display face, and a second family would be the
+      first thing to date the product. Connections are opened early so the font
+      is not a render blocker, and the interface stays fully legible — same
+      metrics, same hierarchy — if Google Fonts is unreachable.
+    -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;550;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- The mark, inlined: no extra request and no binary asset. -->
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='10' fill='%232B54F0'/%3E%3Cpath d='M9 31V10h6.2l4.8 8.6L24.8 10H31v21h-5.1V19.3l-4.2 7.2h-3.4l-4.2-7.2V31H9Z' fill='%23fff'/%3E%3C/svg%3E"
+    />
+
+    <title>MBank</title>
+
+    <script>
+      /*
+        Applied before first paint. Reading the preference from React would leave
+        one frame of the wrong theme on screen, which is exactly the thing people
+        notice.
+
+        An explicit choice wins. With no choice stored, the operating system
+        decides: somebody who runs their machine dark gets a dark bank without
+        having to ask, and everyone else gets the light one.
+      */
+      (function () {
+        var theme = 'light';
+        try {
+          var stored = localStorage.getItem('minibank.theme');
+          if (stored === 'light' || stored === 'dark') {
+            theme = stored;
+          } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            theme = 'dark';
+          }
+        } catch (e) {
+          /* Storage denied in a private window: fall through to light. */
+        }
+        document.documentElement.dataset.theme = theme;
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

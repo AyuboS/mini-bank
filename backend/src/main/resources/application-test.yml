@@ -1,0 +1,69 @@
+# Integration tests. The datasource is supplied by Testcontainers at runtime.
+spring:
+  jpa:
+    properties:
+      hibernate:
+        format_sql: false
+
+minibank:
+  security:
+    jwt:
+      secret: test-only-secret-value-for-integration-tests-0123456789
+    lockout:
+      max-failed-attempts: 3
+      duration: 15m
+    cors:
+      allowed-origins: http://localhost:5173
+  # Rate limiting is disabled by default in tests so that unrelated cases are not throttled;
+  # RateLimitIT enables it explicitly for the case that exercises it.
+  rate-limit:
+    enabled: false
+  seed:
+    enabled: false
+
+  # Nothing leaves the test JVM: both providers are the logging stubs, and codes are returned in
+  # the response so a test can complete a flow without an SMS gateway.
+  notifications:
+    expose-codes: true
+    sms:
+      provider: dev
+    email:
+      provider: dev
+
+  # Limits and risk thresholds are set out of reach by default, so that a test about (say)
+  # concurrency is not silently also a test of the risk engine. TransferLimitIT and RiskReviewIT
+  # override these with their own values to exercise them deliberately.
+  limits:
+    per-transfer-max: 1000000.00
+    daily-max: 1000000.00
+    max-transfers-per-hour: 10000
+  risk:
+    large-amount:
+      threshold: 1000000.00
+      score: 35
+    velocity:
+      window: 5m
+      max-transfers: 100000
+      score: 30
+    unusual-amount:
+      history-window: 30d
+      multiplier: 1000000
+      minimum-amount: 1000000.00
+      score: 25
+    failed-logins:
+      window: 30m
+      threshold: 100000
+      score: 20
+    new-beneficiary:
+      window: 60m
+      amount-threshold: 1000000.00
+      score: 30
+    thresholds:
+      # The score is capped at 100, so these are unreachable.
+      review: 1000
+      block: 2000
+
+logging:
+  level:
+    root: WARN
+    com.minibank: INFO

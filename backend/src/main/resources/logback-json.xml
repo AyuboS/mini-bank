@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Structured logging for containerised environments.
+
+  Every line is a JSON object with the correlation id and, where known, the user id pulled from the
+  MDC. That is what lets an operator take the X-Request-Id a client saw and retrieve the exact set
+  of log lines produced while handling that request.
+
+  Nothing here logs a password, an access token or a refresh token: those values never enter the
+  MDC and are excluded from the DTOs' toString() implementations.
+-->
+<configuration>
+    <appender name="JSON" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <includeMdcKeyName>requestId</includeMdcKeyName>
+            <includeMdcKeyName>userId</includeMdcKeyName>
+            <customFields>{"application":"mbank"}</customFields>
+            <fieldNames>
+                <timestamp>timestamp</timestamp>
+                <message>message</message>
+                <thread>thread</thread>
+                <logger>logger</logger>
+                <levelValue>[ignore]</levelValue>
+            </fieldNames>
+        </encoder>
+    </appender>
+
+    <root level="${LOG_LEVEL_ROOT:-INFO}">
+        <appender-ref ref="JSON"/>
+    </root>
+    <logger name="com.minibank" level="${LOG_LEVEL_APP:-INFO}"/>
+</configuration>

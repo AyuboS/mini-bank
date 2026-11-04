@@ -1,0 +1,204 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+    branches: [main, master, develop]
+  workflow_dispatch:
+
+# A new push to the same branch makes the previous run irrelevant.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  JAVA_VERSION: '21'
+  NODE_VERSION: '22'
+
+jobs:
+  backend:
+    name: Backend build, test and analysis
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: temurin
+          # Caches ~/.m2 keyed on the POM, so a run that changes only source
+          # code does not re-resolve the dependency tree.
+          cache: maven
+
+      # `verify` is the whole gate in one command: Checkstyle at validate,
+      # unit tests via Surefire, Testcontainers integration tests via Failsafe,
+      # SpotBugs, and the JaCoCo coverage floor. The integration tests need a
+      # Docker daemon, which GitHub's Ubuntu runners provide out of the box.
+      - name: Build, test and analyse
+        working-directory: backend
+        run: ./mvnw -B --no-transfer-progress verify
+
+      - name: Publish test report
+        # Runs even when the build failed: a red run is exactly when the report
+        # is worth reading.
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-test-results
+          path: |
+            backend/target/surefire-reports/
+            backend/target/failsafe-reports/
+          retention-days: 7
+
+      - name: Publish coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-coverage
+          path: backend/target/site/jacoco/
+          retention-days: 7
+
+      - name: Summarise coverage
+        if: always()
+        run: |
+          REPORT=backend/target/site/jacoco/jacoco.csv
+          if [ ! -f "$REPORT" ]; then echo "No coverage report produced." >> "$GITHUB_STEP_SUMMARY"; exit 0; fi
+          awk -F, 'NR>1 { im+=$4; ic+=$5; bm+=$6; bc+=$7 }
+            END {
+              printf "## Coverage\n\n| Metric | Covered |\n|---|---|\n";
+              printf "| Instructions | %.1f%% |\n", 100*ic/(ic+im);
+              printf "| Branches | %.1f%% |\n", 100*bc/(bc+bm);
+            }' "$REPORT" >> "$GITHUB_STEP_SUMMARY"
+
+  frontend:
+    name: Frontend type check and build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Set up Node ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: frontend
+        # `npm ci` respects the lock file exactly; `npm install` would quietly
+        # accept newer versions and make CI disagree with a developer's machine.
+        run: npm ci --no-audit --no-fund
+
+      - name: Type check
+        working-directory: frontend
+        run: npm run typecheck
+
+      - name: Build
+        working-directory: frontend
+        run: npm run build
+
+  docker:
+    name: Container build and stack smoke test
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    # No point building images from code that does not pass its own tests.
+    needs: [backend, frontend]
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build backend image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./backend
+          push: false
+          load: true
+          tags: mini-bank-backend:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build frontend image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./frontend
+          push: false
+          load: true
+          tags: mini-bank-frontend:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # Building an image only proves it compiles. This proves it runs: the
+      # stack comes up from nothing, migrations apply, and a real user can
+      # authenticate and move money.
+      - name: Start the stack
+        run: |
+          cp .env.example .env
+          {
+            echo "DB_PASSWORD=ci-password"
+            echo "JWT_SECRET=$(openssl rand -base64 48 | tr -d '\n')"
+          } >> .env
+          docker compose up -d --wait --wait-timeout 180
+
+      - name: Smoke test the running stack
+        run: |
+          set -euo pipefail
+
+          echo "Health:"
+          curl -fsS http://localhost:8080/actuator/health | tee /dev/stderr | grep -q '"status":"UP"'
+
+          echo "Frontend:"
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:3000/)" = "200"
+
+          echo "OpenAPI:"
+          curl -fsS http://localhost:8080/v3/api-docs > /dev/null
+
+          echo "Login:"
+          TOKEN=$(curl -fsS -X POST http://localhost:8080/api/v1/auth/login \
+            -H 'Content-Type: application/json' \
+            -d '{"username":"customer.a","password":"Customer#2026!A"}' | jq -r .accessToken)
+          test -n "$TOKEN" && test "$TOKEN" != "null"
+
+          ACCOUNT=$(curl -fsS http://localhost:8080/api/v1/accounts -H "Authorization: Bearer $TOKEN")
+          FROM_ID=$(echo "$ACCOUNT" | jq -r '.[0].id')
+
+          TO=$(curl -fsS -X POST http://localhost:8080/api/v1/auth/login \
+            -H 'Content-Type: application/json' \
+            -d '{"username":"customer.b","password":"Customer#2026!B"}' | jq -r .accessToken)
+          TO_NUMBER=$(curl -fsS http://localhost:8080/api/v1/accounts \
+            -H "Authorization: Bearer $TO" | jq -r '.[0].accountNumber')
+
+          echo "Transfer:"
+          KEY="ci-$(date +%s)"
+          BODY=$(printf '{"fromAccountId":"%s","toAccountNumber":"%s","amount":25.50,"currency":"EUR"}' "$FROM_ID" "$TO_NUMBER")
+          REF=$(curl -fsS -X POST http://localhost:8080/api/v1/transfers \
+            -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' \
+            -H "Idempotency-Key: $KEY" -d "$BODY" | jq -r .reference)
+          test -n "$REF" && test "$REF" != "null"
+          echo "  settled as $REF"
+
+          echo "Idempotent replay returns the same transfer:"
+          REPLAY=$(curl -fsS -X POST http://localhost:8080/api/v1/transfers \
+            -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' \
+            -H "Idempotency-Key: $KEY" -d "$BODY" | jq -r .reference)
+          test "$REPLAY" = "$REF"
+          echo "  replay returned $REPLAY, no second payment"
+
+      - name: Dump container logs on failure
+        if: failure()
+        run: docker compose logs --no-color --tail 200
+
+      - name: Tear down
+        if: always()
+        run: docker compose down -v

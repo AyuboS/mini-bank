@@ -1,0 +1,36 @@
+# Build output
+target/
+build/
+dist/
+*.jar
+*.war
+
+# Node
+node_modules/
+.vite/
+*.tsbuildinfo
+
+# Secrets and local configuration: .env.example is committed, .env is not.
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.settings/
+.project
+.classpath
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs and temporary files
+*.log
+logs/

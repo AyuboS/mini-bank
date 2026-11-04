@@ -1,0 +1,19 @@
+# Profile used by the Docker Compose stack. Everything comes from the environment.
+spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+minibank:
+  security:
+    jwt:
+      secret: ${JWT_SECRET}
+    cors:
+      allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173}
+  seed:
+    enabled: ${SEED_DEMO_DATA:true}
+
+logging:
+  # Structured JSON, so a log shipper can index fields instead of parsing prose.
+  config: classpath:logback-json.xml

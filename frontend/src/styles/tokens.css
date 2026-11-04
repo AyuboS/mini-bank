@@ -1,0 +1,324 @@
+/* =============================================================================
+   MBank design tokens
+   -----------------------------------------------------------------------------
+   One source for every colour, size, radius and duration in the product. If a
+   component invents its own value, that is a bug: twenty screens look like one
+   product because they all resolve to this file.
+
+   THE IDEA
+   --------
+   MBank is paper and ink, not glass. Surfaces are opaque, edges are hairlines,
+   and depth comes from spacing and hierarchy rather than from blur and shadow.
+   The interface is quiet so that two things can be loud: the balance, and the
+   card.
+
+   Colour is used deliberately and sparingly. A screen picks one accent for the
+   thing it is about — violet for cards, green for money arriving, yellow for
+   savings, blue for movement — and leaves everything else in ink. Using all of
+   them at once is how a fintech product starts looking like a toy.
+
+   Translucency survives in exactly four places, listed in surfaces.css. It is
+   an accent, not a material.
+
+   THEME
+   -----
+   Light is the base and lives on :root, so a token that is somehow missed
+   degrades to a readable light value rather than to nothing. [data-theme='dark']
+   redefines the same names for a dark room — a separate design, not an
+   inversion: the greys are chosen for a dark surround and the accents are
+   lifted, because a colour that reads as confident on white reads as muddy on
+   near-black.
+   ========================================================================== */
+
+:root {
+  color-scheme: light;
+
+  /* --- Ground ------------------------------------------------------------
+     A hair of grey rather than white. Pure white leaves a white card with
+     nothing to sit on, and every panel in the product would need a border to
+     be visible at all. */
+  --bg: #F4F5F7;
+  --bg-deep: #EBECF0;        /* the well behind a modal */
+
+  /* --- Surfaces ----------------------------------------------------------
+     Opaque, and stepped so a panel inside a panel still reads as inside it. */
+  --surface: #FFFFFF;         /* cards, panels, rows — the workhorse */
+  --surface-2: #FFFFFF;       /* a panel nested in a panel */
+  --surface-sunken: #F1F2F5;  /* inputs, tabs — a well cut into a card */
+  /* One step darker than --surface-sunken. A progress track is a thin band read
+     against a filled portion, so it needs more separation from the card than a
+     40px-tall input field does; at --surface-sunken a 6px empty track is
+     invisible and the bar reads as an underline. */
+  --track: #E4E7EC;
+  --surface-chrome: rgba(255, 255, 255, 0.82); /* navigation. See surfaces.css */
+  --surface-inverse: #0B0D12; /* the balance block, and nothing else on the page */
+
+  /* --- Lines -------------------------------------------------------------
+     Hairlines, at two strengths. `--line` separates; `--line-strong` encloses. */
+  --line: #E6E8EC;
+  --line-strong: #D6D9E0;
+  --line-inverse: rgba(255, 255, 255, 0.14);
+
+  /* --- Ink ---------------------------------------------------------------
+     Four steps, measured against --surface. --ink-3 clears 4.5:1, which is what
+     lets it carry real text — labels, metadata, timestamps — rather than being
+     decorative. --ink-4 is for placeholders and disabled states only. */
+  --ink: #0B0D12;                      /* headings, balances, amounts — 18.4:1 */
+  --ink-2: #4B5162;                    /* body copy — 8.1:1 */
+  --ink-3: #656C80;                    /* labels and metadata — 5.2:1 */
+  --ink-4: #9AA1B2;                    /* placeholders and disabled — 2.6:1 */
+  --ink-on-inverse: #FFFFFF;
+  --ink-on-inverse-2: rgba(255, 255, 255, 0.62);
+
+  /* --- Accents -----------------------------------------------------------
+     Five, each with a job. Never all on one screen.
+
+       blue     movement — transfers, the primary action, links
+       violet   cards
+       green    money arriving, and security confirmed
+       yellow   savings and goals
+       coral    attention that is not yet an error
+
+     The values below are measured to hold 4.5:1 against --surface-sunken, not
+     just against --surface. That is the stricter of the two and the one that
+     matters: every one of these appears as text inside a well at some point —
+     a hint under a field, a note in a panel, a budget's state line — and a
+     value tuned against white alone drops below the bar the moment it does.
+
+     The `-fill` variants are the same hue at full confidence, for a filled
+     control where the text on top is white; they carry no text themselves and
+     are free to be brighter. */
+  --blue: #2B54F0;
+  --blue-fill: #2B54F0;
+  --blue-soft: #EBEFFE;
+
+  --violet: #6B3FE4;
+  --violet-fill: #6B3FE4;
+  --violet-soft: #F0EBFD;
+
+  --green: #057B52;
+  --green-fill: #07A26B;
+  --green-soft: #E4F6EF;
+
+  --yellow: #8F6400;
+  --yellow-fill: #F0B429;
+  --yellow-soft: #FDF3DF;
+
+  --coral: #C8371F;
+  --coral-fill: #F04E2E;
+  --coral-soft: #FDEDE9;
+  /* Small white text on a coloured chip needs a darker ground than the same
+     colour used as a bar: white on --coral-fill measures 3.6:1 at 10px. */
+  --count-fill: #CE3A21;
+
+  --lime: #527600;
+  --lime-fill: #A3E635;
+  --lime-soft: #F1FADE;
+
+  /* --- Brand -------------------------------------------------------------
+     MBank's voice is the blue. There is no gradient: a flat accent is what
+     makes a product look built rather than styled. */
+  --brand: var(--blue);
+  --brand-fill: var(--blue-fill);
+  --brand-soft: var(--blue-soft);
+  --brand-ink: #FFFFFF;              /* text on a filled brand surface */
+
+  /* --- Money and status --------------------------------------------------
+     Incoming money is the green; it is never used for chrome, so an amount is
+     never mistaken for a control. */
+  --positive: var(--green);
+  --positive-soft: var(--green-soft);
+  --warning: var(--yellow);
+  --warning-soft: var(--yellow-soft);
+  --danger: #C82A2A;
+  --danger-fill: #DF3535;
+  --danger-soft: #FCEBEB;
+  --neutral-soft: #F1F2F5;
+
+  /* --- Categorical -------------------------------------------------------
+     Category avatars and chart series. Eight hues, ordered so that adjacent
+     series stay distinguishable under the common colour-vision deficiencies.
+
+     These are *fill* colours and are deliberately more vivid than the text
+     tokens above: they are read as bars and glyphs, not as sentences. Where one
+     is used as the ink of a category avatar it is darkened at the point of use
+     rather than here — see `.avatar` in components.css — so the chart palette
+     keeps its life and the glyph still clears contrast. */
+  --c-blue: #2B54F0;
+  --c-violet: #6B3FE4;
+  --c-green: #07A26B;
+  --c-amber: #D98E00;
+  --c-coral: #F04E2E;
+  --c-magenta: #C6318F;
+  --c-teal: #067A87;
+  --c-lime: #6D9B00;
+
+  /* --- Focus -------------------------------------------------------------
+     One ring, everywhere, never removed. A white spacer ring underneath means
+     the same token reads on a white card and on a dark balance block alike. */
+  --focus: var(--blue);
+  --focus-ring: 0 0 0 2px var(--surface), 0 0 0 4px var(--blue);
+
+  /* --- Shape -------------------------------------------------------------
+     Rounded, not pill-shaped. The radii step so nesting works; past 20px a
+     content card starts to look like a bubble. */
+  --radius-xs: 8px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+  --radius-2xl: 28px;
+  --radius-pill: 999px;
+
+  /* --- Depth -------------------------------------------------------------
+     Deliberately small. Depth in this product comes from spacing; a shadow is
+     only ever there to say "this floats above the page", and only four things
+     do. */
+  --shadow-xs: 0 1px 2px rgba(11, 13, 18, 0.05);
+  --shadow-sm: 0 1px 3px rgba(11, 13, 18, 0.07), 0 1px 2px rgba(11, 13, 18, 0.04);
+  --shadow-md: 0 6px 16px -6px rgba(11, 13, 18, 0.12), 0 2px 6px -2px rgba(11, 13, 18, 0.06);
+  --shadow-lg: 0 16px 32px -12px rgba(11, 13, 18, 0.16), 0 4px 10px -4px rgba(11, 13, 18, 0.07);
+  --shadow-xl: 0 28px 56px -20px rgba(11, 13, 18, 0.22), 0 8px 16px -8px rgba(11, 13, 18, 0.10);
+  /* A card is a physical object and is the one thing allowed a real shadow. */
+  --shadow-card: 0 18px 36px -18px rgba(11, 13, 18, 0.38), 0 4px 10px -4px rgba(11, 13, 18, 0.14);
+
+  /* --- Spacing -----------------------------------------------------------
+     A 4px base. --space-5 and up are the ones that make the product feel
+     spacious; reach for them before reaching for a shadow. */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 28px;
+  --space-7: 40px;
+  --space-8: 56px;
+  --space-9: 80px;
+
+  /* --- Typography --------------------------------------------------------
+     One family. The hierarchy comes from size, weight and tracking, which is
+     what keeps a financial interface looking mature; a display face would be
+     the first thing to date it. */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+
+  --text-hero: clamp(2.5rem, 9vw, 3.5rem);      /* the balance, and nothing else */
+  --text-display: clamp(1.75rem, 4vw, 2.125rem);/* page titles */
+  --text-title: 1.1875rem;                      /* section titles */
+  --text-heading: 1rem;
+  --text-body: 0.9375rem;
+  --text-small: 0.8125rem;
+  --text-label: 0.75rem;
+
+  /* --- Motion ------------------------------------------------------------
+     Fast, smooth, subtle. Nothing in the product animates for longer than
+     300ms, and nothing that displays money bounces. --ease-spring exists for
+     sheets and success marks — things that arrive — and for nothing else. */
+  --dur-micro: 120ms;
+  --dur-control: 180ms;
+  --dur-panel: 260ms;
+  --dur-page: 300ms;
+
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring: cubic-bezier(0.34, 1.32, 0.48, 1);
+
+  /* --- Layout ------------------------------------------------------------ */
+  --sidebar-width: 244px;
+  --content-max: 1180px;
+  --mobile-nav-height: 64px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-top: env(safe-area-inset-top, 0px);
+}
+
+/* =============================================================================
+   Dark
+   -----------------------------------------------------------------------------
+   Designed, not inverted.
+
+   Three things change beyond the obvious swap. The surfaces are lifted off the
+   background by lightness rather than by shadow — a shadow is invisible on
+   near-black, so a dark card that only had one would float on nothing. The
+   accents move up in luminance, because #2B54F0 on #0B0D12 is a hole rather
+   than a colour. And the hairlines get *lighter* relative to their surface,
+   since a darker line on a dark card disappears.
+   ========================================================================== */
+
+[data-theme='dark'] {
+  color-scheme: dark;
+
+  --bg: #0A0B0F;
+  --bg-deep: #06070A;
+
+  --surface: #15171D;
+  --surface-2: #1C1F27;
+  --surface-sunken: #101218;
+  --track: #292D37;
+  --surface-chrome: rgba(21, 23, 29, 0.86);
+  --surface-inverse: #F5F6F8;
+
+  --line: #24272F;
+  --line-strong: #31353F;
+  --line-inverse: rgba(11, 13, 18, 0.10);
+
+  --ink: #FFFFFF;
+  --ink-2: #A9AFC0;
+  --ink-3: #838A9C;
+  --ink-4: #5C6376;
+  --ink-on-inverse: #0B0D12;
+  --ink-on-inverse-2: rgba(11, 13, 18, 0.60);
+
+  --blue: #6E8DFF;
+  --blue-fill: #3D62F5;
+  --blue-soft: rgba(110, 141, 255, 0.14);
+
+  --violet: #A98BFF;
+  --violet-fill: #7C4DEE;
+  --violet-soft: rgba(169, 139, 255, 0.14);
+
+  --green: #3FD9A0;
+  --green-fill: #10B981;
+  --green-soft: rgba(63, 217, 160, 0.13);
+
+  --yellow: #F5C451;
+  --yellow-fill: #E5A312;
+  --yellow-soft: rgba(245, 196, 81, 0.13);
+
+  --coral: #FF8367;
+  --coral-fill: #EF562F;
+  --coral-soft: rgba(255, 131, 103, 0.13);
+  --count-fill: #D93F1B;
+
+  --lime: #B9E84F;
+  --lime-fill: #9BD225;
+  --lime-soft: rgba(185, 232, 79, 0.13);
+
+  --brand-ink: #FFFFFF;
+
+  --danger: #FF7A7A;
+  --danger-fill: #E23F3F;
+  --danger-soft: rgba(255, 122, 122, 0.13);
+  --neutral-soft: #22252D;
+
+  --c-blue: #6E8DFF;
+  --c-violet: #A98BFF;
+  --c-green: #3FD9A0;
+  --c-amber: #F5C451;
+  --c-coral: #FF8367;
+  --c-magenta: #F473C8;
+  --c-teal: #46CFDD;
+  --c-lime: #B9E84F;
+
+  --focus: #6E8DFF;
+  --focus-ring: 0 0 0 2px var(--bg), 0 0 0 4px #6E8DFF;
+
+  /* Kept, and kept small. On a dark ground a shadow reads as a smudge, so the
+     separation is doing its work through --surface being lighter than --bg. */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.40);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.44);
+  --shadow-md: 0 8px 20px -8px rgba(0, 0, 0, 0.60);
+  --shadow-lg: 0 18px 38px -14px rgba(0, 0, 0, 0.66);
+  --shadow-xl: 0 30px 62px -22px rgba(0, 0, 0, 0.74);
+  --shadow-card: 0 20px 40px -18px rgba(0, 0, 0, 0.80), 0 4px 12px -4px rgba(0, 0, 0, 0.50);
+}

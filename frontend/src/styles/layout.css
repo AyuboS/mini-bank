@@ -1,0 +1,360 @@
+/* =============================================================================
+   Layout
+   -----------------------------------------------------------------------------
+   The shell: a docked sidebar on a desktop, a bottom bar on a phone.
+
+   The navigation is *docked* rather than floating. The previous version inset
+   both bars from the edges and let the page slide underneath, which looked
+   considered and cost real usability — the sidebar took a channel of dead space
+   down the left of every screen, and the floating phone bar had rounded corners
+   the thumb kept missing. A bar that meets the edge of the display is both
+   larger to hit and easier to ignore.
+   ========================================================================== */
+
+.shell {
+  display: flex;
+  min-height: 100dvh;
+}
+
+/* =============================================================================
+   Sidebar
+   ========================================================================== */
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 40;
+  width: var(--sidebar-width);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-5) var(--space-3) var(--space-4);
+  overflow-y: auto;
+  /* Docked, so only the right edge is a border and no corner is rounded. */
+  border-radius: 0;
+  border-width: 0 1px 0 0;
+}
+
+.sidebar__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3) var(--space-6);
+}
+
+.sidebar__wordmark { display: flex; flex-direction: column; line-height: 1.15; }
+
+.sidebar__name {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+
+.sidebar__tagline {
+  font-size: var(--text-label);
+  font-weight: 520;
+  color: var(--ink-3);
+}
+
+.sidebar__section { display: flex; flex-direction: column; gap: 1px; }
+
+.sidebar__heading {
+  padding: var(--space-5) var(--space-3) var(--space-2);
+  font-size: var(--text-label);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.sidebar__spacer { flex: 1; min-height: var(--space-5); }
+
+/* -----------------------------------------------------------------------------
+   Navigation items.
+
+   The active state is a soft fill of the brand plus the brand-coloured icon.
+   No sliding indicator bar: the fill already says which one is selected, and a
+   second signal for the same fact is decoration.
+   -------------------------------------------------------------------------- */
+.nav-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  height: 40px;
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-body);
+  font-weight: 520;
+  color: var(--ink-2);
+  transition:
+    color var(--dur-micro) var(--ease),
+    background-color var(--dur-micro) var(--ease);
+}
+
+.nav-item:hover { color: var(--ink); background-color: var(--surface-sunken); }
+
+.nav-item--active {
+  color: var(--brand);
+  font-weight: 600;
+  background-color: var(--brand-soft);
+}
+
+.nav-item__icon { display: flex; flex-shrink: 0; color: var(--ink-3); }
+.nav-item__icon svg { width: 18px; height: 18px; }
+.nav-item:hover .nav-item__icon { color: var(--ink-2); }
+.nav-item--active .nav-item__icon { color: var(--brand); }
+
+.nav-item__count {
+  margin-left: auto;
+  min-width: 20px;
+  padding: 0 6px;
+  border-radius: var(--radius-pill);
+  background: var(--count-fill);
+  color: #fff;
+  font-size: 0.625rem;
+  font-weight: 680;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  line-height: 18px;
+}
+
+.user-pill {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  text-align: left;
+  transition: background-color var(--dur-micro) var(--ease), border-color var(--dur-micro) var(--ease);
+}
+
+.user-pill:hover { background-color: var(--surface-sunken); border-color: var(--line); }
+.user-pill:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.user-pill__name { font-size: var(--text-small); font-weight: 600; color: var(--ink); }
+.user-pill__role { font-size: var(--text-label); color: var(--ink-3); }
+.user-pill__chevron { margin-left: auto; color: var(--ink-4); display: flex; }
+.user-pill__chevron svg { width: 16px; height: 16px; }
+
+/* =============================================================================
+   Main column
+   ========================================================================== */
+
+.main {
+  flex: 1;
+  min-width: 0;
+  /* Clears the fixed sidebar. */
+  margin-left: var(--sidebar-width);
+  padding: 0 var(--space-6);
+  display: flex;
+  flex-direction: column;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  height: 68px;
+  /* A sticky bar over scrolling content needs its own ground, or the content
+     runs through it. A short fade rather than a hard edge, so the transition
+     into the page is not a line across the screen. */
+  background: linear-gradient(180deg, var(--bg) 62%, transparent);
+}
+
+.topbar__actions { display: flex; align-items: center; gap: var(--space-2); }
+
+.mobile-topbar { display: none; }
+
+.page {
+  flex: 1;
+  width: 100%;
+  max-width: var(--content-max);
+  padding-bottom: var(--space-9);
+  animation: page-in var(--dur-page) var(--ease);
+}
+
+/* Pages arrive with a short rise. Small enough not to delay the content, big
+   enough that a navigation feels like a change of place. */
+@keyframes page-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page { animation: none; }
+}
+
+/* =============================================================================
+   Search
+   ========================================================================== */
+
+.search {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: min(300px, 32vw);
+  height: 40px;
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-md);
+  background-color: var(--surface);
+  border: 1px solid var(--line);
+  color: var(--ink-3);
+  font-size: var(--text-small);
+  cursor: text;
+  transition: border-color var(--dur-micro) var(--ease);
+}
+
+.search:hover { border-color: var(--line-strong); }
+.search svg { width: 16px; height: 16px; flex-shrink: 0; }
+.search input { flex: 1; min-width: 0; font-size: var(--text-small); color: var(--ink); }
+.search input::placeholder { color: var(--ink-4); }
+
+/* The ⌘K hint. A key cap, so it reads as something to press. */
+.search__key {
+  display: flex;
+  gap: 2px;
+  font-size: 0.6875rem;
+  color: var(--ink-3);
+}
+
+.search__key kbd {
+  padding: 1px 5px;
+  border-radius: 5px;
+  background: var(--surface-sunken);
+  border: 1px solid var(--line);
+  font-family: var(--font-sans);
+  line-height: 1.4;
+}
+
+/* =============================================================================
+   Mobile navigation
+   ========================================================================== */
+
+.mobile-nav { display: none; }
+
+/* =============================================================================
+   Breakpoints
+   ========================================================================== */
+
+/* Tablet: the sidebar narrows to icons before it disappears entirely. */
+@media (max-width: 1100px) and (min-width: 768px) {
+  :root { --sidebar-width: 72px; }
+
+  .sidebar { padding: var(--space-5) var(--space-2) var(--space-3); align-items: center; }
+  .sidebar__wordmark,
+  .sidebar__heading,
+  .user-pill__name,
+  .user-pill__role,
+  .user-pill__chevron { display: none; }
+  .sidebar__brand { padding: 0 0 var(--space-5); }
+  .sidebar__section { width: 100%; }
+
+  .nav-item {
+    justify-content: center;
+    padding: 0;
+    /* The label is hidden but stays in the DOM, so the accessible name is
+       intact and a screen reader still announces the destination. */
+    font-size: 0;
+    gap: 0;
+  }
+
+  .nav-item__count {
+    position: absolute;
+    top: 2px;
+    right: 6px;
+    margin: 0;
+  }
+
+  .user-pill { justify-content: center; padding: var(--space-2); }
+  .main { padding: 0 var(--space-5); }
+  .search { width: 200px; }
+}
+
+/* Phone: the sidebar is replaced by a bar docked to the bottom edge. */
+@media (max-width: 767px) {
+  .sidebar { display: none; }
+
+  .main {
+    margin-left: 0;
+    padding: 0 var(--space-4);
+  }
+
+  .topbar { display: none; }
+
+  .mobile-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    height: 56px;
+    margin: 0 calc(var(--space-4) * -1);
+    padding: 0 var(--space-4);
+    padding-top: var(--safe-top);
+    background: linear-gradient(180deg, var(--bg) 64%, transparent);
+  }
+
+  .mobile-topbar__title {
+    font-weight: 640;
+    font-size: 1.0625rem;
+    letter-spacing: -0.028em;
+  }
+
+  .page {
+    /* Clears the bar plus the home indicator, so the last row of a list is
+       never trapped underneath it. */
+    padding-bottom: calc(var(--mobile-nav-height) + var(--safe-bottom) + var(--space-7));
+  }
+
+  .mobile-nav {
+    position: fixed;
+    z-index: 50;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: calc(var(--mobile-nav-height) + var(--safe-bottom));
+    display: flex;
+    align-items: stretch;
+    padding-bottom: var(--safe-bottom);
+    /* Docked to the edge: no radius, and a border only where content meets it. */
+    border-radius: 0;
+    border-width: 1px 0 0 0;
+  }
+
+  .mobile-nav__item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    font-size: 0.625rem;
+    font-weight: 560;
+    letter-spacing: 0.005em;
+    color: var(--ink-3);
+    /* Every destination is at least 44px wide at 320px: 320 split five ways
+       is 64. */
+    min-width: 44px;
+    transition: color var(--dur-micro) var(--ease);
+  }
+
+  .mobile-nav__item svg { width: 22px; height: 22px; }
+  .mobile-nav__item--active { color: var(--brand); font-weight: 620; }
+  .mobile-nav__item:active { opacity: 0.6; }
+}
+
+/* At 320px the labels no longer fit under the icons at a legible size, so they
+   are dropped and the accessible name carries the meaning instead. */
+@media (max-width: 359px) {
+  .mobile-nav__item { font-size: 0; gap: 0; }
+  .mobile-nav__item svg { width: 24px; height: 24px; }
+}

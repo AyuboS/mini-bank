@@ -1,0 +1,260 @@
+# Base configuration shared by every profile.
+# Anything environment specific is either overridden in a profile file or read from the environment;
+# no credential or secret has a value here.
+spring:
+  application:
+    name: mbank
+  profiles:
+    default: dev
+
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/minibank}
+    username: ${DB_USERNAME:minibank}
+    password: ${DB_PASSWORD:minibank}
+    hikari:
+      pool-name: minibank-pool
+      maximum-pool-size: ${DB_POOL_SIZE:10}
+      minimum-idle: 2
+      connection-timeout: 10000
+      # Slightly under a typical 30 minute network idle timeout, so the pool retires
+      # connections before an intermediary silently drops them.
+      max-lifetime: 1500000
+
+  jpa:
+    # Off deliberately. An open session in the view layer hides lazy loading behind rendering,
+    # which is how N+1 queries reach production unnoticed; fetching is decided in the service layer.
+    open-in-view: false
+    hibernate:
+      # The schema is owned by Flyway. 'validate' makes a drift between entities and migrations a
+      # startup failure rather than a silent inconsistency.
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+          batch_size: 25
+        order_inserts: true
+        order_updates: true
+        query:
+          fail_on_pagination_over_collection_fetch: true
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    validate-on-migrate: true
+
+  jackson:
+    default-property-inclusion: non_null
+
+  threads:
+    virtual:
+      enabled: false
+
+server:
+  port: ${SERVER_PORT:8080}
+  shutdown: graceful
+  error:
+    # Never leak internals to a client. Errors are rendered by GlobalExceptionHandler.
+    include-stacktrace: never
+    include-message: never
+    include-binding-errors: never
+    whitelabel:
+      enabled: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        # Only these are exposed, and everything except health and info requires the ADMIN role.
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: when-authorized
+      probes:
+        enabled: true
+  metrics:
+    tags:
+      application: mbank
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: alpha
+    tagsSorter: alpha
+  api-docs:
+    path: /v3/api-docs
+
+minibank:
+  security:
+    jwt:
+      # No default: a deployment without JWT_SECRET must fail to start rather than sign with a
+      # value that is public in this repository.
+      secret: ${JWT_SECRET}
+      issuer: mbank
+      access-token-ttl: 15m
+      refresh-token-ttl: 7d
+    lockout:
+      max-failed-attempts: 5
+      duration: 15m
+    cors:
+      allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173}
+
+  verification:
+    phone:
+      code-ttl: 5m
+      max-attempts: 5
+      resend-cooldown: 60s
+    email:
+      token-ttl: 24h
+      resend-cooldown: 60s
+
+  notifications:
+    # Where a verification link should point: the web client's origin, not the API's.
+    app-base-url: ${APP_BASE_URL:http://localhost:5173}
+    # DEVELOPMENT ONLY. Returns the OTP in the API response so a local sign-in needs no handset.
+    # StartupSecurityCheck refuses to boot the prod profile with this on.
+    expose-codes: ${EXPOSE_VERIFICATION_CODES:false}
+    sms:
+      # 'dev' logs instead of sending. Set to 'twilio' with credentials to deliver for real.
+      provider: ${SMS_PROVIDER:dev}
+      from: ${SMS_SENDER:MBank}
+      account-sid: ${TWILIO_ACCOUNT_SID:}
+      auth-token: ${TWILIO_AUTH_TOKEN:}
+    email:
+      # 'dev' logs instead of sending. 'smtp' uses spring.mail.*, which every hosted sender speaks.
+      provider: ${EMAIL_PROVIDER:dev}
+      from: ${EMAIL_SENDER:MBank <no-reply@mbank.local>}
+
+  cards:
+    # Left empty the card keys are derived from JWT_SECRET, which is already mandatory. Set this
+    # (base64 of 32+ random bytes) in a real deployment so card data and sessions can be rotated
+    # independently of each other.
+    encryption-key: ${CARD_ENCRYPTION_KEY:}
+    max-per-user: 8
+    reveals-per-hour: 10
+
+  limits:
+    per-transfer-max: 5000.00
+    daily-max: 10000.00
+    max-transfers-per-hour: 20
+
+  risk:
+    large-amount:
+      threshold: 2500.00
+      score: 35
+    velocity:
+      window: 5m
+      max-transfers: 5
+      score: 30
+    unusual-amount:
+      history-window: 30d
+      multiplier: 5
+      minimum-amount: 250.00
+      score: 25
+    failed-logins:
+      window: 30m
+      threshold: 3
+      score: 20
+    new-beneficiary:
+      window: 60m
+      amount-threshold: 1000.00
+      score: 30
+    thresholds:
+      review: 50
+      block: 85
+
+  rate-limit:
+    enabled: true
+    # First matching rule wins, so the specific paths are listed before the general one.
+    rules:
+      - name: login
+        path-pattern: /api/v1/auth/login
+        methods: [POST]
+        capacity: 5
+        refill-period: 1m
+      - name: register
+        path-pattern: /api/v1/auth/register
+        methods: [POST]
+        capacity: 3
+        refill-period: 5m
+      - name: refresh
+        path-pattern: /api/v1/auth/refresh
+        methods: [POST]
+        capacity: 20
+        refill-period: 1m
+      - name: password-change
+        path-pattern: /api/v1/users/me/password
+        methods: [POST]
+        capacity: 5
+        refill-period: 15m
+      - name: create-transfer
+        path-pattern: /api/v1/transfers
+        methods: [POST]
+        capacity: 20
+        refill-period: 1m
+      - name: password-reset-request
+        path-pattern: /api/v1/security/password-reset/request
+        methods: [POST]
+        capacity: 3
+        refill-period: 15m
+      - name: password-reset-verify
+        path-pattern: /api/v1/security/password-reset/verify
+        methods: [POST]
+        capacity: 10
+        refill-period: 15m
+      - name: password-reset-complete
+        path-pattern: /api/v1/security/password-reset/complete
+        methods: [POST]
+        capacity: 5
+        refill-period: 15m
+      # Confirmation of payee is an account-existence oracle by design. The
+      # limit is what keeps it from being enumerable at scale.
+      - name: payee-lookup
+        path-pattern: /api/v1/accounts/lookup
+        methods: [GET]
+        capacity: 30
+        refill-period: 1m
+      - name: create-beneficiary
+        path-pattern: /api/v1/beneficiaries
+        methods: [POST]
+        capacity: 10
+        refill-period: 5m
+      # Revealing a card number is the most sensitive read in the application; a stolen session
+      # should not be able to walk a wallet in seconds.
+      - name: card-details
+        path-pattern: /api/v1/cards/*/details
+        methods: [POST]
+        capacity: 10
+        refill-period: 1h
+      - name: create-card
+        path-pattern: /api/v1/cards
+        methods: [POST]
+        capacity: 5
+        refill-period: 10m
+      # Each request may put a real SMS on somebody's phone and a charge on ours, so the ceiling is
+      # low. The per-destination cooldown is enforced separately, in VerificationService.
+      - name: phone-code
+        path-pattern: /api/v1/auth/phone/code
+        methods: [POST]
+        capacity: 5
+        refill-period: 15m
+      - name: phone-login
+        path-pattern: /api/v1/auth/phone/login
+        methods: [POST]
+        capacity: 10
+        refill-period: 5m
+      - name: phone-confirm
+        path-pattern: /api/v1/auth/phone/confirm
+        methods: [POST]
+        capacity: 10
+        refill-period: 5m
+      - name: email-verify
+        path-pattern: /api/v1/auth/email/verify
+        methods: [POST]
+        capacity: 10
+        refill-period: 15m
+
+logging:
+  level:
+    root: INFO
+    com.minibank: INFO

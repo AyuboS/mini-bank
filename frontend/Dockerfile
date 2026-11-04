@@ -25,7 +25,7 @@ RUN npm run build
 # Runtime stage
 # ---------------------------------------------------------------------------
 # Static files only: no Node process in production, nothing to exploit but nginx.
-FROM nginx:1.27-alpine AS runtime
+FROM nginx:1.31-alpine AS runtime
 
 RUN rm /etc/nginx/conf.d/default.conf
 COPY nginx.conf /etc/nginx/conf.d/app.conf

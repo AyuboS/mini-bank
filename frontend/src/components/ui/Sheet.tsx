@@ -38,6 +38,10 @@ export function Sheet({
   const panelRef = useRef<HTMLDivElement | null>(null);
   const restoreFocusTo = useRef<HTMLElement | null>(null);
 
+  // Read through a ref so a parent re-render (new onClose) does not re-run the focus effect.
+  const latest = useRef({ onClose, dismissible });
+  latest.current = { onClose, dismissible };
+
   useEffect(() => {
     if (!open) return;
 
@@ -46,8 +50,8 @@ export function Sheet({
     restoreFocusTo.current = document.activeElement as HTMLElement | null;
 
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && dismissible) {
-        onClose();
+      if (event.key === 'Escape' && latest.current.dismissible) {
+        latest.current.onClose();
         return;
       }
       if (event.key !== 'Tab') return;
@@ -81,12 +85,16 @@ export function Sheet({
     document.body.style.overflow = 'hidden';
     if (scrollbar > 0) document.body.style.paddingRight = `${scrollbar}px`;
 
-    // Focus lands inside the dialog on the next frame, once it is in the DOM.
+    // Focus the first field if there is one, otherwise the first button.
     const raf = requestAnimationFrame(() => {
-      const target = panelRef.current?.querySelector<HTMLElement>(
-        'input:not([type="hidden"]), textarea, select, button',
-      );
-      (target ?? panelRef.current)?.focus();
+      const panel = panelRef.current;
+      const target =
+        panel?.querySelector<HTMLElement>(
+          'input:not([type="hidden"]):not([disabled]), textarea:not([disabled]), select:not([disabled])',
+        ) ??
+        panel?.querySelector<HTMLElement>('.sheet__body button:not([disabled])') ??
+        panel?.querySelector<HTMLElement>('button:not([disabled])');
+      (target ?? panel)?.focus();
     });
 
     return () => {
@@ -96,7 +104,7 @@ export function Sheet({
       cancelAnimationFrame(raf);
       restoreFocusTo.current?.focus?.();
     };
-  }, [open, onClose, dismissible]);
+  }, [open]);
 
   if (!open) return null;
 

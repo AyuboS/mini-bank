@@ -181,6 +181,20 @@ const MESSAGES: Record<string, { title: string; body?: string }> = {
   INTERNAL_ERROR: { title: 'Something went wrong', body: 'Please try again in a moment.' },
 };
 
+/**
+ * Must a retry of this failed payment reuse its idempotency key?
+ *
+ * Yes whenever the server may have acted on the request: it is still working
+ * on it, or no readable answer came back at all (network failure, bad gateway).
+ * A coded refusal is final, so the next attempt may start with a new key.
+ */
+export function mustKeepIdempotencyKey(error: unknown): boolean {
+  if (error instanceof ApiRequestError) {
+    return error.code === 'IDEMPOTENCY_REQUEST_IN_PROGRESS';
+  }
+  return true;
+}
+
 export interface FriendlyError {
   title: string;
   body?: string;

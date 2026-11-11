@@ -25,7 +25,7 @@ import { ErrorState } from '../components/States';
 import { RiskGauge } from '../components/RiskGauge';
 import { CATEGORY_META } from '../utils/categories';
 import { avatarInitials, currencySymbol, formatMoney, maskAccountNumber, toNumber } from '../utils/format';
-import { toFriendlyError } from '../utils/errors';
+import { mustKeepIdempotencyKey, toFriendlyError } from '../utils/errors';
 import type { FriendlyError } from '../utils/errors';
 
 type Phase = 'compose' | 'review' | 'done';
@@ -73,15 +73,7 @@ export function TransferPage() {
   const [failure, setFailure] = useState<FriendlyError | null>(null);
   const [result, setResult] = useState<TransferResponse | null>(null);
 
-  /**
-   * The key identifying this payment attempt.
-   *
-   * Held in a ref, and generated once when the screen opens, so that a retry
-   * after a network failure sends the *same* key. That is precisely what lets
-   * the server recognise the retry and decline to pay twice. It is replaced
-   * only when a transfer has genuinely been created, or when the customer
-   * starts composing a different one.
-   */
+  // One key per payment attempt, reused on retry so the server cannot pay twice.
   const idempotencyKey = useRef(newIdempotencyKey());
 
   // Preselect the first account that can actually send money.
@@ -176,10 +168,8 @@ export function TransferPage() {
       const friendly = toFriendlyError(err);
       setFailure(friendly);
       setPhase('compose');
-      // A refused payment is a final answer, and replaying the key would simply
-      // replay that same refusal — so the next attempt starts a fresh one. The
-      // exception is "still in progress", where the original key must be kept.
-      if (friendly.title !== 'Still processing') {
+      // A coded refusal is final. Anything else may already have paid.
+      if (!mustKeepIdempotencyKey(err)) {
         idempotencyKey.current = newIdempotencyKey();
       }
     } finally {

@@ -47,8 +47,8 @@ export function TransactionRow({ transaction, onSelect, hideDate = false }: Tran
   */
   const isEvent = transaction.type === 'DEPOSIT' || transaction.type === 'REVERSAL';
 
-  return (
-    <button type="button" className="txn" onClick={() => onSelect?.(transaction)}>
+  const content = (
+    <>
       {isEvent || !transaction.category ? (
         <span className={`txn__glyph ${incoming && settled ? 'txn__glyph--in' : ''}`} aria-hidden="true">
           {transaction.type === 'REVERSAL' ? (
@@ -84,6 +84,17 @@ export function TransactionRow({ transaction, onSelect, hideDate = false }: Tran
         />
         {!settled && <StatusBadge status={transaction.status} />}
       </span>
+    </>
+  );
+
+  // Without onSelect there is nothing to open, so the row must not be a button.
+  if (!onSelect) {
+    return <div className="txn txn--static">{content}</div>;
+  }
+
+  return (
+    <button type="button" className="txn" onClick={() => onSelect(transaction)}>
+      {content}
     </button>
   );
 }

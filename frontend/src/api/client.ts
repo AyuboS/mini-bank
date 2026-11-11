@@ -123,6 +123,20 @@ interface RequestOptions {
  */
 let refreshInFlight: Promise<boolean> | null = null;
 
+// fetch() rejects when the host cannot be reached. The event starts the connection banner.
+async function fetchOrAnnounce(url: string, init: RequestInit): Promise<Response> {
+  try {
+    return await fetch(url, init);
+  } catch (cause) {
+    window.dispatchEvent(new CustomEvent('minibank:unreachable'));
+    throw cause;
+  }
+}
+
+/**
+ * Resolves false only when the server rejected the refresh token (401), and
+ * clears the session then. An outage throws instead, so the session survives it.
+ */
 async function refreshAccessToken(): Promise<boolean> {
   const refreshToken = tokenStore.refreshToken();
   if (!refreshToken) {
@@ -130,19 +144,20 @@ async function refreshAccessToken(): Promise<boolean> {
   }
   refreshInFlight ??= (async () => {
     try {
-      const response = await fetch(`${BASE_URL}/api/v1/auth/refresh`, {
+      const response = await fetchOrAnnounce(`${BASE_URL}/api/v1/auth/refresh`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ refreshToken }),
       });
-      if (!response.ok) {
+      if (response.status === 401) {
         tokenStore.clear();
         return false;
       }
+      if (!response.ok) {
+        throw new ApiRequestError(response.status, {});
+      }
       tokenStore.save((await response.json()) as AuthenticationResponse);
       return true;
-    } catch {
-      return false;
     } finally {
       refreshInFlight = null;
     }
@@ -155,7 +170,7 @@ async function send<T>(path: string, options: RequestOptions = {}): Promise<T> {
 
   const doFetch = async (): Promise<Response> => {
     const accessToken = tokenStore.accessToken();
-    return fetch(`${BASE_URL}${path}`, {
+    return fetchOrAnnounce(`${BASE_URL}${path}`, {
       method,
       headers: {
         'Content-Type': 'application/json',
@@ -166,16 +181,7 @@ async function send<T>(path: string, options: RequestOptions = {}): Promise<T> {
     });
   };
 
-  let response: Response;
-  try {
-    response = await doFetch();
-  } catch (cause) {
-    // fetch() rejects rather than resolving when the host cannot be reached at
-    // all. Announcing it lets the connection banner start probing immediately,
-    // instead of every screen independently rendering its own dead end.
-    window.dispatchEvent(new CustomEvent('minibank:unreachable'));
-    throw cause;
-  }
+  let response = await doFetch();
 
   // One retry, and only for an expired session. Retrying anything else would
   // risk repeating a request the server already acted on.

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import {
   ArrowLeftRight,
@@ -12,7 +12,6 @@ import {
   LayoutGrid,
   LifeBuoy,
   ListOrdered,
-  LogOut,
   PiggyBank,
   Search,
   Settings,
@@ -23,8 +22,9 @@ import {
   Wallet,
 } from 'lucide-react';
 import { useAuth } from '../auth/AuthContext';
-import { Avatar, Button, Sheet } from '../components/ui';
+import { Avatar } from '../components/ui';
 import { Logo } from '../components/Logo';
+import { SignOutButton } from '../components/SignOutButton';
 import { ThemeToggle } from '../components/ThemeToggle';
 import { useUnreadNotifications } from '../hooks/useNotifications';
 import { openCommandPalette } from '../components/CommandPalette';
@@ -119,10 +119,9 @@ function NavItem({ entry, count }: { entry: NavEntry; count?: number }) {
 }
 
 export function AppLayout() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [signOutOpen, setSignOutOpen] = useState(false);
   const { unread } = useUnreadNotifications();
 
   const title = useMemo(() => {
@@ -133,11 +132,6 @@ export function AppLayout() {
 
   const who = initials(user?.firstName, user?.lastName);
   const isAdmin = user?.role === 'ADMIN';
-
-  const signOut = async () => {
-    await logout();
-    navigate('/login', { replace: true });
-  };
 
   return (
     <div className="shell">
@@ -234,9 +228,7 @@ export function AppLayout() {
               {unread > 0 && <span className="icon-btn__count">{unread > 99 ? '99+' : unread}</span>}
             </button>
 
-            <button type="button" className="icon-btn" onClick={() => setSignOutOpen(true)} aria-label="Sign out">
-              <LogOut aria-hidden="true" />
-            </button>
+            <SignOutButton variant="icon" />
           </div>
         </header>
 
@@ -255,6 +247,7 @@ export function AppLayout() {
             <Bell aria-hidden="true" />
             {unread > 0 && <span className="icon-btn__dot" />}
           </button>
+          <SignOutButton variant="icon" />
         </header>
 
         {/* Keyed on the path so each navigation replays the entrance. */}
@@ -279,22 +272,6 @@ export function AppLayout() {
           );
         })}
       </nav>
-
-      <Sheet
-        open={signOutOpen}
-        onClose={() => setSignOutOpen(false)}
-        title="Sign out?"
-        subtitle="You will need your password to sign back in."
-      >
-        <div className="modal-actions">
-          <Button variant="secondary" onClick={() => setSignOutOpen(false)}>
-            Stay signed in
-          </Button>
-          <Button variant="primary" onClick={signOut}>
-            Sign out
-          </Button>
-        </div>
-      </Sheet>
     </div>
   );
 }

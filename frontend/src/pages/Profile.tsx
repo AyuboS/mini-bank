@@ -4,6 +4,7 @@ import { usersApi } from '../api/users';
 import { useAuth } from '../auth/AuthContext';
 import { useToast } from '../components/ToastProvider';
 import { VerificationPanel } from '../components/auth/VerificationPanel';
+import { SignOutButton } from '../components/SignOutButton';
 import { Avatar, Button, Surface, Input } from '../components/ui';
 import { formatDate, initials } from '../utils/format';
 import { toFriendlyError } from '../utils/errors';
@@ -147,6 +148,13 @@ export function ProfilePage() {
             </Button>
           </form>
         </Surface>
+      </section>
+
+      <section className="section">
+        <h3 className="section__title" style={{ marginBottom: 'var(--space-4)' }}>
+          This device
+        </h3>
+        <SignOutButton variant="button" />
       </section>
     </>
   );

@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeftRight, FileText, PiggyBank, Plus, Wallet } from 'lucide-react';
 import { accountsApi } from '../api/accounts';
 import { savingsApi } from '../api/savings';
@@ -203,6 +203,11 @@ function AccountCard({
           >
             {savings ? 'Goal' : 'Send'}
           </Button>
+          {!savings && account.status === 'ACTIVE' && (
+            <Link className="btn btn-ghost btn-sm" to={`/top-up?account=${account.id}`}>
+              Top up
+            </Link>
+          )}
           <Button size="sm" variant="ghost" icon={<FileText />} onClick={onStatement}>
             Statement
           </Button>

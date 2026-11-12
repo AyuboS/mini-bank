@@ -4,7 +4,7 @@ import { TRANSACTION_CATEGORIES } from '../../api/types';
 import { Button, Input, Select } from '../../components/ui';
 import { CATEGORY_META } from '../../utils/categories';
 import { currencySymbol, formatMoney, maskAccountNumber } from '../../utils/format';
-import { toMinorUnits } from '../../utils/money';
+import { cleanAmountInput, toMinorUnits } from '../../utils/money';
 
 export interface PaymentDraft {
   fromAccountId: string;
@@ -19,13 +19,6 @@ interface AmountStepProps {
   onChange: (patch: Partial<PaymentDraft>) => void;
   onBack: () => void;
   onContinue: () => void;
-}
-
-// Digits and one separator, two decimals at most. A typed comma becomes a dot.
-function cleanAmount(raw: string): string {
-  const cleaned = raw.replace(',', '.').replace(/[^\d.]/g, '');
-  const [whole = '', ...rest] = cleaned.split('.');
-  return rest.length > 0 ? `${whole}.${rest.join('').slice(0, 2)}` : whole;
 }
 
 /** Step 2: which account pays, how much, and what it is for. */
@@ -73,7 +66,7 @@ export function AmountStep({ accounts, draft, onChange, onBack, onContinue }: Am
             placeholder="0.00"
             autoComplete="off"
             value={draft.amount}
-            onChange={(event) => onChange({ amount: cleanAmount(event.target.value) })}
+            onChange={(event) => onChange({ amount: cleanAmountInput(event.target.value) })}
             aria-invalid={overBalance || undefined}
             aria-describedby={`${amountId}-message`}
           />

@@ -11,7 +11,7 @@ import { Button, Skeleton } from '../components/ui';
 import { useAsync } from '../hooks/useAsync';
 import { useDebounced } from '../hooks/useDebounced';
 import { useIsPhone } from '../hooks/useMediaQuery';
-import { toDateKey } from '../utils/format';
+import { LOCALE, toDateKey } from '../utils/format';
 import {
   NO_FILTERS,
   countActive,
@@ -42,7 +42,7 @@ function dayHeading(key: string): string {
 
   if (distance === 0) return 'Today';
   if (distance === 1) return 'Yesterday';
-  return date.toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  return date.toLocaleDateString(LOCALE, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 }
 
 export function TransactionsPage() {

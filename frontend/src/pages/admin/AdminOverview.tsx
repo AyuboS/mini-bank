@@ -4,7 +4,7 @@ import { adminApi } from '../../api/admin';
 import { useAsync } from '../../hooks/useAsync';
 import { ErrorState } from '../../components/States';
 import { Surface, Skeleton, Stat, StatusBadge } from '../../components/ui';
-import { formatDate, formatMoney } from '../../utils/format';
+import { LOCALE, formatDate, formatMoney } from '../../utils/format';
 import type { PageResponse, TransferResponse } from '../../api/types';
 
 interface Metrics {
@@ -56,21 +56,21 @@ export function AdminOverview() {
   return (
     <>
       <div className="stat-grid">
-        <Stat label="Customers" icon={<Users aria-hidden="true" />} value={data.users.toLocaleString()} />
+        <Stat label="Customers" icon={<Users aria-hidden="true" />} value={data.users.toLocaleString(LOCALE)} />
         <Stat
           label="Accounts"
           icon={<CreditCard aria-hidden="true" />}
-          value={data.accounts.toLocaleString()}
+          value={data.accounts.toLocaleString(LOCALE)}
         />
         <Stat
           label="Transfers"
           icon={<ArrowLeftRight aria-hidden="true" />}
-          value={data.transfers.toLocaleString()}
+          value={data.transfers.toLocaleString(LOCALE)}
         />
         <Stat
           label="Refused or failed"
           icon={<AlertTriangle aria-hidden="true" />}
-          value={data.flagged.toLocaleString()}
+          value={data.flagged.toLocaleString(LOCALE)}
         />
       </div>
 

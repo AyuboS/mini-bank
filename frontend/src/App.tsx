@@ -15,6 +15,7 @@ import { HomePage } from './pages/Home';
 import { AccountsPage } from './pages/Accounts';
 import { CardsPage } from './pages/Cards';
 import { SendPage } from './pages/send/SendPage';
+import { TopUpPage } from './pages/TopUp';
 import { TransactionsPage } from './pages/Transactions';
 import { BeneficiariesPage } from './pages/Beneficiaries';
 import { SavingsPage } from './pages/Savings';
@@ -70,6 +71,7 @@ export function App() {
               <Route path="/transactions" element={<TransactionsPage />} />
               <Route path="/analytics" element={<AnalyticsPage />} />
               <Route path="/savings" element={<SavingsPage />} />
+              <Route path="/top-up" element={<TopUpPage />} />
               <Route path="/payments" element={<PaymentsLayout />}>
                 <Route index element={<Navigate to="/payments/send" replace />} />
                 <Route path="send" element={<SendPage />} />

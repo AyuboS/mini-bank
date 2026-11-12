@@ -11,7 +11,7 @@ import { TransactionDetail } from '../components/TransactionDetail';
 import { TransactionList } from '../components/TransactionList';
 import { Skeleton } from '../components/ui';
 import { useAsync } from '../hooks/useAsync';
-import { formatMoney } from '../utils/format';
+import { LOCALE, formatMoney } from '../utils/format';
 import { formatMinorUnits, sumMinorUnits } from '../utils/money';
 
 const RECENT_COUNT = 8;
@@ -83,6 +83,9 @@ export function HomePage() {
             </Link>
             <Link className="btn btn-secondary" to="/payments/requests">
               Request
+            </Link>
+            <Link className="btn btn-secondary" to="/top-up">
+              Top up
             </Link>
             <Link className="btn btn-secondary" to="/savings">
               Move to savings
@@ -181,7 +184,7 @@ function UpcomingPayments() {
               <span className="upcoming__main">
                 <span className="truncate">{order.payeeName ?? order.description ?? 'Payment'}</span>
                 <span className="upcoming__meta">
-                  {new Date(order.nextRunOn).toLocaleDateString(undefined, { day: 'numeric', month: 'short' })}
+                  {new Date(order.nextRunOn).toLocaleDateString(LOCALE, { day: 'numeric', month: 'short' })}
                   {' · '}
                   {FREQUENCY_LABEL[order.frequency] ?? 'One-off'}
                 </span>

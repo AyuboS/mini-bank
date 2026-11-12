@@ -42,3 +42,10 @@ export function formatMinorUnits(minor: number, currency: CurrencyCode): string 
   const formatted = formatMoney(fromMinorUnits(Math.abs(minor)), currency);
   return minor < 0 ? `−${formatted}` : formatted;
 }
+
+/** What a person typed into an amount field: digits and one separator, two decimals at most. "12,5" becomes "12.5". */
+export function cleanAmountInput(raw: string): string {
+  const cleaned = raw.replace(',', '.').replace(/[^\d.]/g, '');
+  const [whole = '', ...rest] = cleaned.split('.');
+  return rest.length > 0 ? `${whole}.${rest.join('').slice(0, 2)}` : whole;
+}

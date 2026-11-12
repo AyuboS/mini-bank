@@ -1,5 +1,8 @@
 import type { CurrencyCode } from '../api/types';
 
+/** The interface is written in English, so numbers and dates follow British English wherever the browser is. */
+export const LOCALE = 'en-GB';
+
 const SYMBOLS: Record<CurrencyCode, string> = { EUR: '€', USD: '$', GBP: '£' };
 
 export function currencySymbol(currency: CurrencyCode): string {
@@ -18,7 +21,7 @@ export function formatMoney(amount: string | number, currency: CurrencyCode): st
   if (Number.isNaN(value)) {
     return `${currencySymbol(currency)}0.00`;
   }
-  return `${currencySymbol(currency)}${value.toLocaleString(undefined, {
+  return `${currencySymbol(currency)}${value.toLocaleString(LOCALE, {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   })}`;
@@ -46,14 +49,14 @@ export function formatDate(iso: string): string {
   const startOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
   const days = Math.round((startOfDay(now) - startOfDay(date)) / 86_400_000);
 
-  if (days === 0) return `Today, ${date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}`;
-  if (days === 1) return `Yesterday, ${date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}`;
-  if (days < 7) return date.toLocaleDateString(undefined, { weekday: 'long' });
-  return date.toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' });
+  if (days === 0) return `Today, ${date.toLocaleTimeString(LOCALE, { hour: '2-digit', minute: '2-digit' })}`;
+  if (days === 1) return `Yesterday, ${date.toLocaleTimeString(LOCALE, { hour: '2-digit', minute: '2-digit' })}`;
+  if (days < 7) return date.toLocaleDateString(LOCALE, { weekday: 'long' });
+  return date.toLocaleDateString(LOCALE, { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
 export function formatDateTime(iso: string): string {
-  return new Date(iso).toLocaleString(undefined, {
+  return new Date(iso).toLocaleString(LOCALE, {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
@@ -156,7 +159,7 @@ export function toMonthKey(date: Date = new Date()): string {
 export function formatMonth(monthKey: string): string {
   const [year, month] = monthKey.split('-').map(Number);
   if (!year || !month) return monthKey;
-  return new Date(year, month - 1, 1).toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
+  return new Date(year, month - 1, 1).toLocaleDateString(LOCALE, { month: 'long', year: 'numeric' });
 }
 
 /** `2026-09-01`, the form the scheduling endpoints expect. */
@@ -166,7 +169,7 @@ export function toDateKey(date: Date = new Date()): string {
 
 /** A bare date, without a time. Used where an hour would be noise. */
 export function formatDay(iso: string): string {
-  return new Date(iso).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' });
+  return new Date(iso).toLocaleDateString(LOCALE, { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
 /**

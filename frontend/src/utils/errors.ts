@@ -36,6 +36,11 @@ const MESSAGES: Record<string, { title: string; body?: string }> = {
     title: 'Transfer limit reached',
     body: 'This would exceed your per-transfer, daily or hourly limit.',
   },
+  TOP_UP_LIMIT_EXCEEDED: {
+    title: 'Top-up limit reached',
+    body: 'Simulated top-ups are capped per top-up and per day. Try a smaller amount.',
+  },
+  TOP_UP_NOT_ALLOWED: { title: 'Top-ups go to a spending account', body: 'Choose one of your spending accounts.' },
   CURRENCY_MISMATCH: {
     title: 'Currencies do not match',
     body: 'Both accounts must hold the same currency.',

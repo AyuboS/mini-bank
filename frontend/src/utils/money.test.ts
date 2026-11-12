@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { fromMinorUnits, sumMinorUnits, toMinorUnits } from './money';
+import { cleanAmountInput, fromMinorUnits, sumMinorUnits, toMinorUnits } from './money';
 
 describe('toMinorUnits', () => {
   it.each([
@@ -51,5 +51,18 @@ describe('fromMinorUnits', () => {
     [-4820, '-48.20'],
   ])('%i cents is %s', (minor, expected) => {
     expect(fromMinorUnits(minor)).toBe(expected);
+  });
+});
+
+describe('cleanAmountInput', () => {
+  it.each([
+    ['12,5', '12.5'],
+    ['12.345', '12.34'],
+    ['1.2.3', '1.23'],
+    ['€ 40', '40'],
+    ['abc', ''],
+    ['-5', '5'],
+  ])('%s becomes %s', (typed, expected) => {
+    expect(cleanAmountInput(typed)).toBe(expected);
   });
 });

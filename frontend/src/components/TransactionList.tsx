@@ -1,6 +1,6 @@
 import type { TransactionResponse, TransferStatus } from '../api/types';
 import { categoryMeta } from '../utils/categories';
-import { formatSignedMoney } from '../utils/format';
+import { LOCALE, formatSignedMoney } from '../utils/format';
 import { titleFor } from './TransactionRow';
 
 interface TransactionListProps {
@@ -19,11 +19,11 @@ export const STATUS_LABEL: Partial<Record<TransferStatus, string>> = {
 };
 
 function shortDate(iso: string): string {
-  return new Date(iso).toLocaleDateString(undefined, { day: 'numeric', month: 'short' });
+  return new Date(iso).toLocaleDateString(LOCALE, { day: 'numeric', month: 'short' });
 }
 
 function time(iso: string): string {
-  return new Date(iso).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+  return new Date(iso).toLocaleTimeString(LOCALE, { hour: '2-digit', minute: '2-digit' });
 }
 
 /**

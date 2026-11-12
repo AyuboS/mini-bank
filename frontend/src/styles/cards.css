@@ -50,7 +50,7 @@
 /* Frozen and cancelled cards are drained of colour, and say so in words too. */
 .bank-card--frozen,
 .bank-card--cancelled,
-.bank-card--expired { --card-face: #8f8c83; --card-ink: #f4f2ec; box-shadow: none; }
+.bank-card--expired { --card-face: #6a675f; --card-ink: #f4f2ec; box-shadow: none; }
 
 /* =============================================================================
    The carousel

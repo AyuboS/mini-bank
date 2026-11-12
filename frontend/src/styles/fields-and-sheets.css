@@ -2,8 +2,7 @@
    Fields
    -----------------------------------------------------------------------------
    A modern fintech form: a well cut into the card, a hairline that turns brand
-   on focus, and no glow. The focus state is a 2px ring in the accent — visible,
-   and gone the moment focus leaves.
+   on focus, and no glow. Focus is the same 2px ink ring as every other control.
    ========================================================================== */
 
 .field { display: flex; flex-direction: column; gap: var(--space-2); }
@@ -31,8 +30,8 @@
 
 .field__well:focus-within {
   background: var(--surface);
-  border-color: var(--brand);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand) 16%, transparent);
+  border-color: var(--ink);
+  box-shadow: var(--focus-ring);
 }
 
 .field--error .field__well {
@@ -41,7 +40,7 @@
 }
 
 .field--error .field__well:focus-within {
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--danger) 18%, transparent);
+  box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--red);
 }
 
 .field__input {

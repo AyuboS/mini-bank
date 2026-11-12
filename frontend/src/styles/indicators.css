@@ -36,7 +36,7 @@
   place-items: center;
   flex-shrink: 0;
   border-radius: var(--radius-sm);
-  font-weight: 640;
+  font-weight: var(--weight-semibold);
   letter-spacing: 0.01em;
   /*
      A tint of the accent with the accent as the ink, rather than a filled
@@ -117,7 +117,7 @@
   padding: 0 var(--space-4);
   border-radius: var(--radius-sm);
   font-size: var(--text-small);
-  font-weight: 560;
+  font-weight: var(--weight-semibold);
   color: var(--ink-3);
   white-space: nowrap;
   cursor: pointer;
@@ -125,7 +125,7 @@
 }
 
 .tabs__tab:hover { color: var(--ink-2); }
-.tabs__tab--active { color: var(--ink); font-weight: 620; }
+.tabs__tab--active { color: var(--ink); font-weight: var(--weight-semibold); }
 .tabs__tab:focus-visible { outline: none; box-shadow: var(--focus-ring); }
 
 /*
@@ -143,7 +143,7 @@
   background: var(--brand-soft);
   color: var(--brand);
   font-size: 0.625rem;
-  font-weight: 680;
+  font-weight: var(--weight-semibold);
   font-variant-numeric: tabular-nums;
 }
 
@@ -155,7 +155,7 @@
 .stat__head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); }
 .stat__icon { color: var(--ink-3); display: flex; }
 .stat__icon svg { width: 16px; height: 16px; }
-.stat__value { font-size: 1.5rem; font-weight: 640; letter-spacing: -0.028em; }
+.stat__value { font-size: 1.5rem; font-weight: var(--weight-semibold); letter-spacing: -0.028em; }
 .stat__value--positive { color: var(--positive); }
 .stat__value--warning { color: var(--warning); }
 .stat__value--danger { color: var(--danger); }

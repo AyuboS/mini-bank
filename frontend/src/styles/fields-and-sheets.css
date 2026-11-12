@@ -10,7 +10,7 @@
 
 .field__label {
   font-size: var(--text-small);
-  font-weight: 560;
+  font-weight: var(--weight-semibold);
   color: var(--ink-2);
 }
 
@@ -87,7 +87,7 @@
 .field__suffix svg { width: 18px; height: 18px; }
 
 .field__hint { font-size: var(--text-small); color: var(--ink-3); }
-.field__error { font-size: var(--text-small); color: var(--danger); font-weight: 540; }
+.field__error { font-size: var(--text-small); color: var(--danger); font-weight: var(--weight-medium); }
 
 .field__well--area { height: auto; padding: var(--space-3) var(--space-4); align-items: flex-start; }
 .field__well--area .field__input { min-height: 96px; padding: var(--space-1) 0; }
@@ -159,7 +159,7 @@
 
 .sheet__title {
   font-size: var(--text-title);
-  font-weight: 640;
+  font-weight: var(--weight-semibold);
   letter-spacing: -0.022em;
 }
 

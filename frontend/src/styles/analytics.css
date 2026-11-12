@@ -11,7 +11,7 @@
 }
 
 .cat-row { display: flex; gap: var(--space-3); align-items: flex-start; }
-.cat-row__name { font-size: var(--text-small); font-weight: 540; }
+.cat-row__name { font-size: var(--text-small); font-weight: var(--weight-medium); }
 .cat-row__amount { font-size: var(--text-small); }
 .cat-row__share { font-size: var(--text-label); color: var(--ink-3); }
 
@@ -92,7 +92,7 @@
 .insight--positive { border-left-color: var(--positive); }
 .insight--attention { border-left-color: var(--warning); }
 .insight--neutral { border-left-color: var(--brand); }
-.insight__headline { font-size: var(--text-small); font-weight: 560; }
+.insight__headline { font-size: var(--text-small); font-weight: var(--weight-semibold); }
 .insight__detail { font-size: var(--text-label); color: var(--ink-3); padding-top: 2px; }
 
 /* =============================================================================
@@ -100,7 +100,7 @@
    ========================================================================== */
 
 .budget-row { display: flex; flex-direction: column; gap: var(--space-2); }
-.budget-row__name { font-size: var(--text-small); font-weight: 540; }
+.budget-row__name { font-size: var(--text-small); font-weight: var(--weight-medium); }
 .budget-row__amount { font-size: var(--text-small); }
 .budget-row__state { font-size: var(--text-label); color: var(--ink-3); }
 .budget-row__state--over { color: var(--danger); }

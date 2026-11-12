@@ -84,7 +84,7 @@
 }
 
 .state__icon svg { width: 22px; height: 22px; }
-.state__title { font-size: var(--text-heading); font-weight: 640; }
+.state__title { font-size: var(--text-heading); font-weight: var(--weight-semibold); }
 .state__body { font-size: var(--text-small); color: var(--ink-3); max-width: 42ch; }
 
 /* =============================================================================

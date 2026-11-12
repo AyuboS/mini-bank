@@ -68,7 +68,7 @@
 .palette__group-name {
   padding: var(--space-2) var(--space-3);
   font-size: var(--text-label);
-  font-weight: 620;
+  font-weight: var(--weight-semibold);
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--ink-3);
@@ -87,7 +87,7 @@
   cursor: pointer;
 }
 
-.palette__item--active { background-color: var(--brand-soft); color: var(--brand); font-weight: 560; }
+.palette__item--active { background-color: var(--brand-soft); color: var(--brand); font-weight: var(--weight-semibold); }
 .palette__icon { display: flex; color: var(--ink-3); flex-shrink: 0; }
 .palette__icon svg { width: 16px; height: 16px; }
 .palette__item--active .palette__icon { color: var(--brand); }
@@ -126,7 +126,7 @@
 
 .notfound__code {
   font-size: var(--text-label);
-  font-weight: 620;
+  font-weight: var(--weight-semibold);
   letter-spacing: 0.1em;
   color: var(--ink-3);
   margin-top: var(--space-4);
@@ -158,7 +158,7 @@
 }
 
 .control-row__icon svg { width: 16px; height: 16px; }
-.control-row__label { font-size: var(--text-small); font-weight: 580; }
+.control-row__label { font-size: var(--text-small); font-weight: var(--weight-semibold); }
 .control-row__body { font-size: var(--text-label); color: var(--ink-3); }
 
 /* =============================================================================
@@ -181,7 +181,7 @@
   flex-shrink: 0;
   border-radius: var(--radius-sm);
   font-size: var(--text-small);
-  font-weight: 660;
+  font-weight: var(--weight-semibold);
   color: var(--c-blue);
   background: color-mix(in srgb, var(--c-blue) 12%, var(--surface));
 }
@@ -197,7 +197,7 @@
 
 .account-card__balance {
   font-size: 1.625rem;
-  font-weight: 660;
+  font-weight: var(--weight-semibold);
   letter-spacing: -0.03em;
   font-variant-numeric: tabular-nums;
 }

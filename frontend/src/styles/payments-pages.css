@@ -4,7 +4,7 @@
 
 .order-card { padding: var(--space-4) var(--space-5); display: flex; flex-direction: column; gap: var(--space-3); }
 .order-card__main { display: flex; align-items: center; gap: var(--space-3); }
-.order-card__name { font-size: var(--text-body); font-weight: 560; }
+.order-card__name { font-size: var(--text-body); font-weight: var(--weight-semibold); }
 .order-card__meta { font-size: var(--text-small); color: var(--ink-3); }
 .order-card__right { display: flex; flex-direction: column; align-items: flex-end; flex-shrink: 0; }
 .order-card__right .amount { font-size: 1.0625rem; }
@@ -34,7 +34,7 @@
    ========================================================================== */
 
 .request-card { padding: var(--space-4) var(--space-5); display: flex; flex-direction: column; gap: var(--space-3); }
-.request-card__who { font-size: var(--text-body); font-weight: 580; }
+.request-card__who { font-size: var(--text-body); font-weight: var(--weight-semibold); }
 .request-card__amount { font-size: 1.125rem; }
 
 .request-card__foot {
@@ -76,7 +76,7 @@
 }
 
 .review__row--total dt { color: var(--ink); font-weight: 600; }
-.review__row--total dd { font-size: 1.25rem; font-weight: 660; }
+.review__row--total dd { font-size: 1.25rem; font-weight: var(--weight-semibold); }
 
 /* =============================================================================
    Notifications
@@ -180,7 +180,7 @@
   gap: var(--space-3);
   padding: var(--space-4) 0;
   font-size: var(--text-small);
-  font-weight: 560;
+  font-weight: var(--weight-semibold);
   cursor: pointer;
   list-style: none;
 }
@@ -205,7 +205,7 @@
 .faq[open] .faq__q::before { transform: rotate(45deg); }
 .faq__a { padding: 0 0 var(--space-4) calc(20px + var(--space-3)); font-size: var(--text-small); color: var(--ink-2); }
 
-.ticket-row__subject { font-size: var(--text-small); font-weight: 560; }
+.ticket-row__subject { font-size: var(--text-small); font-weight: var(--weight-semibold); }
 
 .thread { display: flex; flex-direction: column; gap: var(--space-3); }
 
@@ -232,6 +232,6 @@
   background: var(--surface-sunken);
 }
 
-.thread__author { font-size: var(--text-label); font-weight: 620; color: var(--ink-3); }
+.thread__author { font-size: var(--text-label); font-weight: var(--weight-semibold); color: var(--ink-3); }
 .thread__body { font-size: var(--text-small); white-space: pre-wrap; }
 .thread__time { font-size: var(--text-label); color: var(--ink-3); }

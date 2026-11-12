@@ -156,7 +156,7 @@
 .txn__glyph--in { color: var(--positive); background: var(--positive-soft); }
 
 .txn__body { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
-.txn__title { font-size: var(--text-body); font-weight: 540; }
+.txn__title { font-size: var(--text-body); font-weight: var(--weight-medium); }
 .txn__meta { font-size: var(--text-small); color: var(--ink-3); }
 
 .txn__right {

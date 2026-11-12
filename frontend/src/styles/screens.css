@@ -10,9 +10,9 @@
    Small shared pieces
    ========================================================================== */
 
-.field-label { font-size: var(--text-small); font-weight: 560; color: var(--ink-2); display: block; }
+.field-label { font-size: var(--text-small); font-weight: var(--weight-semibold); color: var(--ink-2); display: block; }
 .field-hint { font-size: var(--text-small); color: var(--ink-3); }
-.field-error { font-size: var(--text-small); color: var(--danger); font-weight: 540; }
+.field-error { font-size: var(--text-small); color: var(--danger); font-weight: var(--weight-medium); }
 
 /* An icon-only button. Square, so it does not carry the horizontal padding a
    labelled one needs; the accessible name comes from aria-label. */
@@ -57,7 +57,7 @@
 .detail-row__value { font-size: var(--text-body); text-align: right; word-break: break-word; }
 
 .detail-row--total { border-bottom: none; border-top: 1px solid var(--line-strong); padding-top: var(--space-4); }
-.detail-row--total .detail-row__value { font-size: 1.125rem; font-weight: 640; }
+.detail-row--total .detail-row__value { font-size: 1.125rem; font-weight: var(--weight-semibold); }
 
 /* A revealed card number or CVV. Monospaced and widely tracked, because these
    are read out loud and typed into another form. */
@@ -75,7 +75,7 @@
   border-radius: var(--radius-xs);
   border: 1px solid var(--line);
   font-size: var(--text-label);
-  font-weight: 560;
+  font-weight: var(--weight-semibold);
   color: var(--ink-3);
   cursor: pointer;
   transition: color var(--dur-micro) var(--ease), border-color var(--dur-micro) var(--ease);
@@ -101,7 +101,7 @@
   background: var(--warning-soft);
   color: var(--warning);
   font-size: var(--text-label);
-  font-weight: 540;
+  font-weight: var(--weight-medium);
 }
 
 /* =============================================================================
@@ -111,7 +111,7 @@
 .risk { display: flex; align-items: center; gap: var(--space-5); flex-wrap: wrap; }
 .risk__gauge { flex-shrink: 0; }
 .risk__readout { display: flex; flex-direction: column; align-items: center; }
-.risk__score { font-size: 1.5rem; font-weight: 680; font-variant-numeric: tabular-nums; }
+.risk__score { font-size: 1.5rem; font-weight: var(--weight-semibold); font-variant-numeric: tabular-nums; }
 .risk__of { font-size: var(--text-label); color: var(--ink-3); }
 .risk__reasons { display: flex; flex-direction: column; gap: var(--space-2); min-width: 0; list-style: none; }
 .risk__reason { font-size: var(--text-small); color: var(--ink-2); }
@@ -186,7 +186,7 @@
 
 .timeline__line { flex: 1; width: 1px; background: var(--line); margin: 4px 0; }
 .timeline__body { padding-bottom: var(--space-4); min-width: 0; }
-.timeline__title { font-size: var(--text-small); font-weight: 540; }
+.timeline__title { font-size: var(--text-small); font-weight: var(--weight-medium); }
 .timeline__time { font-size: var(--text-label); color: var(--ink-3); }
 
 /* =============================================================================
@@ -205,7 +205,7 @@
 }
 
 .payee-card__who { display: flex; align-items: center; gap: var(--space-3); min-width: 0; }
-.payee-card__name { font-size: var(--text-small); font-weight: 580; }
+.payee-card__name { font-size: var(--text-small); font-weight: var(--weight-semibold); }
 .payee-card__number { font-size: var(--text-label); color: var(--ink-3); font-family: var(--font-mono); }
 .payee-card__actions { display: flex; gap: var(--space-2); }
 .payee-card__actions > .btn { flex: 1 1 auto; }
@@ -249,7 +249,7 @@
   color: var(--danger);
 }
 
-.auth-error__title { font-weight: 580; font-size: var(--text-small); }
+.auth-error__title { font-weight: var(--weight-semibold); font-size: var(--text-small); }
 .auth-error__body { font-size: var(--text-small); opacity: 0.85; margin-top: 2px; }
 
 .auth-demo {
@@ -291,7 +291,7 @@
   height: 36px;
   border-radius: var(--radius-sm);
   font-size: var(--text-small);
-  font-weight: 560;
+  font-weight: var(--weight-semibold);
   color: var(--ink-3);
   cursor: pointer;
   transition: color var(--dur-micro) var(--ease), background-color var(--dur-micro) var(--ease);

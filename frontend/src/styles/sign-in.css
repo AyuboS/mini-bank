@@ -46,7 +46,7 @@
 
 .auth-poster__name {
   font-size: 1.125rem;
-  font-weight: 700;
+  font-weight: var(--weight-semibold);
   letter-spacing: -0.03em;
   color: #fff;
 }
@@ -54,7 +54,7 @@
 .auth-poster__statement {
   position: relative;
   font-size: clamp(2rem, 3.6vw, 3rem);
-  font-weight: 680;
+  font-weight: var(--weight-semibold);
   line-height: 1.08;
   letter-spacing: -0.038em;
   color: #fff;

@@ -1,7 +1,5 @@
 import { useMemo, useState } from 'react';
 import {
-  ChevronLeft,
-  ChevronRight,
   Plus,
   RefreshCw,
   Sparkles,
@@ -27,12 +25,13 @@ import {
   Stat,
   Surface,
 } from '../components/ui';
+import { MonthSwitch } from '../components/MonthSwitch';
 import { PageHeader } from '../components/PageHeader';
 import { CategoryIcon } from '../components/CategoryIcon';
 import { EmptyState, ErrorState } from '../components/States';
 import { CATEGORY_META, categoryMeta } from '../utils/categories';
 import { describeInsight } from '../utils/insights';
-import { formatDay, formatMoney, formatMonth, toMonthKey, toNumber } from '../utils/format';
+import { formatDay, formatMoney, toMonthKey, toNumber } from '../utils/format';
 import { findSubscriptions, monthlyTotal, type Subscription } from '../utils/subscriptions';
 import { toFriendlyError } from '../utils/errors';
 
@@ -64,14 +63,6 @@ export function AnalyticsPage() {
     [history.data],
   );
 
-  const isCurrentMonth = month === toMonthKey();
-
-  const step = (delta: number) => {
-    const [year, monthNumber] = month.split('-').map(Number);
-    if (!year || !monthNumber) return;
-    setMonth(toMonthKey(new Date(year, monthNumber - 1 + delta, 1)));
-  };
-
   const spending = toNumber(summary.data?.spending);
   const income = toNumber(summary.data?.income);
   const net = toNumber(summary.data?.net);
@@ -86,23 +77,7 @@ export function AnalyticsPage() {
       {/* -------------------------------------------------------------- */}
       {/* Month picker                                                    */}
       {/* -------------------------------------------------------------- */}
-      <Surface tone="chrome" className="month-switch">
-        <button type="button" className="icon-btn" onClick={() => step(-1)} aria-label="Previous month">
-          <ChevronLeft aria-hidden="true" />
-        </button>
-        <span className="month-switch__label">{formatMonth(month)}</span>
-        <button
-          type="button"
-          className="icon-btn"
-          onClick={() => step(1)}
-          /* There is nothing after this month, and a control that does nothing
-             is worse than one that is visibly unavailable. */
-          disabled={isCurrentMonth}
-          aria-label="Next month"
-        >
-          <ChevronRight aria-hidden="true" />
-        </button>
-      </Surface>
+      <MonthSwitch month={month} onChange={setMonth} />
 
       {summary.error ? (
         <ErrorState title={summary.error.title} body={summary.error.body} onRetry={summary.reload} />

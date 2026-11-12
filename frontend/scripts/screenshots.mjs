@@ -24,6 +24,7 @@ const PUBLIC = ['/login', '/register', '/forgot-password'];
 const CUSTOMER = [
   '/',
   '/accounts',
+  '/top-up',
   '/cards',
   '/payments/send',
   '/transactions',
@@ -39,7 +40,7 @@ const CUSTOMER = [
   '/settings',
   '/profile',
 ];
-const ADMIN = ['/admin', '/admin/transfers', '/admin/users', '/admin/audit'];
+const ADMIN = ['/admin', '/admin/transfers', '/admin/users', '/admin/accounts', '/admin/audit'];
 
 // SHOT_ONLY=/,/cards limits a run to those paths.
 const only = process.env.SHOT_ONLY?.split(',');

@@ -1,23 +1,21 @@
 import { useMemo, useState } from 'react';
-import { ChevronLeft, ChevronRight, Download, FileText } from 'lucide-react';
 import { accountsApi } from '../api/accounts';
 import { statementsApi } from '../api/statements';
-import { useAsync } from '../hooks/useAsync';
-import { useToast } from '../components/ToastProvider';
-import { Button, Select, Skeleton, Surface } from '../components/ui';
+import type { TransactionResponse } from '../api/types';
+import { MonthSwitch } from '../components/MonthSwitch';
 import { PageHeader } from '../components/PageHeader';
-import { TransactionRow } from '../components/TransactionRow';
-import { EmptyState, ErrorState } from '../components/States';
-import { formatMoney, formatMonth, toMonthKey } from '../utils/format';
+import { ErrorState } from '../components/States';
+import { useToast } from '../components/ToastProvider';
+import { TransactionDetail } from '../components/TransactionDetail';
+import { TransactionList } from '../components/TransactionList';
+import { Button, Select, Skeleton } from '../components/ui';
+import { useAsync } from '../hooks/useAsync';
 import { toFriendlyError } from '../utils/errors';
+import { formatMoney, maskAccountNumber, toMonthKey } from '../utils/format';
 
 /**
- * Monthly statements.
- *
- * The opening balance is derived from the ledger rather than stored, which is
- * why the four figures at the top always reconcile: opening plus money in minus
- * money out equals closing, by construction rather than by arithmetic done
- * twice.
+ * Monthly statements. The server derives the opening balance from the ledger,
+ * so opening + in − out always equals closing.
  */
 export function StatementsPage() {
   const toast = useToast();
@@ -25,30 +23,23 @@ export function StatementsPage() {
   const [accountId, setAccountId] = useState('');
   const [month, setMonth] = useState(toMonthKey());
   const [downloading, setDownloading] = useState(false);
+  const [selected, setSelected] = useState<TransactionResponse | null>(null);
 
-  const selected = useMemo(() => {
+  const account = useMemo(() => {
     const list = accounts.data ?? [];
-    return list.find((account) => account.id === accountId) ?? list[0];
+    return list.find((candidate) => candidate.id === accountId) ?? list[0];
   }, [accounts.data, accountId]);
 
   const statement = useAsync(
-    () => (selected ? statementsApi.get(selected.id, month) : Promise.resolve(null)),
-    [selected?.id, month],
+    () => (account ? statementsApi.get(account.id, month) : Promise.resolve(null)),
+    [account?.id, month],
   );
 
-  const isCurrentMonth = month === toMonthKey();
-
-  const step = (delta: number) => {
-    const [year, monthNumber] = month.split('-').map(Number);
-    if (!year || !monthNumber) return;
-    setMonth(toMonthKey(new Date(year, monthNumber - 1 + delta, 1)));
-  };
-
   const download = async () => {
-    if (!selected) return;
+    if (!account) return;
     setDownloading(true);
     try {
-      await statementsApi.download(selected.id, selected.accountNumber, month);
+      await statementsApi.download(account.id, account.accountNumber, month);
       toast.success('Statement downloaded');
     } catch (error) {
       const friendly = toFriendlyError(error);
@@ -58,106 +49,85 @@ export function StatementsPage() {
     }
   };
 
+  if (accounts.error) {
+    return <ErrorState title={accounts.error.title} body={accounts.error.body} onRetry={accounts.reload} />;
+  }
+
+  const data = statement.data;
+
   return (
-    <div className="stack-lg">
+    <>
       <PageHeader
         title="Statements"
-        subtitle="A month at a time, reconciled against the ledger."
+        subtitle="One month of one account, reconciled against the ledger."
         actions={
-          <Button
-            variant="primary"
-            icon={<Download />}
-            onClick={download}
-            loading={downloading}
-            disabled={!selected}
-          >
+          <Button variant="secondary" onClick={download} loading={downloading} disabled={!account}>
             Download CSV
           </Button>
         }
       />
 
       <div className="statement-controls">
-        <Select
-          label="Account"
-          value={selected?.id ?? ''}
-          onChange={(event) => setAccountId(event.target.value)}
-        >
-          {(accounts.data ?? []).map((account) => (
-            <option key={account.id} value={account.id}>
-              {account.accountNumber} ({account.currency})
-              {account.purpose === 'SAVINGS' ? ' · Savings' : ''}
+        <Select label="Account" value={account?.id ?? ''} onChange={(event) => setAccountId(event.target.value)}>
+          {(accounts.data ?? []).map((option) => (
+            <option key={option.id} value={option.id}>
+              {option.purpose === 'SAVINGS' ? 'Savings' : 'Spending'} {maskAccountNumber(option.accountNumber)} ·{' '}
+              {option.currency}
             </option>
           ))}
         </Select>
-
-        <Surface tone="chrome" className="month-switch">
-          <button type="button" className="icon-btn" onClick={() => step(-1)} aria-label="Previous month">
-            <ChevronLeft aria-hidden="true" />
-          </button>
-          <span className="month-switch__label">{formatMonth(month)}</span>
-          <button
-            type="button"
-            className="icon-btn"
-            onClick={() => step(1)}
-            disabled={isCurrentMonth}
-            aria-label="Next month"
-          >
-            <ChevronRight aria-hidden="true" />
-          </button>
-        </Surface>
+        <MonthSwitch month={month} onChange={setMonth} />
       </div>
 
-      {statement.loading ? (
+      {statement.loading && !data ? (
         <Skeleton height="160px" />
       ) : statement.error ? (
         <ErrorState title={statement.error.title} body={statement.error.body} onRetry={statement.reload} />
-      ) : !statement.data ? (
-        <Surface>
-          <EmptyState title="No account selected" icon={<FileText />} />
-        </Surface>
-      ) : (
+      ) : !data ? null : (
         <>
-          <Surface className="statement-summary">
-            <div className="statement-summary__row">
-              <span className="label">Opening balance</span>
-              <span className="amount">
-                {formatMoney(statement.data.openingBalance, statement.data.currency)}
-              </span>
+          <dl className="figures">
+            <div>
+              <dt>Opening balance</dt>
+              <dd>{formatMoney(data.openingBalance, data.currency)}</dd>
             </div>
-            <div className="statement-summary__row">
-              <span className="label">Money in</span>
-              <span className="amount amount--in">
-                +{formatMoney(statement.data.totalIn, statement.data.currency)}
-              </span>
+            <div>
+              <dt>Money in</dt>
+              <dd className="figures__in">+{formatMoney(data.totalIn, data.currency)}</dd>
             </div>
-            <div className="statement-summary__row">
-              <span className="label">Money out</span>
-              <span className="amount">
-                −{formatMoney(statement.data.totalOut, statement.data.currency)}
-              </span>
+            <div>
+              <dt>Money out</dt>
+              <dd>−{formatMoney(data.totalOut, data.currency)}</dd>
             </div>
-            <div className="statement-summary__row statement-summary__row--total">
-              <span className="label">Closing balance</span>
-              <span className="amount">
-                {formatMoney(statement.data.closingBalance, statement.data.currency)}
-              </span>
+            <div>
+              <dt>Closing balance</dt>
+              <dd className="figures__total">{formatMoney(data.closingBalance, data.currency)}</dd>
             </div>
-          </Surface>
+          </dl>
 
-          <Surface className="list-panel">
-            {statement.data.transactions.length === 0 ? (
-              <EmptyState
-                title="No movement in this month"
-                body="The opening and closing balances are the same."
-              />
+          <section className="statement-lines" aria-label="Transactions in this month">
+            {data.transactions.length === 0 ? (
+              <p className="quiet-empty">No money moved in this month.</p>
             ) : (
-              statement.data.transactions.map((transaction) => (
-                <TransactionRow key={transaction.transferId} transaction={transaction} />
-              ))
+              <TransactionList transactions={data.transactions} onSelect={setSelected} />
             )}
-          </Surface>
+          </section>
         </>
       )}
-    </div>
+
+      <TransactionDetail
+        transaction={selected}
+        onClose={() => setSelected(null)}
+        onRecategorised={(updated) => {
+          setSelected(updated);
+          statement.setData(
+            (current) =>
+              current && {
+                ...current,
+                transactions: current.transactions.map((row) => (row.transferId === updated.transferId ? updated : row)),
+              },
+          );
+        }}
+      />
+    </>
   );
 }

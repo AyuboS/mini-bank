@@ -25,25 +25,6 @@
 .input-shell__icon { display: flex; color: var(--ink-3); flex-shrink: 0; }
 .input-shell__icon svg { width: 18px; height: 18px; }
 
-.status-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  height: 24px;
-  padding: 0 var(--space-3);
-  border-radius: var(--radius-pill);
-  font-size: var(--text-label);
-  font-weight: 600;
-  color: var(--ink-2);
-  background: var(--neutral-soft);
-  white-space: nowrap;
-}
-
-.status-chip--active { color: var(--positive); background: var(--positive-soft); }
-.status-chip--frozen { color: var(--warning); background: var(--warning-soft); }
-.status-chip--expired,
-.status-chip--cancelled { color: var(--ink-3); background: var(--neutral-soft); }
-
 .verified-chip {
   display: inline-flex;
   align-items: center;
@@ -145,55 +126,6 @@
    Cards screen
    ========================================================================== */
 
-.card-detail { padding: var(--space-5); display: flex; flex-direction: column; gap: var(--space-4); }
-.card-detail__head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-3); }
-.card-detail__title { font-size: var(--text-heading); font-weight: 640; }
-
-.card-detail__note {
-  font-size: var(--text-label);
-  color: var(--ink-3);
-  padding: var(--space-3) var(--space-4);
-  border-radius: var(--radius-sm);
-  background: var(--surface-sunken);
-}
-
-/*
-   The four card actions.
-
-   Big, labelled and always visible. Freezing a card is the thing somebody does
-   at speed with one hand while looking for a receipt, and burying it two taps
-   deep in an overflow menu is how a product loses that moment.
-*/
-.card-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(88px, 100%), 1fr)); gap: var(--space-2); }
-
-.card-action {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-2);
-  min-height: 76px;
-  padding: var(--space-3);
-  border-radius: var(--radius-md);
-  border: 1px solid transparent;
-  background: var(--surface-sunken);
-  color: var(--ink-2);
-  font-size: var(--text-label);
-  font-weight: 580;
-  cursor: pointer;
-  transition: background-color var(--dur-micro) var(--ease), color var(--dur-micro) var(--ease), transform var(--dur-micro) var(--ease);
-}
-
-.card-action:hover:not(:disabled) { color: var(--ink); background: color-mix(in srgb, var(--surface-sunken) 86%, var(--ink)); }
-.card-action:active:not(:disabled) { transform: scale(0.96); }
-.card-action:disabled { opacity: 0.4; cursor: not-allowed; }
-.card-action:focus-visible { outline: none; box-shadow: var(--focus-ring); }
-.card-action--danger { color: var(--danger); }
-.card-action--danger:hover:not(:disabled) { color: var(--danger); background: var(--danger-soft); }
-
-.card-action__icon { display: flex; }
-.card-action__icon svg { width: 20px; height: 20px; }
-
 .card-confirm { display: flex; flex-direction: column; gap: var(--space-4); }
 
 .usage { display: flex; flex-direction: column; gap: var(--space-2); }
@@ -207,8 +139,9 @@
    -------------------------------------------------------------------------- */
 .design-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(150px, 100%), 1fr)); gap: var(--space-4); }
 .design-swatch { display: flex; flex-direction: column; gap: var(--space-2); background: none; cursor: pointer; text-align: center; }
-.design-swatch__name { font-size: var(--text-small); font-weight: 600; color: var(--ink-2); }
-.design-swatch--selected .design-swatch__name { color: var(--brand); }
+.design-swatch__name { font-size: var(--text-2); font-weight: var(--weight-medium); color: var(--ink-2); }
+.design-swatch--selected .design-swatch__name { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+.design-swatch--selected .bank-card { box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--ink); }
 .design-swatch:focus-visible { outline: none; box-shadow: var(--focus-ring); border-radius: var(--radius-md); }
 
 /* A radio option drawn as a row you can hit. */

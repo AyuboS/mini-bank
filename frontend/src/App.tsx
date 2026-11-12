@@ -13,7 +13,7 @@ import { ForgotPasswordPage } from './pages/ForgotPassword';
 import { VerifyEmailPage } from './pages/VerifyEmail';
 import { HomePage } from './pages/Home';
 import { AccountsPage } from './pages/Accounts';
-import { CardsPage } from './pages/Cards';
+import { CardsPage } from './pages/cards/CardsPage';
 import { SendPage } from './pages/send/SendPage';
 import { TopUpPage } from './pages/TopUp';
 import { TransactionsPage } from './pages/Transactions';

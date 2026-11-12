@@ -1,350 +1,56 @@
-/* =============================================================================
-   The MBank card range
-   -----------------------------------------------------------------------------
-   Seven cards, three materials, one shape.
+/* Card art and the card carousel.
 
-   THE SHAPE
-   ---------
-   Bank cards are ID-1: 85.60 × 53.98 mm, an aspect ratio of 1.586. Every card
-   here is drawn at exactly that ratio at every size. It is the single strongest
-   cue that the thing on screen is a payment card rather than a rounded div, and
-   getting it wrong by a few percent is felt even by people who could not say
-   what is wrong.
-
-   THE RANGE
-   ---------
-     Standard          near-black, plastic       the default
-     Ocean             deep blue, plastic
-     Violet            violet, plastic
-     Coral             warm red, plastic
-     Lime              bright green, plastic     dark text — the one light face
-     Metal             graphite, brushed metal
-     Special Edition   seasonal, two-tone
-
-   WHAT CHANGED
-   ------------
-   The previous range gave each card an animated gradient — a rotating conic
-   sweep, a drifting radial, a holographic band that swept on hover. Seven cards
-   on one screen meant seven independent animations running behind the balance.
-
-   A real premium card is not animated. It is one confident colour, a material
-   you can feel, and the fewest possible marks on top. So each face is now:
-
-     1. a flat fill                    the colour, and it is the whole design
-     2. a material layer               plastic sheen, brushed grain, or two-tone
-     3. the hardware                   chip and contactless mark
-     4. the data                       number, holder, expiry, network
-
-   Nothing on a card face moves.
-
-   ORIGINALITY
-   -----------
-   The names, the palette, the proportions of the face and the material
-   treatments are MBank's own. No existing issuer's artwork is reproduced.
-   ========================================================================== */
+   A card is one flat colour at the real ID-1 ratio (85.60 x 53.98 mm), with
+   the brand, the type, the last four digits, the holder and the expiry. No
+   chip, no gradient, no sheen, no network logo, and nothing on it moves. */
 
 .bank-card {
   position: relative;
-  width: 100%;
-  /* ID-1. Not negotiable, and not approximated. */
-  aspect-ratio: 1.586;
-  border-radius: 16px;
-  overflow: hidden;
-  isolation: isolate;
-  color: #fff;
-  box-shadow: var(--shadow-card);
-  transition:
-    transform var(--dur-control) var(--ease),
-    box-shadow var(--dur-control) var(--ease);
-}
-
-.bank-card--interactive { cursor: pointer; }
-
-.bank-card--interactive:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 26px 48px -20px rgba(11, 13, 18, 0.46), 0 6px 14px -6px rgba(11, 13, 18, 0.20);
-}
-
-.bank-card--interactive:active { transform: translateY(-1px); }
-
-.bank-card:focus-visible {
-  outline: none;
-  box-shadow: var(--focus-ring), var(--shadow-card);
-}
-
-/* -----------------------------------------------------------------------------
-   Sizes.
-
-   Only the width, the radius and the type scale change. The ratio and every
-   internal proportion are held, because the face is laid out in `em` against
-   the card's own font-size — see `.bank-card__body`.
-   -------------------------------------------------------------------------- */
-.bank-card--sm { max-width: 240px; border-radius: 12px; font-size: 0.6875rem; }
-.bank-card--md { max-width: 360px; border-radius: 16px; font-size: 0.8125rem; }
-.bank-card--lg { max-width: 440px; border-radius: 20px; font-size: 0.9375rem; }
-
-/* =============================================================================
-   Materials
-   -----------------------------------------------------------------------------
-   Three, drawn on one shared pseudo-element. The material is what the card is
-   made of; the design is what colour it is. They vary independently, which is
-   why they are separate classes.
-   ========================================================================== */
-
-.bank-card__sheen {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-}
-
-/* Plastic: one soft diagonal highlight across the upper left, the way light
-   falls on a matte polycarbonate card held at an angle. Nothing else. */
-.bank-card--plastic .bank-card__sheen {
-  background: linear-gradient(
-    128deg,
-    rgba(255, 255, 255, 0.16) 0%,
-    rgba(255, 255, 255, 0.04) 34%,
-    rgba(255, 255, 255, 0) 62%
-  );
-}
-
-/*
-   Metal: fine vertical striations, the brushed finish of an anodised card.
-
-   A repeating linear-gradient at 1px intervals rather than a chrome effect or a
-   3D bevel. Real brushed metal is a texture, not a reflection, and the moment
-   you add a specular highlight it stops reading as metal and starts reading as
-   a render of metal.
-*/
-.bank-card--metal .bank-card__sheen {
-  background:
-    linear-gradient(122deg, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0) 46%),
-    repeating-linear-gradient(
-      92deg,
-      rgba(255, 255, 255, 0.045) 0px,
-      rgba(255, 255, 255, 0.045) 1px,
-      rgba(0, 0, 0, 0.05) 1px,
-      rgba(0, 0, 0, 0.05) 2px
-    );
-}
-
-/*
-   Special edition: a two-tone diagonal split.
-
-   Seasonal artwork that is still a bank card. One hard diagonal edge and a
-   second tone — enough to be recognisably different across a room, restrained
-   enough to sit next to the Standard in the same wallet.
-*/
-.bank-card--special .bank-card__sheen {
-  background:
-    linear-gradient(112deg, transparent 0%, transparent 48%, rgba(255, 255, 255, 0.13) 48%, rgba(255, 255, 255, 0.13) 100%),
-    linear-gradient(128deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0) 52%);
-}
-
-/*
-   Grain.
-
-   A flat fill this large bands visibly on a wide display, which reads as a
-   rendering fault rather than as a design. 3.5% of noise fixes it and is
-   invisible as noise.
-*/
-.bank-card__noise {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  opacity: 0.035;
-  pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
-}
-
-/* A hairline inside the edge. On a dark card it reads as the moulded rim; on
-   the Lime it keeps a bright face from bleeding into a light page. */
-.bank-card::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  border-radius: inherit;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  pointer-events: none;
-}
-
-/* =============================================================================
-   The seven faces
-   -----------------------------------------------------------------------------
-   One fill each. Where a second stop appears it is the same hue a few percent
-   darker at the foot of the card — the shading a physical object has, not a
-   gradient as decoration.
-   ========================================================================== */
-
-/* Standard — near-black. The default, and the one most people keep. */
-.bank-card--midnight {
-  background: linear-gradient(168deg, #23262E 0%, #101218 62%, #0A0B0F 100%);
-}
-
-/* Ocean */
-.bank-card--ocean {
-  background: linear-gradient(168deg, #1B49C9 0%, #12328F 64%, #0D2465 100%);
-}
-
-/* Violet */
-.bank-card--aurora {
-  background: linear-gradient(168deg, #6B3FE4 0%, #4E2BAE 64%, #351C7C 100%);
-}
-
-/* Coral. Darker than the accent of the same name: the face has to hold white
-   text, and #F0603A measured 3.26:1 against it. */
-.bank-card--sunset {
-  background: linear-gradient(168deg, #D14524 0%, #B2361A 64%, #8E2712 100%);
-}
-
-/*
-   Lime — the one light face.
-
-   Bright enough that white text on it would fail contrast badly, so this design
-   alone flips its ink to near-black. Every text colour on the face is
-   overridden below rather than the face being darkened to suit the default,
-   which would have cost the card the thing that makes it worth having.
-*/
-.bank-card--crystal {
-  background: linear-gradient(168deg, #C7F04A 0%, #A8DC22 62%, #8CC10C 100%);
-  color: #12210A;
-}
-
-.bank-card--crystal::after { border-color: rgba(0, 0, 0, 0.10); }
-
-.bank-card--crystal .bank-card__sheen {
-  background: linear-gradient(
-    128deg,
-    rgba(255, 255, 255, 0.34) 0%,
-    rgba(255, 255, 255, 0.08) 36%,
-    rgba(255, 255, 255, 0) 64%
-  );
-}
-
-.bank-card--crystal .bank-card__brand,
-.bank-card--crystal .bank-card__number,
-.bank-card--crystal .bank-card__name,
-.bank-card--crystal .bank-card__expiry { color: #12210A; }
-
-.bank-card--crystal .bank-card__type { color: rgba(18, 33, 10, 0.72); }
-.bank-card--crystal .bank-card__contactless { color: rgba(18, 33, 10, 0.55); }
-.bank-card--crystal .bank-card__type { background: rgba(18, 33, 10, 0.10); }
-
-/* Metal — graphite. The material class does the work; the fill is neutral. */
-.bank-card--carbon {
-  background: linear-gradient(168deg, #6E747F 0%, #464B55 58%, #2C3038 100%);
-}
-
-/* Special edition — the seasonal face, in the two brand hues. The violet half
-   stops at #7C4BF5 rather than #8A5CFF, which was too light for white text. */
-.bank-card--holographic {
-  background: linear-gradient(122deg, #2B54F0 0%, #2B54F0 48%, #6335DC 48%, #7C4BF5 100%);
-}
-
-/* =============================================================================
-   The face
-   -----------------------------------------------------------------------------
-   Padding and type are in `em`, so the entire layout scales with the size
-   modifier's font-size and never has to be re-specified per size.
-   ========================================================================== */
-
-.bank-card__body {
-  position: relative;
-  z-index: 3;
-  height: 100%;
-  padding: 1.55em 1.7em;
   display: flex;
   flex-direction: column;
-}
-
-.bank-card__top { display: flex; align-items: flex-start; justify-content: space-between; gap: 1em; }
-
-.bank-card__brand {
-  font-size: 1.32em;
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  line-height: 1;
-}
-
-.bank-card__top-right { display: flex; align-items: center; gap: 0.55em; }
-
-/* The material, named on the face. A physical card says what it is made of in
-   small type near the top; this is the same convention. */
-.bank-card__type {
-  padding: 0.3em 0.68em;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.16);
-  font-size: 0.72em;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  white-space: nowrap;
-}
-
-.bank-card__status {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4em;
-  padding: 0.3em 0.68em;
-  border-radius: 999px;
-  background: rgba(0, 0, 0, 0.28);
-  font-size: 0.72em;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-.bank-card__status-dot { width: 0.42em; height: 0.42em; border-radius: 50%; background: currentColor; }
-.bank-card__status--frozen { color: #8FD8FF; }
-.bank-card__status--expired,
-.bank-card__status--cancelled { color: rgba(255, 255, 255, 0.72); }
-
-.bank-card__hardware { display: flex; align-items: center; gap: 0.85em; margin-top: 1.2em; }
-.bank-card__chip { width: 3.1em; height: 2.4em; }
-.bank-card__contactless { width: 1.5em; height: 1.5em; color: rgba(255, 255, 255, 0.76); }
-
-.bank-card__number {
-  margin-top: auto;
-  padding-bottom: 0.9em;
-  font-size: 1.22em;
-  font-weight: 550;
-  letter-spacing: 0.09em;
+  justify-content: space-between;
+  width: 100%;
+  aspect-ratio: 1.586;
+  padding: 1.4em 1.5em;
+  border-radius: var(--radius-3);
+  background: var(--card-face, #171612);
+  color: var(--card-ink, #f4f2ec);
   font-variant-numeric: tabular-nums;
-  font-feature-settings: 'tnum' 1;
 }
 
-.bank-card__bottom { display: flex; align-items: flex-end; gap: 1.2em; min-width: 0; }
+.bank-card--sm { max-width: 240px; font-size: 0.6875rem; border-radius: var(--radius-2); }
+.bank-card--md { max-width: 360px; font-size: 0.8125rem; }
+.bank-card--lg { max-width: 440px; font-size: 0.9375rem; }
 
-.bank-card__name,
-.bank-card__expiry {
-  font-size: 0.94em;
-  font-weight: 560;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
+.bank-card--interactive { cursor: pointer; }
+.bank-card:focus-visible { outline: none; box-shadow: var(--focus-ring); }
 
-/* The name yields; the expiry never does — it is five characters and shortening
-   it would leave "11/2". */
-.bank-card__name { min-width: 0; flex: 1; }
-.bank-card__expiry { flex-shrink: 0; }
+/* The range. Light faces carry dark lettering and a hairline edge. */
+.bank-card--midnight { --card-face: #171612; }
+.bank-card--ocean { --card-face: #0b6b43; }
+.bank-card--aurora { --card-face: #6e4b3a; }
+.bank-card--sunset { --card-face: #cfc9bc; --card-ink: #171612; }
+.bank-card--crystal { --card-face: #fbfaf7; --card-ink: #171612; box-shadow: inset 0 0 0 1px var(--line-strong); }
+.bank-card--carbon { --card-face: #45443f; }
+.bank-card--holographic { --card-face: #123b2c; }
 
-.bank-card__expiry { font-variant-numeric: tabular-nums; }
-.bank-card__network { margin-left: auto; height: 1.9em; flex-shrink: 0; }
+.bank-card__top,
+.bank-card__bottom { display: flex; align-items: baseline; justify-content: space-between; gap: 1em; min-width: 0; }
 
-/* =============================================================================
-   Inactive states
-   -----------------------------------------------------------------------------
-   A frozen card is desaturated rather than covered with an overlay: it still
-   reads as the customer's own card, which is the point — it has not gone away,
-   it has been paused.
-   ========================================================================== */
+.bank-card__brand { font-size: 1.15em; font-weight: var(--weight-semibold); letter-spacing: -0.01em; }
+.bank-card__type { font-size: 0.9em; opacity: 0.8; }
+.bank-card__number { font-size: 1.2em; font-weight: var(--weight-medium); letter-spacing: 0.04em; }
+.bank-card__name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-transform: uppercase; letter-spacing: 0.03em; }
+.bank-card__expiry,
+.bank-card__network { flex-shrink: 0; }
+.bank-card__network { opacity: 0.8; }
 
-.bank-card--frozen { filter: saturate(0.28) brightness(0.86); }
-.bank-card--expired,
-.bank-card--cancelled { filter: grayscale(0.88) brightness(0.66); }
+.bank-card__status { font-size: 0.9em; font-weight: var(--weight-medium); }
+
+/* Frozen and cancelled cards are drained of colour, and say so in words too. */
+.bank-card--frozen,
+.bank-card--cancelled,
+.bank-card--expired { --card-face: #8f8c83; --card-ink: #f4f2ec; box-shadow: none; }
 
 /* =============================================================================
    The carousel
@@ -418,43 +124,53 @@
 .card-carousel__dot--active { width: 18px; background: var(--ink); }
 .card-carousel__arrows { grid-column: 1; display: flex; gap: var(--space-2); justify-self: start; }
 
-/* A row of cards on the dashboard: the same track, without the dots. */
-.card-track {
-  display: flex;
-  gap: var(--space-4);
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: none;
-  padding-bottom: var(--space-2);
-}
-
-.card-track::-webkit-scrollbar { display: none; }
-.card-track__item { flex: 0 0 auto; width: min(340px, 76vw); scroll-snap-align: start; }
-
-/* =============================================================================
-   The stack
-   -----------------------------------------------------------------------------
-   Cards fanned behind one another, for a summary where the wallet is one object
-   rather than a list.
-   ========================================================================== */
-
-.card-stack { position: relative; }
-.card-stack__front { position: relative; z-index: 3; }
-
-.card-stack__layer {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  border-radius: 16px;
-  transform-origin: 50% 0;
-}
-
-.card-stack__layer--1 { transform: translateY(10px) scale(0.955); opacity: 0.68; z-index: 2; }
-.card-stack__layer--2 { transform: translateY(20px) scale(0.91); opacity: 0.42; z-index: 1; }
-
-/* On a phone a card is nearly the full width, which is what makes it read as an
-   object you are holding rather than a thumbnail of one. */
 @media (max-width: 767px) {
   .card-carousel__slide { width: min(340px, 84vw); }
-  .card-track__item { width: min(320px, 82vw); }
+}
+
+/* --- The Cards screen ---------------------------------------------------------- */
+
+.cards-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 380px) minmax(0, 1fr);
+  gap: var(--space-6) var(--space-8);
+  align-items: start;
+}
+
+.cards-layout__activity { grid-column: 1 / -1; }
+
+.cards-title { font-size: var(--text-4); font-weight: var(--weight-semibold); letter-spacing: 0; }
+.cards-subtitle { margin: var(--space-1) 0 var(--space-4); font-size: var(--text-2); color: var(--ink-3); font-variant-numeric: tabular-nums; }
+
+/* A settings list: label and hint on the left, a value, switch or chevron on the right. */
+.settings-list { list-style: none; border-top: 1px solid var(--line-strong); }
+.settings-list > li { border-bottom: 1px solid var(--line); }
+
+.settings-list__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: 60px;
+  padding: var(--space-3) 0;
+  background: none;
+  color: var(--ink);
+  font-size: var(--text-3);
+  text-align: left;
+}
+
+button.settings-list__row { cursor: pointer; }
+button.settings-list__row:hover:not(:disabled) .settings-list__label { text-decoration: underline; text-underline-offset: 3px; }
+button.settings-list__row:focus-visible { outline: none; box-shadow: var(--focus-ring); border-radius: 2px; }
+button.settings-list__row:disabled { color: var(--ink-4); cursor: not-allowed; }
+
+.settings-list__text { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+.settings-list__label { font-weight: var(--weight-medium); }
+.settings-list__hint { font-size: var(--text-2); color: var(--ink-3); }
+.settings-list__value { min-width: 0; max-width: 45%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ink-3); }
+.settings-list__chevron { width: 16px; height: 16px; flex-shrink: 0; color: var(--ink-3); }
+.settings-list__danger { color: var(--red); font-weight: var(--weight-medium); }
+
+@media (max-width: 1100px) {
+  .cards-layout { grid-template-columns: minmax(0, 1fr); }
 }

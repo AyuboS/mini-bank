@@ -15,6 +15,7 @@ import './styles/layout.css';
 import './styles/pages.css';
 import './styles/screens.css';
 import './styles/home.css';
+import './styles/transactions.css';
 
 const container = document.getElementById('root');
 if (!container) {

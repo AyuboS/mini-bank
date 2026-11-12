@@ -1,0 +1,178 @@
+/* Transactions: filters, the desktop table, the phone's day groups, and the
+   detail panel. Row figures reuse the .ledger__* classes from home.css. */
+
+/* --- Filters --------------------------------------------------------------- */
+
+.filters {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+}
+
+.filters__top { display: flex; gap: var(--space-2); }
+.filters__search { flex: 1; min-width: 0; max-width: 420px; }
+.filters__toggle { display: none; flex-shrink: 0; }
+
+.filters__more {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(140px, 160px)) minmax(150px, 190px) repeat(2, minmax(100px, 120px)) minmax(130px, 160px);
+  gap: var(--space-3);
+}
+
+.filters__more .field__label { font-size: var(--text-1); color: var(--ink-3); }
+
+.filters__problem { font-size: var(--text-2); color: var(--red); }
+.filters__clear { align-self: flex-start; font-size: var(--text-2); }
+
+/* --- Table ----------------------------------------------------------------- */
+
+.txn-count {
+  padding-bottom: var(--space-2);
+  font-size: var(--text-2);
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.txn-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: var(--text-3);
+}
+
+.txn-table th {
+  padding: var(--space-2) var(--space-4) var(--space-2) 0;
+  border-bottom: 1px solid var(--line-strong);
+  font-size: var(--text-1);
+  font-weight: var(--weight-medium);
+  color: var(--ink-3);
+  text-align: left;
+}
+
+.txn-table th:nth-child(1) { width: 124px; }
+.txn-table th:nth-child(3) { width: 160px; }
+.txn-table th:nth-child(4) { width: 150px; }
+.txn-table th:nth-child(5) { width: 150px; }
+
+.txn-table td {
+  padding: var(--space-3) var(--space-4) var(--space-3) 0;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink-3);
+  font-size: var(--text-2);
+  vertical-align: baseline;
+}
+
+.txn-table th.txn-table__num,
+.txn-table td.txn-table__num { padding-right: 0; text-align: right; }
+
+.txn-table td.txn-table__num { font-size: var(--text-3); }
+.txn-table td.txn-table__num .ledger__status { display: block; }
+.txn-table__date,
+.txn-table__account { font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+.txn-table tbody tr { cursor: pointer; }
+.txn-table tbody tr:hover { background: var(--surface-sunken); }
+
+.txn-table__open {
+  display: block;
+  max-width: 100%;
+  font-size: var(--text-3);
+  font-weight: var(--weight-medium);
+  color: var(--ink);
+  text-align: left;
+}
+
+.txn-table__open:focus-visible { outline: none; box-shadow: var(--focus-ring); border-radius: 2px; }
+
+/* --- Day groups (phones) --------------------------------------------------- */
+
+.day-group + .day-group { margin-top: var(--space-5); }
+
+.day-group__title {
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--line-strong);
+  font-size: var(--text-2);
+  font-weight: var(--weight-medium);
+  letter-spacing: 0;
+  color: var(--ink-3);
+}
+
+/* --- Pager ----------------------------------------------------------------- */
+
+.pager--plain {
+  justify-content: flex-end;
+  gap: var(--space-4);
+  padding: var(--space-4) 0 0;
+  border-top: none;
+  font-size: var(--text-2);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Detail panel ---------------------------------------------------------- */
+
+.sheet__head > .stack { flex: 1; min-width: 0; }
+
+.detail-amount {
+  font-size: var(--text-5);
+  font-weight: var(--weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+.detail-amount--in { color: var(--green); }
+
+.detail-status { margin-top: var(--space-1); font-size: var(--text-2); color: var(--ink-3); }
+.detail-status--failed { color: var(--red); }
+.detail-note { font-size: var(--text-2); color: var(--ink-2); }
+.detail-heading { font-size: var(--text-2); font-weight: var(--weight-medium); color: var(--ink-3); letter-spacing: 0; }
+
+@media (min-width: 768px) {
+  .sheet-scrim--side {
+    align-items: stretch;
+    justify-content: flex-end;
+    padding: 0;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgba(23, 22, 18, 0.24);
+  }
+
+  .sheet.sheet--side {
+    max-width: 440px;
+    max-height: none;
+    border-radius: 0;
+    border-width: 0 0 0 1px;
+    animation: sheet-side-in var(--dur-panel) var(--ease);
+  }
+}
+
+@keyframes sheet-side-in {
+  from { transform: translateX(24px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sheet.sheet--side { animation: none; }
+}
+
+/* --- Phones ---------------------------------------------------------------- */
+
+@media (max-width: 767px) {
+  .filters__search { max-width: none; }
+  .filters__toggle { display: inline-flex; }
+
+  .filters__more { display: none; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .filters__more .field,
+  .filters__more .field__input { min-width: 0; }
+
+  /* The top bar already names the screen. */
+  .page__head--wide-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .filters__more--open { display: grid; }
+
+  .pager--plain { justify-content: space-between; }
+}
+
+@media (min-width: 768px) and (max-width: 1100px) {
+  .filters__more { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .txn-table th:nth-child(4),
+  .txn-table td:nth-child(4) { display: none; }
+}

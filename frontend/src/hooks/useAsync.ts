@@ -19,6 +19,8 @@ interface AsyncState<T> {
 export function useAsync<T>(loader: () => Promise<T>, deps: unknown[] = []) {
   const [state, setState] = useState<AsyncState<T>>({ data: null, loading: true, error: null });
   const mounted = useRef(true);
+  // Counts requests, so a slow answer to an old question cannot replace a newer one.
+  const latestRun = useRef(0);
 
   useEffect(() => {
     mounted.current = true;
@@ -28,14 +30,16 @@ export function useAsync<T>(loader: () => Promise<T>, deps: unknown[] = []) {
   }, []);
 
   const run = useCallback(async () => {
+    const thisRun = ++latestRun.current;
+    const isCurrent = () => mounted.current && thisRun === latestRun.current;
     setState((current) => ({ ...current, loading: true, error: null }));
     try {
       const data = await loader();
-      if (mounted.current) {
+      if (isCurrent()) {
         setState({ data, loading: false, error: null });
       }
     } catch (error) {
-      if (mounted.current) {
+      if (isCurrent()) {
         setState({ data: null, loading: false, error: toFriendlyError(error) });
       }
     }

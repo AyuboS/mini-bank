@@ -12,6 +12,8 @@ interface SheetProps {
   dismissible?: boolean;
   /** Wider than the default, for tables and multi-column forms. */
   wide?: boolean;
+  /** Docks to the right edge on a wide screen, for a detail read beside the list. */
+  side?: boolean;
   /** Where focus lands on open. Use `panel` for a read-first view that happens to contain a field. */
   initialFocus?: 'first-field' | 'panel';
 }
@@ -36,6 +38,7 @@ export function Sheet({
   children,
   dismissible = true,
   wide = false,
+  side = false,
   initialFocus = 'first-field',
 }: SheetProps) {
   const panelRef = useRef<HTMLDivElement | null>(null);
@@ -116,10 +119,10 @@ export function Sheet({
   if (!open) return null;
 
   return (
-    <div className="sheet-scrim" onClick={dismissible ? onClose : undefined}>
+    <div className={`sheet-scrim ${side ? 'sheet-scrim--side' : ''}`} onClick={dismissible ? onClose : undefined}>
       <div
         ref={panelRef}
-        className={`sheet surface--raised ${wide ? 'sheet--wide' : ''}`}
+        className={`sheet surface--raised ${wide ? 'sheet--wide' : ''} ${side ? 'sheet--side' : ''}`}
         role="dialog"
         aria-modal="true"
         aria-label={title}

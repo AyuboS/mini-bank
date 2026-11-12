@@ -6,10 +6,12 @@ import { titleFor } from './TransactionRow';
 interface TransactionListProps {
   transactions: TransactionResponse[];
   onSelect: (transaction: TransactionResponse) => void;
+  /** Shows the time instead of the date, for a list already grouped by day. */
+  groupedByDay?: boolean;
 }
 
 // Completed is the normal case and gets no label.
-const STATUS_LABEL: Partial<Record<TransferStatus, string>> = {
+export const STATUS_LABEL: Partial<Record<TransferStatus, string>> = {
   PENDING: 'In review',
   PROCESSING: 'Processing',
   FAILED: 'Failed',
@@ -20,13 +22,17 @@ function shortDate(iso: string): string {
   return new Date(iso).toLocaleDateString(undefined, { day: 'numeric', month: 'short' });
 }
 
+function time(iso: string): string {
+  return new Date(iso).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+}
+
 /**
  * Transactions as ledger lines: date, description, category, amount.
  *
  * Four columns on a wide screen. On a phone the date and category move under
  * the description, so the amount keeps its own column and stays aligned.
  */
-export function TransactionList({ transactions, onSelect }: TransactionListProps) {
+export function TransactionList({ transactions, onSelect, groupedByDay = false }: TransactionListProps) {
   return (
     <ul className="ledger">
       {transactions.map((transaction) => {
@@ -34,7 +40,7 @@ export function TransactionList({ transactions, onSelect }: TransactionListProps
         const settled = transaction.status === 'COMPLETED';
         const status = STATUS_LABEL[transaction.status];
         const category = transaction.category ? categoryMeta(transaction.category).label : null;
-        const date = shortDate(transaction.createdAt);
+        const date = groupedByDay ? time(transaction.createdAt) : shortDate(transaction.createdAt);
 
         return (
           <li key={transaction.transferId}>

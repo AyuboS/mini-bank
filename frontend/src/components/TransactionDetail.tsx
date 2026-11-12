@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { AlertTriangle } from 'lucide-react';
 import { transfersApi } from '../api/transfers';
 import type {
   LedgerEntryResponse,
@@ -10,10 +9,9 @@ import type {
 import { TRANSACTION_CATEGORIES } from '../api/types';
 import { CATEGORY_META } from '../utils/categories';
 import { toFriendlyError } from '../utils/errors';
-import { formatDateTime, formatMoney } from '../utils/format';
-import { Select, Sheet, StatusBadge } from './ui';
-import { Money } from './Money';
-import { RiskGauge } from './RiskGauge';
+import { formatDateTime, formatMoney, formatSignedMoney } from '../utils/format';
+import { Select, Sheet } from './ui';
+import { STATUS_LABEL } from './TransactionList';
 
 interface TransactionDetailProps {
   transaction: TransactionResponse | null;
@@ -130,22 +128,25 @@ export function TransactionDetail({ transaction, onClose, onRecategorised }: Tra
   }
 
   const steps = stepsFor(transaction);
-  const risk = transfer?.risk;
+  const incoming = transaction.direction === 'CREDIT';
+  const held = transaction.status === 'PENDING' || transaction.status === 'PROCESSING';
 
   return (
-    <Sheet open onClose={onClose} title="Transaction" subtitle={transaction.reference} initialFocus="panel">
-      <div className="review-amount">
-        <div className="review-amount__value">
-          <Money
-            amount={transaction.amount}
-            currency={transaction.currency}
-            direction={transaction.direction}
-          />
-        </div>
-        <div style={{ marginTop: 10 }}>
-          <StatusBadge status={transaction.status} />
-        </div>
+    <Sheet open onClose={onClose} title="Transaction" subtitle={transaction.reference} initialFocus="panel" side>
+      <div>
+        <p className={`detail-amount ${incoming && transaction.status === 'COMPLETED' ? 'detail-amount--in' : ''}`}>
+          {formatSignedMoney(transaction.amount, transaction.currency, incoming ? 'in' : 'out')}
+        </p>
+        <p className={`detail-status ${transaction.status === 'FAILED' ? 'detail-status--failed' : ''}`}>
+          {STATUS_LABEL[transaction.status] ?? 'Completed'}
+        </p>
       </div>
+
+      {held && (
+        <p className="detail-note">
+          This payment is being checked before it is released. No money has moved yet.
+        </p>
+      )}
 
       <div className="timeline">
         {steps.map((step, index) => (
@@ -174,24 +175,6 @@ export function TransactionDetail({ transaction, onClose, onRecategorised }: Tra
         ))}
       </div>
 
-      {risk && risk.decision !== 'ALLOW' && (
-        <>
-          <hr className="divider" />
-          <div className="risk">
-            <RiskGauge score={risk.riskScore} decision={risk.decision} size={92} />
-            <div className="risk__reasons">
-              <span className="label">Why this was flagged</span>
-              {risk.reasons.map((reason) => (
-                <span className="risk__reason" key={reason}>
-                  <AlertTriangle aria-hidden="true" />
-                  {reason}
-                </span>
-              ))}
-            </div>
-          </div>
-        </>
-      )}
-
       <hr className="divider" />
 
       <div className="detail-rows">
@@ -216,7 +199,7 @@ export function TransactionDetail({ transaction, onClose, onRecategorised }: Tra
         {transfer?.failureReason && (
           <div className="detail-row">
             <span className="detail-row__label">Reason</span>
-            <span className="detail-row__value" style={{ color: 'var(--danger)' }}>
+            <span className="detail-row__value detail-status--failed">
               {transfer.failureReason}
             </span>
           </div>
@@ -248,8 +231,8 @@ export function TransactionDetail({ transaction, onClose, onRecategorised }: Tra
       {ledger.length > 0 && (
         <>
           <hr className="divider" />
-          <span className="label">Ledger postings</span>
-          <div className="detail-rows" style={{ marginTop: 8 }}>
+          <h3 className="detail-heading">Ledger postings</h3>
+          <div className="detail-rows">
             {ledger.map((entry) => (
               <div className="detail-row" key={entry.id}>
                 <span className="detail-row__label">
@@ -261,7 +244,7 @@ export function TransactionDetail({ transaction, onClose, onRecategorised }: Tra
               </div>
             ))}
           </div>
-          <p className="field-hint" style={{ marginTop: 10 }}>
+          <p className="field-hint">
             Every transfer posts one debit and one matching credit. They always sum to zero.
           </p>
         </>

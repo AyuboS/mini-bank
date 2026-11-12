@@ -271,6 +271,8 @@
   background: transparent;
 }
 
+/* The surrounding well shows focus, so the input does not draw a second ring. */
+.field__input:focus-visible { outline: none; box-shadow: none; }
 .field__input::placeholder { color: var(--ink-4); }
 
 .field__select {

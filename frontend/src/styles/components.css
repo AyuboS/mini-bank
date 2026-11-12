@@ -23,28 +23,25 @@
   gap: var(--space-2);
   height: 44px;
   padding: 0 var(--space-5);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-1);
   border: 1px solid transparent;
-  font-size: var(--text-body);
-  font-weight: 580;
-  letter-spacing: -0.006em;
+  font-size: var(--text-3);
+  font-weight: var(--weight-medium);
   white-space: nowrap;
   cursor: pointer;
   transition:
     background-color var(--dur-micro) var(--ease),
     border-color var(--dur-micro) var(--ease),
-    color var(--dur-micro) var(--ease),
-    transform var(--dur-micro) var(--ease);
+    color var(--dur-micro) var(--ease);
 }
 
 .btn svg { width: 18px; height: 18px; flex-shrink: 0; }
 
-.btn:active:not(:disabled) { transform: scale(0.975); }
 .btn:disabled { opacity: 0.45; cursor: not-allowed; }
 .btn:focus-visible { outline: none; box-shadow: var(--focus-ring); }
 
-.btn-sm { height: 36px; padding: 0 var(--space-4); font-size: var(--text-small); border-radius: var(--radius-sm); }
-.btn-lg { height: 54px; padding: 0 var(--space-6); font-size: 1rem; border-radius: var(--radius-lg); }
+.btn-sm { height: 36px; padding: 0 var(--space-4); font-size: var(--text-2); }
+.btn-lg { height: 52px; padding: 0 var(--space-6); }
 .btn-block { width: 100%; }
 
 /* -----------------------------------------------------------------------------
@@ -56,25 +53,27 @@
    which is only correct when the screen has exactly one.
    -------------------------------------------------------------------------- */
 .btn-primary {
-  background: var(--brand-fill);
-  color: var(--brand-ink);
+  background: var(--primary);
+  color: var(--primary-ink);
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: color-mix(in srgb, var(--brand-fill) 88%, #000);
+  background: color-mix(in srgb, var(--primary) 84%, var(--bg));
+  color: var(--primary-ink);
 }
 
 /* -----------------------------------------------------------------------------
    Secondary — the other action beside it.
    -------------------------------------------------------------------------- */
 .btn-secondary {
-  background: var(--surface-sunken);
+  background: transparent;
   color: var(--ink);
-  border-color: transparent;
+  border-color: var(--line-strong);
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background: color-mix(in srgb, var(--surface-sunken) 88%, var(--ink));
+  background: var(--surface-sunken);
+  border-color: var(--ink-3);
 }
 
 /* On the ink-filled hero block the sunken grey disappears, so the secondary

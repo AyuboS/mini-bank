@@ -2,6 +2,9 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { App } from './App';
 
+// Inter as one variable font file, served from this app rather than from Google.
+import '@fontsource-variable/inter/wght.css';
+
 // Order matters: tokens define the variables every later file consumes.
 import './styles/tokens.css';
 import './styles/base.css';
@@ -11,6 +14,7 @@ import './styles/cards.css';
 import './styles/layout.css';
 import './styles/pages.css';
 import './styles/screens.css';
+import './styles/home.css';
 
 const container = document.getElementById('root');
 if (!container) {

@@ -163,10 +163,7 @@
   justify-content: flex-end;
   gap: var(--space-3);
   height: 68px;
-  /* A sticky bar over scrolling content needs its own ground, or the content
-     runs through it. A short fade rather than a hard edge, so the transition
-     into the page is not a line across the screen. */
-  background: linear-gradient(180deg, var(--bg) 62%, transparent);
+  background: var(--bg);
 }
 
 .topbar__actions { display: flex; align-items: center; gap: var(--space-2); }
@@ -178,18 +175,6 @@
   width: 100%;
   max-width: var(--content-max);
   padding-bottom: var(--space-9);
-  animation: page-in var(--dur-page) var(--ease);
-}
-
-/* Pages arrive with a short rise. Small enough not to delay the content, big
-   enough that a navigation feels like a change of place. */
-@keyframes page-in {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .page { animation: none; }
 }
 
 /* =============================================================================
@@ -300,7 +285,7 @@
     margin: 0 calc(var(--space-4) * -1);
     padding: 0 var(--space-4);
     padding-top: var(--safe-top);
-    background: linear-gradient(180deg, var(--bg) 64%, transparent);
+    background: var(--bg);
   }
 
   .mobile-topbar__title {

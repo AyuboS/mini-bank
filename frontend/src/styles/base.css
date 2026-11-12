@@ -36,64 +36,40 @@ body {
   overflow-x: hidden;
 }
 
-/* -----------------------------------------------------------------------------
-   The ambient wash.
-
-   One fixed gradient, a few percent of opacity, at the top of the page. It is
-   the entire decorative budget of the background: enough to keep a long white
-   page from reading as a document, and far short of the four animated blurred
-   blobs it replaces. Nothing here moves, and nothing here is above 4% alpha —
-   if you can see it as a colour rather than as warmth, it is too strong.
-   -------------------------------------------------------------------------- */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0 0 auto 0;
-  height: 55vh;
-  z-index: -1;
-  pointer-events: none;
-  background:
-    radial-gradient(80% 60% at 12% 0%, color-mix(in srgb, var(--blue) 6%, transparent) 0%, transparent 70%),
-    radial-gradient(70% 55% at 88% 0%, color-mix(in srgb, var(--violet) 5%, transparent) 0%, transparent 72%);
-}
-
-[data-theme='dark'] body::before {
-  background:
-    radial-gradient(80% 60% at 12% 0%, color-mix(in srgb, var(--blue) 9%, transparent) 0%, transparent 70%),
-    radial-gradient(70% 55% at 88% 0%, color-mix(in srgb, var(--violet) 8%, transparent) 0%, transparent 72%);
-}
-
 /* =============================================================================
-   Typography
-   -----------------------------------------------------------------------------
-   One family at a wide range of weights and sizes. A display face would be the
-   first thing to date the product; the hierarchy comes from size, weight and
-   tracking instead, which is what makes a financial interface read as mature.
+   Typography: Inter at 400, 500 and 600. See docs/design-system.md.
    ========================================================================== */
 
 h1, h2, h3, h4, h5, h6 {
-  font-weight: 660;
-  line-height: 1.18;
-  /* Display type at these sizes needs negative tracking or it reads as loose. */
-  letter-spacing: -0.024em;
+  font-weight: var(--weight-semibold);
+  line-height: 1.25;
+  letter-spacing: -0.012em;
   color: var(--ink);
   text-wrap: balance;
 }
 
-h1 { font-size: var(--text-display); letter-spacing: -0.034em; }
-h2 { font-size: var(--text-title); letter-spacing: -0.026em; }
-h3 { font-size: var(--text-heading); letter-spacing: -0.018em; }
+h1 { font-size: var(--text-5); letter-spacing: -0.02em; }
+h2 { font-size: var(--text-4); }
+h3 { font-size: var(--text-3); letter-spacing: 0; }
 
 p { text-wrap: pretty; }
 
 a {
-  color: var(--brand);
+  color: var(--ink);
   text-decoration: none;
-  font-weight: 540;
-  transition: color var(--dur-micro) var(--ease);
+  font-weight: var(--weight-medium);
 }
 
-a:hover { color: color-mix(in srgb, var(--brand) 80%, var(--ink)); }
+/* Links inside running text are underlined, since colour alone no longer marks them. */
+p a,
+.link {
+  text-decoration: underline;
+  text-decoration-color: var(--line-strong);
+  text-underline-offset: 3px;
+}
+
+p a:hover,
+.link:hover { text-decoration-color: var(--ink); }
 
 /* -----------------------------------------------------------------------------
    Money.
@@ -116,35 +92,27 @@ a:hover { color: color-mix(in srgb, var(--brand) 80%, var(--ink)); }
 .amount {
   font-variant-numeric: tabular-nums;
   font-feature-settings: 'tnum' 1;
-  font-weight: 580;
-  letter-spacing: -0.014em;
+  font-weight: var(--weight-medium);
   color: var(--ink);
 }
 
 .amount--in { color: var(--positive); }
 .amount--out { color: var(--ink); }
 
-/*
-   The balance, and nothing else on the page.
-
-   This is the single loudest piece of type in the product, and it is loud by
-   size and weight rather than by colour — which is what lets it sit on an
-   ink-filled block and still be the first thing read.
-*/
+/* The balance: the largest type in the product, in plain ink. */
 .balance {
-  font-size: var(--text-hero);
-  font-weight: 680;
-  line-height: 1;
-  letter-spacing: -0.045em;
+  font-size: var(--text-6);
+  font-weight: var(--weight-semibold);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
   font-variant-numeric: tabular-nums;
   font-feature-settings: 'tnum' 1;
 }
 
-/* A label above a figure. Small, wide, quiet. */
+/* A label above a figure. */
 .label {
-  font-size: var(--text-label);
-  font-weight: 580;
-  letter-spacing: 0.02em;
+  font-size: var(--text-1);
+  font-weight: var(--weight-medium);
   color: var(--ink-3);
 }
 
@@ -250,7 +218,7 @@ img, svg, video, canvas {
   border-radius: var(--radius-sm);
   background: var(--brand-fill);
   color: var(--brand-ink);
-  font-weight: 620;
+  font-weight: var(--weight-semibold);
   transform: translateY(-200%);
   transition: transform var(--dur-control) var(--ease);
 }
@@ -360,7 +328,6 @@ img, svg, video, canvas {
 
 @media print {
   body { background: #fff; color: #000; }
-  body::before { display: none; }
 
   .sidebar, .mobile-nav, .mobile-topbar, .topbar, .no-print { display: none !important; }
 

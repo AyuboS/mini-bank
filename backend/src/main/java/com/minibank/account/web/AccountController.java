@@ -5,6 +5,8 @@ import com.minibank.account.dto.AccountResponse;
 import com.minibank.account.dto.BalanceResponse;
 import com.minibank.account.dto.CreateAccountRequest;
 import com.minibank.account.service.AccountService;
+import com.minibank.common.error.ErrorCode;
+import com.minibank.common.error.NotFoundException;
 import com.minibank.common.security.AuthenticatedUser;
 import com.minibank.common.security.SecurityUtils;
 import com.minibank.common.web.PageResponse;
@@ -115,7 +117,10 @@ public class AccountController {
         // Authentication is required by the security chain; the caller's identity
         // is not used beyond that, because a payee's name is the same whoever asks.
         SecurityUtils.requireCurrentUser();
-        BankAccount account = accountService.getByAccountNumber(accountNumber);
+        // Loaded with its owner: the holder name is read after the transaction has closed.
+        BankAccount account = accountService.findAllByAccountNumbers(List.of(accountNumber)).stream()
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException(ErrorCode.ACCOUNT_NOT_FOUND));
         return ResponseEntity.ok(new PayeeLookupResponse(
                 account.getAccountNumber(), abbreviatedHolderName(account), account.getCurrency(), "MBank"));
     }

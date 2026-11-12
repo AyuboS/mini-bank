@@ -34,6 +34,7 @@ public enum AuditAction {
     ACCOUNT_UNFROZEN,
     ACCOUNT_CLOSED,
     DEPOSIT_COMPLETED,
+    TOP_UP_COMPLETED,
 
     // Transfers
     TRANSFER_CREATED,

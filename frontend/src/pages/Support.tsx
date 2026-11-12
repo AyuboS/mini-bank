@@ -35,7 +35,7 @@ const FAQ = [
   },
   {
     q: 'Why was my payment held for review?',
-    a: 'MBank checks every payment against a set of risk rules — an unusually large amount, a burst of payments, a payee added minutes earlier. A held payment has not left your account, and the reason is shown on the transaction.',
+    a: 'MBank checks every payment against a set of risk rules — an unusually large amount, a burst of payments, a payee added minutes earlier. A held payment has not left your account. Someone at MBank reviews it, and it is either sent or returned in full.',
   },
   {
     q: 'Can I get my money back out of a savings goal?',

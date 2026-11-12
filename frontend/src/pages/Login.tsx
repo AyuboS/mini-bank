@@ -113,7 +113,7 @@ export function LoginPage() {
     }
   };
 
-  const useDemo = (demo: (typeof DEMO_ACCOUNTS)[number]) => {
+  const fillDemoAccount = (demo: (typeof DEMO_ACCOUNTS)[number]) => {
     setMethod('password');
     setIdentifier(demo.username);
     setPassword(demo.password);
@@ -352,7 +352,7 @@ export function LoginPage() {
         <div className="auth-demo">
           <span className="label">Demo accounts</span>
         {DEMO_ACCOUNTS.map((demo) => (
-          <button key={demo.username} type="button" className="auth-demo__row" onClick={() => useDemo(demo)}>
+          <button key={demo.username} type="button" className="auth-demo__row" onClick={() => fillDemoAccount(demo)}>
             <span>{demo.username}</span>
             <span className="dim">{demo.label}</span>
           </button>

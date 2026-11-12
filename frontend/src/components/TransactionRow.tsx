@@ -15,7 +15,7 @@ interface TransactionRowProps {
 }
 
 /** Falls back to something meaningful when there is no description to show. */
-function titleFor(transaction: TransactionResponse): string {
+export function titleFor(transaction: TransactionResponse): string {
   if (transaction.description) return transaction.description;
   if (transaction.type === 'DEPOSIT') return 'Deposit';
   if (transaction.type === 'REVERSAL') return 'Reversal';

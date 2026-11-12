@@ -39,7 +39,7 @@ interface NavEntry {
 
 /** Money: what a customer opens the app to do. */
 const MONEY: NavEntry[] = [
-  { to: '/', label: 'Overview', icon: LayoutGrid, end: true },
+  { to: '/', label: 'Home', icon: LayoutGrid, end: true },
   { to: '/accounts', label: 'Accounts', icon: Wallet },
   { to: '/cards', label: 'Cards', icon: CreditCard },
   { to: '/transfer', label: 'Send', icon: ArrowLeftRight },
@@ -82,7 +82,7 @@ const MOBILE: NavEntry[] = [
 
 /** Titles for the phone's top bar, so each screen does not have to repeat itself. */
 const TITLES: Record<string, string> = {
-  '/': 'Overview',
+  '/': 'Home',
   '/accounts': 'Accounts',
   '/cards': 'Cards',
   '/transfer': 'Send money',

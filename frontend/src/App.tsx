@@ -10,7 +10,7 @@ import { LoginPage } from './pages/Login';
 import { RegisterPage } from './pages/Register';
 import { ForgotPasswordPage } from './pages/ForgotPassword';
 import { VerifyEmailPage } from './pages/VerifyEmail';
-import { OverviewPage } from './pages/Overview';
+import { HomePage } from './pages/Home';
 import { AccountsPage } from './pages/Accounts';
 import { CardsPage } from './pages/Cards';
 import { TransferPage } from './pages/Transfer';
@@ -57,7 +57,7 @@ export function App() {
                 </ProtectedRoute>
               }
             >
-              <Route path="/" element={<OverviewPage />} />
+              <Route path="/" element={<HomePage />} />
               <Route path="/accounts" element={<AccountsPage />} />
               <Route path="/cards" element={<CardsPage />} />
               <Route path="/transfer" element={<TransferPage />} />

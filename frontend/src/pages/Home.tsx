@@ -78,10 +78,10 @@ export function HomePage() {
           )}
 
           <nav className="home-actions" aria-label="Move money">
-            <Link className="btn btn-primary" to="/transfer">
+            <Link className="btn btn-primary" to="/payments/send">
               Send
             </Link>
-            <Link className="btn btn-secondary" to="/requests">
+            <Link className="btn btn-secondary" to="/payments/requests">
               Request
             </Link>
             <Link className="btn btn-secondary" to="/savings">
@@ -163,7 +163,7 @@ function UpcomingPayments() {
     <section aria-labelledby="home-upcoming-title">
       <header className="home-section__head">
         <h2 id="home-upcoming-title">Upcoming</h2>
-        <Link className="link" to="/scheduled">
+        <Link className="link" to="/payments/scheduled">
           Scheduled
         </Link>
       </header>

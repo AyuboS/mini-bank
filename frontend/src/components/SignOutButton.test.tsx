@@ -7,12 +7,12 @@ import type { AuthenticationResponse } from '../api/types';
 import { AuthProvider } from '../auth/AuthContext';
 import { SignOutButton } from './SignOutButton';
 
-function renderButton(variant: 'icon' | 'button') {
+function renderButton() {
   render(
     <MemoryRouter initialEntries={['/profile']}>
       <AuthProvider>
         <Routes>
-          <Route path="/profile" element={<SignOutButton variant={variant} />} />
+          <Route path="/profile" element={<SignOutButton />} />
           <Route path="/login" element={<p>Login page</p>} />
         </Routes>
       </AuthProvider>
@@ -26,9 +26,9 @@ describe('SignOutButton', () => {
     localStorage.clear();
   });
 
-  it.each(['icon', 'button'] as const)('%s variant signs out after confirmation', async (variant) => {
+  it('signs out after confirmation', async () => {
     const logout = vi.spyOn(authApi, 'logout').mockResolvedValue();
-    renderButton(variant);
+    renderButton();
     tokenStore.save({ accessToken: 'access', refreshToken: 'refresh' } as AuthenticationResponse);
 
     fireEvent.click(screen.getByRole('button', { name: 'Sign out' }));
@@ -47,7 +47,7 @@ describe('SignOutButton', () => {
 
   it('stays signed in when the confirmation is dismissed', () => {
     const logout = vi.spyOn(authApi, 'logout').mockResolvedValue();
-    renderButton('button');
+    renderButton();
 
     fireEvent.click(screen.getByRole('button', { name: 'Sign out' }));
     fireEvent.click(screen.getByText('Stay signed in'));

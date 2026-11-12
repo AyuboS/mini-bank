@@ -1,107 +1,53 @@
-import { useMemo } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import {
-  ArrowLeftRight,
-  Bell,
-  CalendarClock,
-  ChartPie,
-  ChevronRight,
-  CreditCard,
-  FileText,
-  HandCoins,
-  LayoutGrid,
-  LifeBuoy,
-  ListOrdered,
-  PiggyBank,
-  Search,
-  Settings,
-  Shield,
-  ShieldCheck,
-  User,
-  Users,
-  Wallet,
-} from 'lucide-react';
+import { ArrowLeftRight, Bell, CreditCard, House, ListOrdered, PiggyBank, Search, ShieldCheck } from 'lucide-react';
 import { useAuth } from '../auth/AuthContext';
-import { Avatar } from '../components/ui';
 import { Logo } from '../components/Logo';
-import { SignOutButton } from '../components/SignOutButton';
+import { ProfileMenu } from '../components/ProfileMenu';
 import { ThemeToggle } from '../components/ThemeToggle';
 import { useUnreadNotifications } from '../hooks/useNotifications';
 import { openCommandPalette } from '../components/CommandPalette';
-import { initials } from '../utils/format';
 
 interface NavEntry {
   to: string;
   label: string;
-  icon: typeof LayoutGrid;
+  icon: typeof House;
   end?: boolean;
 }
 
-/** Money: what a customer opens the app to do. */
-const MONEY: NavEntry[] = [
-  { to: '/', label: 'Home', icon: LayoutGrid, end: true },
-  { to: '/accounts', label: 'Accounts', icon: Wallet },
-  { to: '/cards', label: 'Cards', icon: CreditCard },
-  { to: '/transfer', label: 'Send', icon: ArrowLeftRight },
-  { to: '/requests', label: 'Requests', icon: HandCoins },
-];
-
-/** Planning: what a customer opens the app to understand. */
-const PLAN: NavEntry[] = [
+// The same five on the desktop sidebar and the phone's bottom bar.
+const PRIMARY: NavEntry[] = [
+  { to: '/', label: 'Home', icon: House, end: true },
   { to: '/transactions', label: 'Transactions', icon: ListOrdered },
-  { to: '/analytics', label: 'Analytics', icon: ChartPie },
-  { to: '/savings', label: 'Savings', icon: PiggyBank },
-  { to: '/scheduled', label: 'Scheduled', icon: CalendarClock },
-  { to: '/statements', label: 'Statements', icon: FileText },
-];
-
-const ACCOUNT: NavEntry[] = [
-  { to: '/beneficiaries', label: 'Payees', icon: Users },
-  { to: '/security', label: 'Security', icon: Shield },
-  { to: '/settings', label: 'Settings', icon: Settings },
-  { to: '/support', label: 'Support', icon: LifeBuoy },
-];
-
-const ADMIN: NavEntry[] = [{ to: '/admin', label: 'Administration', icon: ShieldCheck }];
-
-/**
- * Five destinations reachable by thumb; everything else lives behind Me.
- *
- * Five is a ceiling, not a target. Past it the labels have to shrink below
- * legibility and the targets drop under the 44px minimum on a 375px screen. The
- * five chosen are the ones with a daily reason to be opened; Transactions is one
- * tap from Overview and does not need a permanent slot.
- */
-const MOBILE: NavEntry[] = [
-  { to: '/', label: 'Home', icon: LayoutGrid, end: true },
+  { to: '/payments', label: 'Payments', icon: ArrowLeftRight },
   { to: '/cards', label: 'Cards', icon: CreditCard },
-  { to: '/transfer', label: 'Send', icon: ArrowLeftRight },
-  { to: '/analytics', label: 'Insights', icon: ChartPie },
-  { to: '/profile', label: 'Me', icon: User },
+  { to: '/savings', label: 'Savings', icon: PiggyBank },
 ];
 
-/** Titles for the phone's top bar, so each screen does not have to repeat itself. */
-const TITLES: Record<string, string> = {
-  '/': 'Home',
-  '/accounts': 'Accounts',
-  '/cards': 'Cards',
-  '/transfer': 'Send money',
-  '/transactions': 'Transactions',
-  '/analytics': 'Analytics',
-  '/savings': 'Savings',
-  '/scheduled': 'Scheduled',
-  '/requests': 'Requests',
-  '/beneficiaries': 'Payees',
-  '/notifications': 'Notifications',
-  '/statements': 'Statements',
-  '/support': 'Support',
-  '/security': 'Security',
-  '/settings': 'Settings',
-  '/profile': 'Profile',
-  '/admin': 'Administration',
-};
+const ADMIN: NavEntry = { to: '/admin', label: 'Administration', icon: ShieldCheck };
 
-function NavItem({ entry, count }: { entry: NavEntry; count?: number }) {
+// Titles for the phone's top bar. Longest prefix wins, so /payments/send reads "Payments".
+const TITLES: [prefix: string, title: string][] = [
+  ['/payments', 'Payments'],
+  ['/transactions', 'Transactions'],
+  ['/cards', 'Cards'],
+  ['/savings', 'Savings'],
+  ['/accounts', 'Accounts'],
+  ['/analytics', 'Analytics'],
+  ['/notifications', 'Notifications'],
+  ['/statements', 'Statements'],
+  ['/support', 'Support'],
+  ['/security', 'Security'],
+  ['/settings', 'Settings'],
+  ['/profile', 'Profile'],
+  ['/admin', 'Administration'],
+];
+
+function titleFor(pathname: string): string {
+  if (pathname === '/') return 'Home';
+  return TITLES.find(([prefix]) => pathname.startsWith(prefix))?.[1] ?? 'MBank';
+}
+
+function NavItem({ entry }: { entry: NavEntry }) {
   const Icon = entry.icon;
   return (
     <NavLink
@@ -113,151 +59,90 @@ function NavItem({ entry, count }: { entry: NavEntry; count?: number }) {
         <Icon aria-hidden="true" />
       </span>
       {entry.label}
-      {count !== undefined && count > 0 && <span className="nav-item__count">{count > 99 ? '99+' : count}</span>}
     </NavLink>
+  );
+}
+
+function NotificationsButton() {
+  const navigate = useNavigate();
+  const { unread } = useUnreadNotifications();
+  return (
+    <button
+      type="button"
+      className="icon-btn"
+      onClick={() => navigate('/notifications')}
+      aria-label={unread > 0 ? `Notifications, ${unread} unread` : 'Notifications'}
+    >
+      <Bell aria-hidden="true" />
+      {unread > 0 && <span className="icon-btn__count">{unread > 99 ? '99+' : unread}</span>}
+    </button>
   );
 }
 
 export function AppLayout() {
   const { user } = useAuth();
-  const navigate = useNavigate();
   const location = useLocation();
-  const { unread } = useUnreadNotifications();
-
-  const title = useMemo(() => {
-    const exact = TITLES[location.pathname];
-    if (exact) return exact;
-    return location.pathname.startsWith('/admin') ? 'Administration' : 'MBank';
-  }, [location.pathname]);
-
-  const who = initials(user?.firstName, user?.lastName);
   const isAdmin = user?.role === 'ADMIN';
 
   return (
     <div className="shell">
-      {/* The first thing in the tab order, and the only way past a long
-          navigation for somebody using a keyboard. */}
       <a className="skip-link" href="#main">
         Skip to content
       </a>
 
-      <aside className="surface--chrome sidebar">
+      <aside className="sidebar">
         <div className="sidebar__brand">
-          <Logo size={34} />
-          <span className="sidebar__wordmark">
-            <span className="sidebar__name">MBank</span>
-            <span className="sidebar__tagline">{isAdmin ? 'Back office' : 'Personal'}</span>
-          </span>
+          <Logo size={30} />
+          <span className="sidebar__name">MBank</span>
         </div>
 
-        <nav className="sidebar__section" aria-label="Money">
-          {MONEY.map((entry) => (
+        <nav className="sidebar__section" aria-label="Main">
+          {PRIMARY.map((entry) => (
             <NavItem entry={entry} key={entry.to} />
           ))}
+          {isAdmin && <NavItem entry={ADMIN} />}
         </nav>
-
-        <div className="sidebar__heading">Plan</div>
-        <nav className="sidebar__section" aria-label="Planning">
-          {PLAN.map((entry) => (
-            <NavItem entry={entry} key={entry.to} />
-          ))}
-        </nav>
-
-        <div className="sidebar__heading">Account</div>
-        <nav className="sidebar__section" aria-label="Account">
-          {ACCOUNT.map((entry) => (
-            <NavItem entry={entry} key={entry.to} />
-          ))}
-        </nav>
-
-        {isAdmin && (
-          <>
-            <div className="sidebar__heading">Back office</div>
-            <nav className="sidebar__section" aria-label="Administration">
-              {ADMIN.map((entry) => (
-                <NavItem entry={entry} key={entry.to} />
-              ))}
-            </nav>
-          </>
-        )}
 
         <div className="sidebar__spacer" />
 
-        <button type="button" className="user-pill" onClick={() => navigate('/profile')}>
-          <Avatar initials={who} />
-          <span className="stack">
-            <span className="user-pill__name">
-              {user?.firstName} {user?.lastName}
-            </span>
-            <span className="user-pill__role">{isAdmin ? 'Administrator' : 'Personal account'}</span>
-          </span>
-          <span className="user-pill__chevron">
-            <ChevronRight aria-hidden="true" />
-          </span>
-        </button>
+        <p className="demo-label">Demo. No real money.</p>
+        <ProfileMenu placement="sidebar" />
       </aside>
 
       <div className="main">
-        {/*
-          No page title in the desktop bar. Every screen states its own name in
-          display type immediately below, and a bar repeating it in smaller
-          letters is chrome for the sake of chrome.
-        */}
         <header className="topbar">
-          <div className="topbar__actions">
-            <button type="button" className="search" onClick={openCommandPalette}>
-              <Search aria-hidden="true" />
-              <span className="grow" style={{ textAlign: 'left' }}>
-                Search MBank
-              </span>
-              <span className="search__key" aria-hidden="true">
-                <kbd>⌘</kbd>
-                <kbd>K</kbd>
-              </span>
-            </button>
-
-            <ThemeToggle />
-
-            <button
-              type="button"
-              className="icon-btn"
-              onClick={() => navigate('/notifications')}
-              aria-label={unread > 0 ? `Notifications, ${unread} unread` : 'Notifications'}
-            >
-              <Bell aria-hidden="true" />
-              {unread > 0 && <span className="icon-btn__count">{unread > 99 ? '99+' : unread}</span>}
-            </button>
-
-            <SignOutButton variant="icon" />
-          </div>
+          <button type="button" className="search" onClick={openCommandPalette}>
+            <Search aria-hidden="true" />
+            <span className="search__label">Search</span>
+            <span className="search__key" aria-hidden="true">
+              <kbd>Ctrl</kbd>
+              <kbd>K</kbd>
+            </span>
+          </button>
+          <ThemeToggle />
+          <NotificationsButton />
         </header>
 
         <header className="mobile-topbar">
-          <Logo size={28} />
-          <span className="grow mobile-topbar__title">{title}</span>
+          <Logo size={26} />
+          <span className="mobile-topbar__heading">
+            <span className="mobile-topbar__title">{titleFor(location.pathname)}</span>
+            <span className="demo-label">Demo. No real money.</span>
+          </span>
           <button type="button" className="icon-btn" onClick={openCommandPalette} aria-label="Search">
             <Search aria-hidden="true" />
           </button>
-          <button
-            type="button"
-            className="icon-btn"
-            onClick={() => navigate('/notifications')}
-            aria-label={unread > 0 ? `Notifications, ${unread} unread` : 'Notifications'}
-          >
-            <Bell aria-hidden="true" />
-            {unread > 0 && <span className="icon-btn__dot" />}
-          </button>
-          <SignOutButton variant="icon" />
+          <NotificationsButton />
+          <ProfileMenu placement="topbar" />
         </header>
 
-        {/* Keyed on the path so each navigation replays the entrance. */}
-        <main className="page" id="main" key={location.pathname}>
+        <main className="page" id="main">
           <Outlet />
         </main>
       </div>
 
-      <nav className="surface--chrome mobile-nav" aria-label="Main">
-        {MOBILE.map((entry) => {
+      <nav className="mobile-nav" aria-label="Main">
+        {PRIMARY.map((entry) => {
           const Icon = entry.icon;
           return (
             <NavLink

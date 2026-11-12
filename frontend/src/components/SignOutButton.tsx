@@ -4,16 +4,15 @@ import { LogOut } from 'lucide-react';
 import { useAuth } from '../auth/AuthContext';
 import { Button, Sheet } from './ui';
 
-interface SignOutButtonProps {
-  /** `icon` for a toolbar, `button` for a labelled button on a page. */
-  variant: 'icon' | 'button';
+interface SignOutConfirmProps {
+  open: boolean;
+  onClose: () => void;
 }
 
-/** Sign out, with a confirmation step. Used in the top bars and on Profile. */
-export function SignOutButton({ variant }: SignOutButtonProps) {
+/** The "Sign out?" question. Shared by the profile menu and the Profile page. */
+export function SignOutConfirm({ open, onClose }: SignOutConfirmProps) {
   const { logout } = useAuth();
   const navigate = useNavigate();
-  const [confirming, setConfirming] = useState(false);
 
   const signOut = async () => {
     await logout();
@@ -21,32 +20,29 @@ export function SignOutButton({ variant }: SignOutButtonProps) {
   };
 
   return (
-    <>
-      {variant === 'icon' ? (
-        <button type="button" className="icon-btn" onClick={() => setConfirming(true)} aria-label="Sign out">
-          <LogOut aria-hidden="true" />
-        </button>
-      ) : (
-        <Button variant="secondary" onClick={() => setConfirming(true)} icon={<LogOut aria-hidden="true" />}>
+    <Sheet open={open} onClose={onClose} title="Sign out?" subtitle="You will need your password to sign back in.">
+      <div className="modal-actions">
+        <Button variant="secondary" onClick={onClose}>
+          Stay signed in
+        </Button>
+        <Button variant="primary" onClick={signOut}>
           Sign out
         </Button>
-      )}
+      </div>
+    </Sheet>
+  );
+}
 
-      <Sheet
-        open={confirming}
-        onClose={() => setConfirming(false)}
-        title="Sign out?"
-        subtitle="You will need your password to sign back in."
-      >
-        <div className="modal-actions">
-          <Button variant="secondary" onClick={() => setConfirming(false)}>
-            Stay signed in
-          </Button>
-          <Button variant="primary" onClick={signOut}>
-            Sign out
-          </Button>
-        </div>
-      </Sheet>
+/** A labelled Sign out button with its confirmation step. */
+export function SignOutButton() {
+  const [confirming, setConfirming] = useState(false);
+
+  return (
+    <>
+      <Button variant="secondary" onClick={() => setConfirming(true)} icon={<LogOut aria-hidden="true" />}>
+        Sign out
+      </Button>
+      <SignOutConfirm open={confirming} onClose={() => setConfirming(false)} />
     </>
   );
 }

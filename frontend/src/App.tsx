@@ -1,10 +1,11 @@
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { AuthProvider } from './auth/AuthContext';
 import { AdminRoute, ProtectedRoute } from './auth/ProtectedRoute';
 import { ConnectionBanner } from './components/ConnectionBanner';
 import { ToastProvider } from './components/ToastProvider';
 import { CommandPalette } from './components/CommandPalette';
 import { AppLayout } from './layouts/AppLayout';
+import { PaymentsLayout } from './layouts/PaymentsLayout';
 
 import { LoginPage } from './pages/Login';
 import { RegisterPage } from './pages/Register';
@@ -34,6 +35,12 @@ import { AdminTransfers } from './pages/admin/AdminTransfers';
 import { AdminUsers } from './pages/admin/AdminUsers';
 import { AdminAudit } from './pages/admin/AdminAudit';
 
+/** Redirects an old address, keeping its query string ("?to=..."). */
+function Moved({ to }: { to: string }) {
+  const { search } = useLocation();
+  return <Navigate to={to + search} replace />;
+}
+
 export function App() {
   return (
     <BrowserRouter>
@@ -60,13 +67,21 @@ export function App() {
               <Route path="/" element={<HomePage />} />
               <Route path="/accounts" element={<AccountsPage />} />
               <Route path="/cards" element={<CardsPage />} />
-              <Route path="/transfer" element={<TransferPage />} />
               <Route path="/transactions" element={<TransactionsPage />} />
               <Route path="/analytics" element={<AnalyticsPage />} />
               <Route path="/savings" element={<SavingsPage />} />
-              <Route path="/scheduled" element={<ScheduledPage />} />
-              <Route path="/requests" element={<RequestsPage />} />
-              <Route path="/beneficiaries" element={<BeneficiariesPage />} />
+              <Route path="/payments" element={<PaymentsLayout />}>
+                <Route index element={<Navigate to="/payments/send" replace />} />
+                <Route path="send" element={<TransferPage />} />
+                <Route path="payees" element={<BeneficiariesPage />} />
+                <Route path="scheduled" element={<ScheduledPage />} />
+                <Route path="requests" element={<RequestsPage />} />
+              </Route>
+              {/* The addresses these screens had before Payments grouped them. */}
+              <Route path="/transfer" element={<Moved to="/payments/send" />} />
+              <Route path="/beneficiaries" element={<Moved to="/payments/payees" />} />
+              <Route path="/scheduled" element={<Moved to="/payments/scheduled" />} />
+              <Route path="/requests" element={<Moved to="/payments/requests" />} />
               <Route path="/notifications" element={<NotificationsPage />} />
               <Route path="/statements" element={<StatementsPage />} />
               <Route path="/support" element={<SupportPage />} />

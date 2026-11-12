@@ -65,7 +65,7 @@ export function BeneficiariesPage() {
     <>
       <div className="page__head spread">
         <div>
-          <h1 className="page__title">Beneficiaries</h1>
+          <h1 className="page__title">Payees</h1>
           <p className="page__subtitle">Accounts you pay regularly.</p>
         </div>
         <Button variant="secondary" icon={<UserPlus aria-hidden="true" />} onClick={() => setAddOpen(true)}>
@@ -128,7 +128,7 @@ export function BeneficiariesPage() {
                 <Button
                   size="sm"
                   variant="secondary"
-                  onClick={() => navigate('/transfer')}
+                  onClick={() => navigate('/payments/send')}
                   icon={<ArrowRight aria-hidden="true" />}
                 >
                   Transfer

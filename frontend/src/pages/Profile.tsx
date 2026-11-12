@@ -154,7 +154,7 @@ export function ProfilePage() {
         <h3 className="section__title" style={{ marginBottom: 'var(--space-4)' }}>
           This device
         </h3>
-        <SignOutButton variant="button" />
+        <SignOutButton />
       </section>
     </>
   );

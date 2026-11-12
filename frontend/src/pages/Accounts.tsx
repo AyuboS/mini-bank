@@ -121,7 +121,7 @@ export function AccountsPage() {
         ) : (
           <div className="account-grid">
             {spending.map((account) => (
-              <AccountCard key={account.id} account={account} onSend={() => navigate('/transfer')} onStatement={() => navigate('/statements')} />
+              <AccountCard key={account.id} account={account} onSend={() => navigate('/payments/send')} onStatement={() => navigate('/statements')} />
             ))}
           </div>
         )}

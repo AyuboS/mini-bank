@@ -164,9 +164,9 @@ function destinationFor(entry: NotificationResponse): string | undefined {
     case 'Budget':
       return '/analytics';
     case 'ScheduledTransfer':
-      return '/scheduled';
+      return '/payments/scheduled';
     case 'MoneyRequest':
-      return '/requests';
+      return '/payments/requests';
     case 'Card':
       return '/cards';
     case 'User':

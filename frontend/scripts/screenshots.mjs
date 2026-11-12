@@ -25,13 +25,13 @@ const CUSTOMER = [
   '/',
   '/accounts',
   '/cards',
-  '/transfer',
+  '/payments/send',
   '/transactions',
   '/analytics',
   '/savings',
-  '/scheduled',
-  '/requests',
-  '/beneficiaries',
+  '/payments/scheduled',
+  '/payments/requests',
+  '/payments/payees',
   '/notifications',
   '/statements',
   '/support',
@@ -40,6 +40,10 @@ const CUSTOMER = [
   '/profile',
 ];
 const ADMIN = ['/admin', '/admin/transfers', '/admin/users', '/admin/audit'];
+
+// SHOT_ONLY=/,/cards limits a run to those paths.
+const only = process.env.SHOT_ONLY?.split(',');
+const pick = (paths) => (only ? paths.filter((path) => only.includes(path)) : paths);
 
 const fileName = (path) => (path === '/' ? 'home' : path.slice(1).replaceAll('/', '-'));
 
@@ -87,10 +91,10 @@ if (!SHOT_USER || !SHOT_PASSWORD) {
 await mkdir(outDir, { recursive: true });
 const browser = await chromium.launch();
 const overflowing = [
-  ...(await capture(browser, PUBLIC, null)),
-  ...(await capture(browser, CUSTOMER, await signIn(SHOT_USER, SHOT_PASSWORD))),
+  ...(await capture(browser, pick(PUBLIC), null)),
+  ...(await capture(browser, pick(CUSTOMER), await signIn(SHOT_USER, SHOT_PASSWORD))),
   ...(SHOT_ADMIN && SHOT_ADMIN_PASSWORD
-    ? await capture(browser, ADMIN, await signIn(SHOT_ADMIN, SHOT_ADMIN_PASSWORD))
+    ? await capture(browser, pick(ADMIN), await signIn(SHOT_ADMIN, SHOT_ADMIN_PASSWORD))
     : []),
 ];
 await browser.close();

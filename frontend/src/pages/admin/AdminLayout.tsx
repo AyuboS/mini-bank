@@ -4,6 +4,7 @@ const TABS = [
   { to: '/admin', label: 'Overview', end: true },
   { to: '/admin/transfers', label: 'Transfers' },
   { to: '/admin/users', label: 'Users' },
+  { to: '/admin/accounts', label: 'Accounts' },
   { to: '/admin/audit', label: 'Audit trail' },
 ];
 

@@ -17,6 +17,7 @@ import './styles/screens.css';
 import './styles/home.css';
 import './styles/transactions.css';
 import './styles/send.css';
+import './styles/admin.css';
 
 const container = document.getElementById('root');
 if (!container) {

@@ -34,6 +34,7 @@ import { AdminLayout } from './pages/admin/AdminLayout';
 import { AdminOverview } from './pages/admin/AdminOverview';
 import { AdminTransfers } from './pages/admin/AdminTransfers';
 import { AdminUsers } from './pages/admin/AdminUsers';
+import { AdminAccounts } from './pages/admin/AdminAccounts';
 import { AdminAudit } from './pages/admin/AdminAudit';
 
 /** Redirects an old address, keeping its query string ("?to=..."). */
@@ -102,6 +103,7 @@ export function App() {
                 <Route index element={<AdminOverview />} />
                 <Route path="transfers" element={<AdminTransfers />} />
                 <Route path="users" element={<AdminUsers />} />
+                <Route path="accounts" element={<AdminAccounts />} />
                 <Route path="audit" element={<AdminAudit />} />
               </Route>
 

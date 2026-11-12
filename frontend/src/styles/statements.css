@@ -12,6 +12,7 @@
 
 .month-switch {
   display: inline-flex;
+  align-self: flex-start;
   align-items: center;
   height: 50px; /* the height of a select beside it */
   border: 1px solid var(--line-strong);

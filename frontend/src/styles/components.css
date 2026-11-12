@@ -924,7 +924,6 @@
   .method-switch__tab { height: 44px; }
 
   /* The accent swatches on a savings goal. */
-  .accent-dot { width: 44px; height: 44px; }
 
   /* The reveal toggle inside a password field. */
   .field__reveal { padding: 12px; margin: -12px; }

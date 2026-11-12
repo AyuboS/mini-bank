@@ -1,0 +1,49 @@
+/* Savings: goals as rows between dividers, each with a thin progress rule. */
+
+.savings-figures { grid-template-columns: repeat(2, minmax(0, max-content)); column-gap: var(--space-8); }
+
+.goals { list-style: none; margin-top: var(--space-2); }
+
+.goal {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-5) 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.goal__head,
+.goal__foot {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.goal__name { min-width: 0; }
+.goal__name h2 { font-size: var(--text-4); font-weight: var(--weight-semibold); letter-spacing: 0; }
+
+.goal__sub {
+  font-size: var(--text-2);
+  font-weight: var(--weight-regular);
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.goal__name .goal__sub { display: block; margin-top: 2px; }
+
+.goal__figure {
+  font-size: var(--text-4);
+  font-weight: var(--weight-medium);
+  font-variant-numeric: tabular-nums;
+}
+
+.goal__actions { display: flex; gap: var(--space-1); flex-wrap: wrap; }
+
+.savings-archived { margin-top: var(--space-8); }
+
+@media (max-width: 767px) {
+  .goal__actions { width: 100%; }
+  .goal__actions .btn:first-child { flex: 1 0 100%; }
+}

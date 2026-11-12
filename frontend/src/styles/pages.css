@@ -158,12 +158,6 @@
   gap: var(--space-4);
 }
 
-.goal-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
-  gap: var(--space-4);
-}
-
 .account-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
@@ -349,70 +343,6 @@
 .budget-row__state { font-size: var(--text-label); color: var(--ink-3); }
 .budget-row__state--over { color: var(--danger); }
 .budget-row__state--nearing { color: var(--warning); }
-
-/* =============================================================================
-   Savings goals
-   -----------------------------------------------------------------------------
-   Each goal carries an accent the customer chose, applied as a tinted top strip
-   rather than as a coloured glow behind the card. The strip is 3px and reads at
-   a glance across a grid of six.
-   ========================================================================== */
-
-.goal-card {
-  position: relative;
-  padding: var(--space-5);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-  overflow: hidden;
-}
-
-.goal-card__glow {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: var(--goal-accent, var(--brand));
-}
-
-.goal-card__name { font-size: var(--text-heading); font-weight: 640; }
-.goal-card__deadline { font-size: var(--text-label); color: var(--ink-3); }
-.goal-card__figures { display: flex; align-items: baseline; gap: var(--space-2); flex-wrap: wrap; }
-.goal-card__saved { font-size: 1.5rem; font-weight: 660; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
-.goal-card__meta { font-size: var(--text-label); color: var(--ink-3); }
-.goal-card__actions { display: flex; gap: var(--space-2); flex-wrap: wrap; padding-top: var(--space-1); }
-.goal-card__account { font-size: var(--text-label); font-family: var(--font-mono); color: var(--ink-3); }
-
-.goal-row { padding: var(--space-4); display: flex; flex-direction: column; gap: var(--space-3); text-align: left; width: 100%; }
-.goal-row__name { font-size: var(--text-small); font-weight: 560; }
-
-.accent-row { display: flex; gap: var(--space-2); flex-wrap: wrap; }
-
-.accent-dot {
-  display: grid;
-  place-items: center;
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-pill);
-  border: 2px solid transparent;
-  cursor: pointer;
-  transition: transform var(--dur-micro) var(--ease), border-color var(--dur-micro) var(--ease);
-}
-
-/* The swatch itself, so the hit area can grow on touch without the dot growing
-   with it. */
-.accent-dot::before {
-  content: '';
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: currentColor;
-}
-
-.accent-dot:hover { transform: scale(1.08); }
-.accent-dot--selected { border-color: var(--ink); }
-.accent-dot:focus-visible { outline: none; box-shadow: var(--focus-ring); }
 
 /* =============================================================================
    Standing orders
@@ -1056,7 +986,6 @@
   .hero__actions .btn { flex: 1; }
 
   .panel,
-  .goal-card,
   .account-card,
   .security-status,
 

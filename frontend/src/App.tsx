@@ -18,7 +18,7 @@ import { SendPage } from './pages/send/SendPage';
 import { TopUpPage } from './pages/TopUp';
 import { TransactionsPage } from './pages/Transactions';
 import { BeneficiariesPage } from './pages/Beneficiaries';
-import { SavingsPage } from './pages/Savings';
+import { SavingsPage } from './pages/savings/SavingsPage';
 import { AnalyticsPage } from './pages/Analytics';
 import { ScheduledPage } from './pages/Scheduled';
 import { RequestsPage } from './pages/Requests';

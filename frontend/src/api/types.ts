@@ -298,8 +298,8 @@ export interface ApiError {
 export type SavingsGoalStatus = 'ACTIVE' | 'ACHIEVED' | 'ARCHIVED';
 
 /** The six accents a goal can be drawn in. Matches the server's validation. */
-export const GOAL_ACCENTS = ['violet', 'cyan', 'emerald', 'amber', 'coral', 'blue'] as const;
-export type GoalAccent = (typeof GOAL_ACCENTS)[number];
+/** Stored by the server; the interface no longer sets it. */
+export type GoalAccent = 'violet' | 'cyan' | 'emerald' | 'amber' | 'coral' | 'blue';
 
 export interface SavingsGoalResponse {
   id: string;

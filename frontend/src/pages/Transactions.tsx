@@ -61,7 +61,7 @@ export function TransactionsPage() {
   const [page, setPage] = useState(0);
   const [selected, setSelected] = useState<TransactionResponse | null>(null);
 
-  const { data, loading, error, reload } = useAsync<PageResponse<TransactionResponse>>(
+  const { data, loading, error, reload, setData } = useAsync<PageResponse<TransactionResponse>>(
     () => transfersApi.transactions({ page, size: PAGE_SIZE, status: filter as TransferStatus | '' }),
     [page, filter],
   );
@@ -171,7 +171,19 @@ export function TransactionsPage() {
         </Surface>
       )}
 
-      <TransactionDetail transaction={selected} onClose={() => setSelected(null)} />
+      <TransactionDetail
+        transaction={selected}
+        onClose={() => setSelected(null)}
+        onRecategorised={(updated) => {
+          setSelected(updated);
+          setData((current) =>
+            current && {
+              ...current,
+              content: current.content.map((row) => (row.transferId === updated.transferId ? updated : row)),
+            },
+          );
+        }}
+      />
     </>
   );
 }

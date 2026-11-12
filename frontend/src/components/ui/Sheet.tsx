@@ -12,6 +12,8 @@ interface SheetProps {
   dismissible?: boolean;
   /** Wider than the default, for tables and multi-column forms. */
   wide?: boolean;
+  /** Where focus lands on open. Use `panel` for a read-first view that happens to contain a field. */
+  initialFocus?: 'first-field' | 'panel';
 }
 
 /**
@@ -34,13 +36,14 @@ export function Sheet({
   children,
   dismissible = true,
   wide = false,
+  initialFocus = 'first-field',
 }: SheetProps) {
   const panelRef = useRef<HTMLDivElement | null>(null);
   const restoreFocusTo = useRef<HTMLElement | null>(null);
 
   // Read through a ref so a parent re-render (new onClose) does not re-run the focus effect.
-  const latest = useRef({ onClose, dismissible });
-  latest.current = { onClose, dismissible };
+  const latest = useRef({ onClose, dismissible, initialFocus });
+  latest.current = { onClose, dismissible, initialFocus };
 
   useEffect(() => {
     if (!open) return;
@@ -88,6 +91,10 @@ export function Sheet({
     // Focus the first field if there is one, otherwise the first button.
     const raf = requestAnimationFrame(() => {
       const panel = panelRef.current;
+      if (latest.current.initialFocus === 'panel') {
+        panel?.focus();
+        return;
+      }
       const target =
         panel?.querySelector<HTMLElement>(
           'input:not([type="hidden"]):not([disabled]), textarea:not([disabled]), select:not([disabled])',

@@ -1,15 +1,25 @@
 import { useEffect, useState } from 'react';
 import { AlertTriangle } from 'lucide-react';
 import { transfersApi } from '../api/transfers';
-import type { LedgerEntryResponse, TransactionResponse, TransferResponse } from '../api/types';
+import type {
+  LedgerEntryResponse,
+  TransactionCategory,
+  TransactionResponse,
+  TransferResponse,
+} from '../api/types';
+import { TRANSACTION_CATEGORIES } from '../api/types';
+import { CATEGORY_META } from '../utils/categories';
+import { toFriendlyError } from '../utils/errors';
 import { formatDateTime, formatMoney } from '../utils/format';
-import { Sheet, StatusBadge } from './ui';
+import { Select, Sheet, StatusBadge } from './ui';
 import { Money } from './Money';
 import { RiskGauge } from './RiskGauge';
 
 interface TransactionDetailProps {
   transaction: TransactionResponse | null;
   onClose: () => void;
+  /** Called with the saved transaction after its category changes, so a list can update its row. */
+  onRecategorised?: (updated: TransactionResponse) => void;
 }
 
 interface Step {
@@ -55,12 +65,41 @@ function stepsFor(transaction: TransactionResponse): Step[] {
   }
 }
 
-export function TransactionDetail({ transaction, onClose }: TransactionDetailProps) {
+export function TransactionDetail({ transaction, onClose, onRecategorised }: TransactionDetailProps) {
   const [transfer, setTransfer] = useState<TransferResponse | null>(null);
   const [ledger, setLedger] = useState<LedgerEntryResponse[]>([]);
+  const [category, setCategory] = useState<TransactionCategory | ''>('');
+  const [savingCategory, setSavingCategory] = useState(false);
+  const [categoryError, setCategoryError] = useState<string | null>(null);
+
+  const transferId = transaction?.transferId;
+  const initialCategory = transaction?.category ?? '';
 
   useEffect(() => {
-    if (!transaction) {
+    setCategory(initialCategory);
+    setCategoryError(null);
+  }, [transferId, initialCategory]);
+
+  const changeCategory = async (next: TransactionCategory) => {
+    if (!transferId) return;
+    const previous = category;
+    setCategory(next);
+    setSavingCategory(true);
+    setCategoryError(null);
+    try {
+      // Saved first: inside `onRecategorised?.(...)` the call would be skipped when no callback is passed.
+      const updated = await transfersApi.recategorise(transferId, next);
+      onRecategorised?.(updated);
+    } catch (err) {
+      setCategory(previous);
+      setCategoryError(toFriendlyError(err).title);
+    } finally {
+      setSavingCategory(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!transferId) {
       setTransfer(null);
       setLedger([]);
       return;
@@ -71,9 +110,9 @@ export function TransactionDetail({ transaction, onClose }: TransactionDetailPro
     // and its postings are fetched when somebody actually opens one.
     void (async () => {
       try {
-        const full = await transfersApi.get(transaction.transferId);
+        const full = await transfersApi.get(transferId);
         if (!cancelled) setTransfer(full);
-        const entries = await transfersApi.ledger(transaction.transferId);
+        const entries = await transfersApi.ledger(transferId);
         if (!cancelled) setLedger(entries);
       } catch {
         /* The summary below is already enough to be useful. */
@@ -83,7 +122,8 @@ export function TransactionDetail({ transaction, onClose }: TransactionDetailPro
     return () => {
       cancelled = true;
     };
-  }, [transaction]);
+    // Keyed on the id so a recategorised row does not refetch the same transfer.
+  }, [transferId]);
 
   if (!transaction) {
     return null;
@@ -93,7 +133,7 @@ export function TransactionDetail({ transaction, onClose }: TransactionDetailPro
   const risk = transfer?.risk;
 
   return (
-    <Sheet open onClose={onClose} title="Transaction" subtitle={transaction.reference}>
+    <Sheet open onClose={onClose} title="Transaction" subtitle={transaction.reference} initialFocus="panel">
       <div className="review-amount">
         <div className="review-amount__value">
           <Money
@@ -182,6 +222,28 @@ export function TransactionDetail({ transaction, onClose }: TransactionDetailPro
           </div>
         )}
       </div>
+
+      <Select
+        label="Category"
+        value={category}
+        disabled={savingCategory}
+        onChange={(event) => void changeCategory(event.target.value as TransactionCategory)}
+        className="detail-category"
+        {...(categoryError
+          ? { error: categoryError }
+          : { hint: 'Both sides of the payment see the category you choose.' })}
+      >
+        {category === '' && (
+          <option value="" disabled>
+            Uncategorised
+          </option>
+        )}
+        {TRANSACTION_CATEGORIES.map((option) => (
+          <option key={option} value={option}>
+            {CATEGORY_META[option].label}
+          </option>
+        ))}
+      </Select>
 
       {ledger.length > 0 && (
         <>

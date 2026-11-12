@@ -190,6 +190,7 @@
 }
 
 .txn:hover { background-color: var(--surface-sunken); }
+.detail-category { margin-top: var(--space-4); }
 .txn--static { cursor: default; }
 .txn--static:hover { background-color: transparent; }
 .txn:focus-visible { outline: none; box-shadow: var(--focus-ring); }

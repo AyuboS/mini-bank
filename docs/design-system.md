@@ -1,7 +1,8 @@
 # M Bank design system
 
-Status: proposal. The tokens and the Home screen are built; every other screen
-still has its old layout and is rebuilt in Phases 3 and 5.
+Status: in use. Home, Transactions, Send, Top up, Cards, Savings, Statements,
+Profile, Security and the admin pages follow it. Accounts, Analytics, Payees,
+Requests, Scheduled, Notifications and Support still use the older layout.
 
 ## Idea
 
@@ -74,7 +75,7 @@ navigation, no success wave, no self-drawing tick, no scaling buttons.
   digits, holder and expiry.
 - **Focus**: a 2px ink ring with a 2px gap, on every interactive element.
 
-## Navigation (built in Phase 3)
+## Navigation
 
 Five destinations: Home, Transactions, Payments, Cards, Savings. Everything
 else lives in a profile menu that ends with Sign out. Desktop uses a sidebar,
@@ -84,7 +85,7 @@ money." label stays visible in the shell.
 ## Home hierarchy
 
 1. Available balance, as a plain 40px number, with savings as one line under it.
-2. Actions: Send (primary), Request, Move to savings. Top up joins in Phase 4.
+2. Actions: Send (primary), Request, Top up, Move to savings.
 3. Money in and out this month.
 4. Recent transactions as ledger rows.
 5. Side column on wide screens: upcoming payments, then one card.
@@ -101,13 +102,12 @@ Checked at 375, 768 and 1440px: no horizontal overflow on Home.
 
 ## What is in the code now
 
-- `frontend/src/styles/tokens.css`: the tokens above, plus a block of legacy
-  aliases that keeps unrebuilt screens rendering. Each alias is deleted when the
-  last screen using it is rebuilt.
-- `frontend/src/pages/Home.tsx` and `frontend/src/styles/home.css`: the sample screen.
+- `frontend/src/styles/tokens.css`: the tokens above, plus legacy aliases that
+  the older screens still use.
 - `frontend/src/components/TransactionList.tsx`: the ledger row list.
-- `frontend/src/utils/money.ts`: sums in integer cents, used for the balance.
-- Screenshots: `docs/screenshots/proposal/`.
+- `frontend/src/pages/cards/CardSettings.tsx`: the settings list pattern.
+- `frontend/src/utils/money.ts`: money arithmetic in integer cents.
+- Screenshots: `docs/screenshots/proposal/` (the sample) and `docs/screenshots/after/`.
 
 ## Open questions
 

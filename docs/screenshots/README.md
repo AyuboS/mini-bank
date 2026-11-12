@@ -1,14 +1,9 @@
 # Screenshots
 
-Drop UI captures here and link them from the root `README.md`.
+Taken with `frontend/scripts/screenshots.mjs` at 375 and 1440px wide.
 
-Suggested set:
-
-| File | Screen |
+| Folder | What |
 |---|---|
-| `dashboard.png` | Dashboard with balances and recent transactions |
-| `transfer.png` | Send money, including a transfer held for review |
-| `transactions.png` | Transaction history with statuses |
-| `swagger.png` | Swagger UI listing the endpoints |
-
-Nothing is committed here yet, and the README does not link to any image file, so no link is broken.
+| `before/` | Every screen before the redesign |
+| `proposal/` | The Home screen built as the design sample |
+| `after/` | Every screen after the redesign, on a freshly seeded database |

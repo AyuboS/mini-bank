@@ -25,8 +25,6 @@ export interface ContributionBody {
 export const savingsApi = {
   list: () => api.get<SavingsGoalResponse[]>('/api/v1/savings/goals'),
 
-  get: (id: string) => api.get<SavingsGoalResponse>(`/api/v1/savings/goals/${id}`),
-
   create: (body: SavingsGoalBody) => api.post<SavingsGoalResponse>('/api/v1/savings/goals', body),
 
   update: (id: string, body: SavingsGoalBody) =>

@@ -3,7 +3,6 @@ import type {
   AccountResponse,
   AdminUserResponse,
   AuditLogResponse,
-  EffectiveLimits,
   PageResponse,
   TransferResponse,
   TransferStatus,
@@ -17,12 +16,8 @@ export const adminApi = {
     return api.get<PageResponse<AdminUserResponse>>(`/api/v1/admin/users?${params}`);
   },
 
-  user: (id: string) => api.get<AdminUserResponse>(`/api/v1/admin/users/${id}`),
-
   changeUserStatus: (id: string, status: UserStatus, reason: string) =>
     api.patch<AdminUserResponse>(`/api/v1/admin/users/${id}/status`, { status, reason }),
-
-  limits: (id: string) => api.get<EffectiveLimits>(`/api/v1/admin/users/${id}/limits`),
 
   accounts: (page = 0, size = 20) =>
     api.get<PageResponse<AccountResponse>>(`/api/v1/admin/accounts?page=${page}&size=${size}`),

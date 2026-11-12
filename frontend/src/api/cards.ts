@@ -49,8 +49,6 @@ export interface CardControlsBody {
 export const cardsApi = {
   list: () => api.get<CardResponse[]>('/api/v1/cards'),
 
-  get: (id: string) => api.get<CardResponse>(`/api/v1/cards/${id}`),
-
   create: (body: CreateCardBody) => api.post<CardResponse>('/api/v1/cards', body),
 
   update: (id: string, body: { label?: string; design?: CardDesign }) =>

@@ -23,13 +23,8 @@ export interface ScheduledTransferBody {
 export const scheduledApi = {
   list: () => api.get<ScheduledTransferResponse[]>('/api/v1/scheduled-transfers'),
 
-  get: (id: string) => api.get<ScheduledTransferResponse>(`/api/v1/scheduled-transfers/${id}`),
-
   create: (body: ScheduledTransferBody) =>
     api.post<ScheduledTransferResponse>('/api/v1/scheduled-transfers', body),
-
-  update: (id: string, body: ScheduledTransferBody) =>
-    api.put<ScheduledTransferResponse>(`/api/v1/scheduled-transfers/${id}`, body),
 
   pause: (id: string) => api.patch<ScheduledTransferResponse>(`/api/v1/scheduled-transfers/${id}/pause`),
 

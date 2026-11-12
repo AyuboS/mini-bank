@@ -2,72 +2,43 @@
 
 .auth-page { display: grid; grid-template-columns: 1fr 1fr; min-height: 100dvh; }
 
-/* Pinned to ink in both themes, rather than following --surface-inverse. */
+/* Ink in both themes. No decoration: the type is the poster. */
 .auth-poster {
-  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   gap: var(--space-7);
   padding: var(--space-8) var(--space-7);
-  background: #0B0D12;
-  color: #fff;
-  overflow: hidden;
+  background: #171612;
+  color: #f4f2ec;
 }
 
-/* The poster's only decoration: one soft field of brand colour in the lower
-   left, well under the type. */
-.auth-poster__bloom {
-  position: absolute;
-  bottom: -22%;
-  left: -18%;
-  width: 68%;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(43, 84, 240, 0.42) 0%, transparent 68%);
-  pointer-events: none;
-}
+.auth-poster__brand { display: flex; align-items: center; gap: var(--space-3); }
 
-.auth-poster__brand { display: flex; align-items: center; gap: var(--space-3); position: relative; }
-
-.auth-poster__name {
-  font-size: 1.125rem;
-  font-weight: var(--weight-semibold);
-  letter-spacing: -0.03em;
-  color: #fff;
-}
+.auth-poster__name { font-size: var(--text-4); font-weight: var(--weight-semibold); }
+.auth-poster .auth-poster__name { color: #f4f2ec; }
 
 .auth-poster__statement {
-  position: relative;
-  font-size: clamp(2rem, 3.6vw, 3rem);
+  font-size: clamp(2rem, 3.6vw, 2.75rem);
   font-weight: var(--weight-semibold);
-  line-height: 1.08;
-  letter-spacing: -0.038em;
-  color: #fff;
-  max-width: 15ch;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  max-width: 14ch;
+  color: #f4f2ec;
 }
 
-.auth-poster__statement em { font-style: normal; color: #6E8DFF; }
+.auth-poster__sub { max-width: 42ch; margin-top: var(--space-4); font-size: var(--text-3); color: #b9b6ad; }
 
-.auth-poster__sub {
-  position: relative;
-  color: rgba(255, 255, 255, 0.62);
-  font-size: var(--text-body);
-  max-width: 40ch;
-  margin-top: var(--space-4);
-}
-
-.auth-poster__points { position: relative; display: flex; flex-direction: column; gap: var(--space-3); }
-
-.auth-poster__point {
+.auth-poster__points {
   display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  font-size: var(--text-small);
-  color: rgba(255, 255, 255, 0.62);
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-top: var(--space-4);
+  border-top: 1px solid #3d3c38;
+  list-style: none;
+  font-size: var(--text-2);
+  color: #b9b6ad;
 }
-
-.auth-poster__point svg { width: 17px; height: 17px; color: #6E8DFF; flex-shrink: 0; }
 
 .auth-form-side {
   display: flex;

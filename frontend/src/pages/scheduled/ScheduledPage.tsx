@@ -82,9 +82,9 @@ export function ScheduledPage() {
                   <span className="order-card__name truncate">
                     {order.description || order.payeeName || 'Scheduled payment'}
                   </span>
-                  <span className="dim order-card__meta truncate inline-icon">
+                  <span className="dim order-card__meta truncate">
                     {order.payeeName ?? maskAccountNumber(order.toAccountNumber)} ·{' '}
-                    <Repeat size={12} aria-hidden="true" />{' '}
+                    <Repeat size={12} className="inline-icon" aria-hidden="true" />{' '}
                     {FREQUENCY_LABEL[order.frequency]}
                   </span>
                 </div>

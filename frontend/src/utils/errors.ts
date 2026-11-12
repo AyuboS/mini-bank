@@ -1,4 +1,4 @@
-import { API_BASE_URL, ApiRequestError } from '../api/client';
+import { ApiRequestError } from '../api/client';
 
 /**
  * Turns a backend error code into something a person can act on.
@@ -222,15 +222,10 @@ export function toFriendlyError(error: unknown): FriendlyError {
   }
 
   if (error instanceof TypeError) {
-    /*
-      fetch() rejects with a TypeError when it cannot reach the host at all —
-      the API is not running, or is running somewhere else. Naming the address
-      it tried turns a dead end into something the reader can act on.
-    */
-    const where = `${API_BASE_URL || window.location.origin}/api`;
+    // fetch() rejects with a TypeError when it cannot reach the server at all.
     return {
-      title: 'The MBank API is not responding',
-      body: `Nothing answered at ${where}. Start the stack with "docker compose up", then try again.`,
+      title: 'MBank is not responding',
+      body: 'Check your connection and try again in a moment.',
       fields: {},
     };
   }

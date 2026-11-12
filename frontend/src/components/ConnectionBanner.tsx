@@ -29,8 +29,7 @@ export function ConnectionBanner() {
   useEffect(() => {
     let cancelled = false;
 
-    // The scheduled retry. Backs off from 2s to 30s so a long-running
-    // `docker compose up` is not hammered, and a quick restart is caught fast.
+    // The scheduled retry backs off from 2s to 30s.
     const schedule = () => {
       const delay = Math.min(2000 * 2 ** attempts.current, 30_000);
       attempts.current += 1;
@@ -119,10 +118,15 @@ export function ConnectionBanner() {
         <CloudOff aria-hidden="true" />
       </span>
       <span className="conn__body">
-        <strong className="conn__title">The API is not responding</strong>
+        <strong className="conn__title">MBank is not responding</strong>
         <span className="conn__detail">
-          Nothing answered at <code>{where}</code>. Run <code>docker compose up</code> from the
-          project root — this banner clears itself once it does.
+          We are checking again automatically. This message goes away when the connection is back.
+          {import.meta.env.DEV && (
+            <>
+              {' '}
+              Developer note: nothing answered at <code>{where}</code>.
+            </>
+          )}
         </span>
       </span>
       <button

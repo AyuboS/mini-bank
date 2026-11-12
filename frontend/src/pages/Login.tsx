@@ -11,7 +11,9 @@ import { Button, Input } from '../components/ui';
 import { toFriendlyError } from '../utils/errors';
 import type { FriendlyError } from '../utils/errors';
 
-/** Non-production, and labelled as such on screen so nobody mistakes them. */
+// Shown only in development, or in a build made with VITE_DEMO_MODE=true.
+const SHOW_DEMO_ACCOUNTS = import.meta.env.DEV || import.meta.env.VITE_DEMO_MODE === 'true';
+
 const DEMO_ACCOUNTS = [
   { label: 'Customer', username: 'customer.a', password: 'Customer#2026!A' },
   { label: 'Administrator', username: 'admin', password: 'Admin#2026!Demo' },
@@ -346,18 +348,18 @@ export function LoginPage() {
         )}
       </button>
 
-      <div className="auth-demo">
-        <span className="label">Demo credentials</span>
+      {SHOW_DEMO_ACCOUNTS && (
+        <div className="auth-demo">
+          <span className="label">Demo accounts</span>
         {DEMO_ACCOUNTS.map((demo) => (
           <button key={demo.username} type="button" className="auth-demo__row" onClick={() => useDemo(demo)}>
             <span>{demo.username}</span>
             <span className="dim">{demo.label}</span>
           </button>
         ))}
-        <p className="field-hint" style={{ marginTop: 10 }}>
-          Tap to fill. These accounts exist only in the demo database.
-        </p>
-      </div>
+          <p className="field-hint">Tap to fill. These accounts exist only in the demo database.</p>
+        </div>
+      )}
     </AuthLayout>
   );
 }

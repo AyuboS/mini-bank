@@ -21,18 +21,7 @@ const DEMO_ACCOUNTS = [
 
 type Method = 'phone' | 'password';
 
-/**
- * Signing in, by phone or by password.
- *
- * Two methods, one segmented control, and never more than one form on screen at
- * a time — the brief's "do not put six giant buttons on the page" is the whole
- * layout rule here. Phone leads because it is the faster path for somebody on a
- * handset, and the password form is one tap away rather than hidden.
- *
- * The password field accepts a username, an email address or a verified phone
- * number, because people do not reliably remember which they signed up with and
- * the server resolves all three.
- */
+/** Signing in, by phone or by password. */
 export function LoginPage() {
   const { login, loginWithPhone } = useAuth();
   const navigate = useNavigate();

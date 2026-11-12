@@ -19,14 +19,7 @@ import { SubscriptionsPanel } from './SubscriptionsPanel';
 import { DailyChart } from './DailyChart';
 import { BudgetRow, BudgetSheet } from './Budgets';
 
-/**
- * Spending analytics.
- *
- * Everything on this screen is arithmetic over the customer's own settled
- * transactions. Nothing is estimated, projected or compared against other
- * customers, and when the data cannot support a statement the statement is
- * simply absent — which is why the insights list can legitimately be empty.
- */
+/** Spending analytics. */
 export function AnalyticsPage() {
   const [month, setMonth] = useState(toMonthKey());
   const currency: CurrencyCode = 'EUR';

@@ -10,16 +10,7 @@ import type { FriendlyError } from '../utils/errors';
 
 type State = { status: 'working' } | { status: 'done' } | { status: 'failed'; error: FriendlyError };
 
-/**
- * The landing page for a verification link.
- *
- * Deliberately reachable signed out: the link is opened in whatever browser the
- * mail client hands it to, which is very often not the one holding the session.
- * Redeeming the token needs no session — the token is the credential.
- *
- * If somebody *is* signed in, their profile is refreshed afterwards so the
- * "unverified" prompt disappears without a reload.
- */
+/** The landing page for a verification link. */
 export function VerifyEmailPage() {
   const [params] = useSearchParams();
   const { user, refreshUser } = useAuth();

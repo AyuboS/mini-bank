@@ -8,15 +8,7 @@ import { monthlyTotal, type Subscription } from '../../utils/subscriptions';
 
 /* ---------------------------------------------------------------------------- */
 
-/**
- * Recurring payments.
- *
- * Inferred from the customer's own settled transactions rather than fetched
- * from a merchant feed, because there is not one — see utils/subscriptions.ts.
- * The heading says "looks recurring" for that reason: the panel is telling the
- * customer what MBank can see in their statement, not asserting a fact about
- * their contracts.
- */
+/** Recurring payments. */
 export function SubscriptionsPanel({
   subscriptions,
   loading,

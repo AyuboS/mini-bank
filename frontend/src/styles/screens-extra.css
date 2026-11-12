@@ -6,13 +6,7 @@
 .phone-field__code { width: 108px; flex-shrink: 0; }
 .phone-field__number { flex: 1; min-width: 0; }
 
-/*
-   The six-digit code.
-
-   One real input stretched invisibly across six drawn cells. That is what makes
-   paste, autofill and the iOS "from Messages" suggestion work — all three target
-   a single field, and six separate inputs break every one of them.
-*/
+/* The six-digit code. */
 .otp { display: flex; flex-direction: column; gap: var(--space-2); }
 .otp__row { position: relative; display: flex; gap: var(--space-2); }
 
@@ -70,22 +64,9 @@
    Balance block, older markup
    ========================================================================== */
 
-/* =============================================================================
-   Quick actions
-   -----------------------------------------------------------------------------
-   Large, labelled, and always in the same order. These are the four things a
-   customer opens the app to do, so they are buttons with words on them rather
-   than a row of icons somebody has to learn.
-   ========================================================================== */
+/* Quick actions */
 
-/*
-   Four across on a desktop, two-by-two on a phone.
-
-   Fixed counts rather than `auto-fit`, because auto-fit fits as many as it can
-   and then orphans the remainder: at 390px the four actions came out as a row of
-   three with Exchange alone underneath, which reads as a mistake. Two-by-two
-   also gives the largest targets on the screen where they are hit with a thumb.
-*/
+/* Four across on a desktop, two-by-two on a phone. */
 
 .action {
   display: flex;
@@ -145,14 +126,7 @@
 .conn__retry { flex-shrink: 0; }
 .conn__spin { animation: spin 900ms linear infinite; }
 
-/*
-   Room for the banner while it is up.
-
-   A fixed overlay at the top of the viewport otherwise lands on the first
-   heading of every screen. The reserve is generous — the detail line wraps to
-   three lines at 320px — and it only applies during an outage, so
-   over-reserving costs nothing anybody sees in normal use.
-*/
+/* Room for the banner while it is up. */
 [data-api-down='true'] .page,
 [data-api-down='true'] .auth-form-side,
 [data-api-down='true'] .auth-poster { padding-top: 128px; }
@@ -161,13 +135,7 @@
   [data-api-down='true'] .page { padding-top: 96px; }
 }
 
-/* =============================================================================
-   Tables (administration)
-   -----------------------------------------------------------------------------
-   The back office is the one part of MBank that is genuinely a table, and it is
-   styled as one: dense rows, a sticky-feeling header, and a horizontal scroll
-   container so a wide table never widens the page.
-   ========================================================================== */
+/* Tables (administration) */
 
 .table { width: 100%; border-collapse: collapse; font-size: var(--text-small); }
 

@@ -12,27 +12,11 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   icon?: ReactNode;
   /** A unit or action at the trailing edge — a currency symbol, a reveal toggle. */
   suffix?: ReactNode;
-  /**
-   * Adds a show/hide toggle to a password field.
-   *
-   * Worth having: a hidden password field is where typos go undetected, and the
-   * usual response to one is to clear the field and start again. The toggle is a
-   * real button with a label, so it is reachable by keyboard and announced.
-   */
+  /** Adds a show/hide toggle to a password field. */
   revealable?: boolean;
 }
 
-/**
- * A recessed well cut into the glass rather than a pane laid on top of it.
- *
- * The inverted lighting is the whole idea: dark at the top, light at the bottom,
- * which is what makes a shape read as a hollow you can put something into. See
- * `.well` in surfaces.css.
- *
- * The accessibility wiring is not optional decoration. A validation message that
- * is only visually adjacent to a field is not associated with it, so a screen
- * reader announces the field with no indication that anything is wrong.
- */
+/** A recessed well cut into the glass rather than a pane laid on top of it. */
 export function Input({
   label,
   error,

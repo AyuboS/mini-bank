@@ -8,14 +8,7 @@ export interface BudgetBody {
   currency: CurrencyCode;
 }
 
-/**
- * Monthly spending caps.
- *
- * Every call carries the browser's timezone: a budget month is a calendar month
- * on the customer's own calendar, and computing the boundary in UTC would put a
- * late-evening payment on the 31st into the wrong month for anyone east of
- * Greenwich.
- */
+/** Monthly spending caps. */
 export const budgetsApi = {
   list: (currency: CurrencyCode = 'EUR') =>
     api.get<BudgetResponse[]>(

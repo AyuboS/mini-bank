@@ -13,13 +13,7 @@ export interface ScheduledTransferBody {
   endsOn?: string;
 }
 
-/**
- * Standing orders.
- *
- * Due orders are executed by a background runner through the ordinary transfer
- * path, so a scheduled payment carries the same limits, risk checks and ledger
- * guarantees as one typed by hand.
- */
+/** Standing orders. */
 export const scheduledApi = {
   list: () => api.get<ScheduledTransferResponse[]>('/api/v1/scheduled-transfers'),
 

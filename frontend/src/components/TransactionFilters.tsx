@@ -20,12 +20,7 @@ const STATUSES: { id: TransferStatus; label: string }[] = [
   { id: 'REVERSED', label: 'Reversed' },
 ];
 
-/**
- * Search and filters for the transaction list.
- *
- * Search is always visible. On a phone the other filters sit behind a
- * "Filters" button so the list starts near the top of the screen.
- */
+/** Search and filters for the transaction list. */
 export function TransactionFilters({ filters, onChange, problem }: TransactionFiltersProps) {
   const [expanded, setExpanded] = useState(false);
   const set = (patch: Partial<Filters>) => onChange({ ...filters, ...patch });

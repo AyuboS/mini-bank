@@ -1,12 +1,6 @@
 import { newIdempotencyKey } from '../api/client';
 
-/**
- * Decides which idempotency key goes with a payment request.
- *
- * The server pays once per key. So a retry of the same payment must reuse its
- * key (the first try may have gone through), and a payment whose details were
- * changed is a different payment and needs a new one.
- */
+/** Decides which idempotency key goes with a payment request. */
 export function createPaymentAttempt(newKey: () => string = newIdempotencyKey) {
   let key = newKey();
   let sentPayload: string | null = null;

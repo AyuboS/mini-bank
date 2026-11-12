@@ -1,13 +1,6 @@
 import { ApiRequestError } from '../api/client';
 
-/**
- * Turns a backend error code into something a person can act on.
- *
- * The server's codes are stable and machine-readable, which is right for an
- * API and wrong for a human: "INSUFFICIENT_FUNDS" is not a sentence. Anything
- * without an entry here falls back to the server's own message, which is
- * already written in plain language.
- */
+/** Turns a backend error code into something a person can act on. */
 const MESSAGES: Record<string, { title: string; body?: string }> = {
   AUTH_INVALID_CREDENTIALS: {
     title: 'Incorrect username or password',
@@ -186,13 +179,7 @@ const MESSAGES: Record<string, { title: string; body?: string }> = {
   INTERNAL_ERROR: { title: 'Something went wrong', body: 'Please try again in a moment.' },
 };
 
-/**
- * Must a retry of this failed payment reuse its idempotency key?
- *
- * Yes whenever the server may have acted on the request: it is still working
- * on it, or no readable answer came back at all (network failure, bad gateway).
- * A coded refusal is final, so the next attempt may start with a new key.
- */
+/** Must a retry of this failed payment reuse its idempotency key? */
 export function mustKeepIdempotencyKey(error: unknown): boolean {
   if (error instanceof ApiRequestError) {
     return error.code === 'IDEMPOTENCY_REQUEST_IN_PROGRESS';

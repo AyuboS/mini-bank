@@ -1,39 +1,4 @@
-/* =============================================================================
-   Surfaces
-   -----------------------------------------------------------------------------
-   The four things a rectangle in MBank can be.
-
-   The previous version of this file built ten-layer glass: a translucent body,
-   a backdrop blur, saturation, refraction, a sheen, two differently-coloured
-   edges, grain and two shadows. It was well made and it was wrong. Everything
-   was equally see-through, so nothing was in front of anything; the balance and
-   the settings panel had the same visual weight; and every pane cost the
-   compositor a full-viewport blur.
-
-   What replaced it is duller on purpose:
-
-     background   one opaque colour from the token file
-     border       one hairline
-     radius       one step from the scale
-     shadow       usually none
-
-   Hierarchy now comes from the three things that actually carry it — how much
-   space is around a thing, how large its type is, and whether it is filled with
-   ink — rather than from how thick its glass is.
-
-   WHERE TRANSLUCENCY SURVIVES
-   ---------------------------
-   Four places, and they share one property: content scrolls underneath them, so
-   the blur is doing a job rather than a look.
-
-     .surface--chrome   the sidebar, the mobile top bar, the bottom navigation
-     .sheet             a bottom sheet or dialog, over its scrim
-     .toast             a notification over whatever it interrupted
-     .palette           the search overlay
-
-   Everything else is opaque. If you are about to add a fifth, it is probably a
-   card and should be `.surface`.
-   ========================================================================== */
+/* Surfaces */
 
 .surface,
 .surface--chrome,
@@ -50,25 +15,12 @@
     transform var(--dur-control) var(--ease);
 }
 
-/* -----------------------------------------------------------------------------
-   Content. Cards, panels, list containers, forms — most of the product.
-
-   No shadow. A white card on a light-grey ground separates by value alone, and
-   adding a shadow to something that is already legible is how an interface
-   starts to look busy.
-   -------------------------------------------------------------------------- */
+/* ----------------------------------------------------------------------------- Content. */
 .surface {
   background-color: var(--surface);
 }
 
-/* -----------------------------------------------------------------------------
-   Chrome. Navigation, and only navigation.
-
-   Translucent with a modest blur, because the page genuinely scrolls beneath
-   it and a solid bar would cut the content off with a hard line. 16px, not
-   40px: enough to keep a headline from showing through as readable text, not
-   enough to turn the page into fog or to cost a phone its frame budget.
-   -------------------------------------------------------------------------- */
+/* ----------------------------------------------------------------------------- Chrome. */
 .surface--chrome {
   background-color: var(--surface-chrome);
   backdrop-filter: blur(16px) saturate(150%);
@@ -76,12 +28,7 @@
   border-color: var(--line);
 }
 
-/* -----------------------------------------------------------------------------
-   Raised. Dialogs, sheets, popovers — the things that sit above the page.
-
-   This is where the shadow budget goes. It is the only surface whose depth is
-   information: it says "this is in front, deal with it first".
-   -------------------------------------------------------------------------- */
+/* ----------------------------------------------------------------------------- Raised. */
 .surface--raised {
   border-radius: var(--radius-xl);
   background-color: var(--surface);
@@ -89,32 +36,14 @@
   box-shadow: var(--shadow-xl);
 }
 
-/* -----------------------------------------------------------------------------
-   Hero. One per screen, and usually the balance.
-
-   Filled with ink rather than tinted, which is the single most effective way to
-   make one block on a page unmistakably the first thing read. In dark mode the
-   fill inverts to white — a light block in a dark room draws the eye exactly as
-   a dark block does in a light one.
-   -------------------------------------------------------------------------- */
+/* ----------------------------------------------------------------------------- Hero. */
 .surface--hero {
   border-radius: var(--radius-xl);
   background-color: var(--surface-inverse);
   border-color: transparent;
   color: var(--ink-on-inverse);
 
-  /*
-     The hero re-points the status colours at its own background.
-
-     This is the trap in an inverting surface: --positive is tuned for contrast
-     against the page, and the hero is the one block whose background is the
-     opposite of the page. On the light theme's near-black hero the light green
-     (#06895A) drops to 1.9:1; on the dark theme's near-white hero the dark
-     theme's green does the same in the other direction. Redefining the tokens
-     here rather than overriding every rule means `.amount--in`, badges and
-     anything else that consumes them are all corrected at once, and a new
-     component placed on the hero inherits the fix without knowing about it.
-  */
+  /* The hero re-points the status colours at its own background. */
   --positive: #2FBE86;
   --warning: #E0A83A;
   --danger: #FF8367;
@@ -141,24 +70,11 @@
   color: var(--ink-on-inverse);
 }
 
-/*
-   Two class names, to outrank the rule above.
-
-   `.surface--hero .amount` is two selectors and beats a bare `.amount--in`, so
-   without this the hero would repaint an incoming amount as ordinary ink and
-   quietly lose the one piece of colour on the block that carries meaning. The
-   value comes from the hero's own --positive, redefined above.
-*/
+/* Two class names, to outrank the rule above. */
 .surface--hero .amount.amount--in { color: var(--positive); }
 .surface--hero .amount.amount--out { color: var(--ink-on-inverse); }
 
-/* =============================================================================
-   Response to the pointer
-   -----------------------------------------------------------------------------
-   Two states, both quiet. A row that lights up when you hover it is telling you
-   it can be opened; a row that also grows, glows and lifts is telling you the
-   designer was enjoying themselves.
-   ========================================================================== */
+/* Response to the pointer */
 
 .surface--interactive {
   cursor: pointer;
@@ -194,18 +110,7 @@
   transform: translateY(0);
 }
 
-/* =============================================================================
-   Wells
-   -----------------------------------------------------------------------------
-   A shape cut into a surface rather than laid on top: input fields, segmented
-   controls, code blocks. Progress tracks use --track, which is one step darker
-   again — see tokens.css.
-
-   Drawn as a flat darker fill, not as an inset shadow. The old inset-lighting
-   trick made a hollow out of a pane of glass; against an opaque surface a
-   simple change of value reads as recessed and survives being scaled, printed
-   and rendered at 1x.
-   ========================================================================== */
+/* Wells */
 
 .well {
   border-radius: var(--radius-md);
@@ -213,13 +118,7 @@
   border: 1px solid transparent;
 }
 
-/* =============================================================================
-   Focus
-   -----------------------------------------------------------------------------
-   One ring, everywhere, never removed. The two-stop ring — a spacer in the
-   surface colour, then the accent — is what lets a single token read on a white
-   card, on a dark card and on the ink-filled hero block alike.
-   ========================================================================== */
+/* Focus */
 
 .surface:focus-visible,
 .surface--chrome:focus-visible,
@@ -230,12 +129,7 @@
   box-shadow: var(--focus-ring);
 }
 
-/* =============================================================================
-   Touch
-   -----------------------------------------------------------------------------
-   No cursor means no hover. Without this a tapped card keeps its hover state
-   until something else is touched, which reads as a stuck selection.
-   ========================================================================== */
+/* Touch */
 
 @media (hover: none) {
   .surface--interactive:hover,
@@ -266,12 +160,7 @@
   }
 }
 
-/* =============================================================================
-   No backdrop-filter
-   -----------------------------------------------------------------------------
-   Some builds ship it disabled, and a print context has never had it. The four
-   translucent surfaces fall back to opaque rather than to nearly invisible.
-   ========================================================================== */
+/* No backdrop-filter */
 
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .surface--chrome {

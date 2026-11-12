@@ -1,22 +1,9 @@
-/**
- * Light and dark.
- *
- * The preference is read from storage, and from the operating system when
- * storage has nothing to say. The stored value is applied by a small script in
- * index.html before first paint, so this module never has to deal with a flash
- * of the wrong theme — it only ever reads back what that script decided, and
- * writes the customer's choice for next time.
- */
+/** Light and dark. */
 export type Theme = 'light' | 'dark';
 
 const STORAGE_KEY = 'minibank.theme';
 
-/**
- * The theme in effect.
- *
- * Read off the document rather than recomputed, so this can never disagree with
- * what is actually on screen.
- */
+/** The theme in effect. */
 export function currentTheme(): Theme {
   return document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
 }

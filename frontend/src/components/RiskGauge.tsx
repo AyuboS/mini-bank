@@ -11,14 +11,7 @@ const TONE = {
   BLOCK: { stroke: 'rgb(255,133,133)', glow: 'rgba(255,133,133,0.35)' },
 } as const;
 
-/**
- * The risk score as a thin circular arc.
- *
- * A ring rather than a bar deliberately: a horizontal bar that fills with
- * colour reads as a game health meter, which is the wrong register entirely for
- * telling somebody their payment is being reviewed. The arc is quiet, and the
- * number stays the thing you read.
- */
+/** The risk score as a thin circular arc. */
 export function RiskGauge({ score, decision, size = 108 }: RiskGaugeProps) {
   const tone = TONE[decision];
   const stroke = 6;

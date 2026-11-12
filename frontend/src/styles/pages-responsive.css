@@ -37,13 +37,7 @@
    The pieces that exist only on the home screen.
    ========================================================================== */
 
-/*
-   The month's change, beside the balance.
-
-   A tinted pill rather than coloured text, so it reads as a separate fact and
-   not as part of the figure. On the ink block the tint is a wash of white, since
-   a soft green on near-black is neither legible nor calm.
-*/
+/* The month's change, beside the balance. */
 .delta {
   display: inline-flex;
   align-items: center;
@@ -63,26 +57,13 @@
 
 [data-theme='dark'] .delta { background: rgba(11, 13, 18, 0.08); }
 
-/* -----------------------------------------------------------------------------
-   Favourite payees.
-
-   A horizontal strip of faces. It scrolls rather than wrapping, because a
-   second row of payees pushes the transaction list below the fold on a phone
-   for no gain — the people somebody sends to most are the first three.
-   -------------------------------------------------------------------------- */
+/* ----------------------------------------------------------------------------- Favourite payees. */
 
 /* -----------------------------------------------------------------------------
    The home editor.
    -------------------------------------------------------------------------- */
 
-/* -----------------------------------------------------------------------------
-   The greeting row.
-
-   "Good evening, Ayubkhon" and a button do not share 390px, and letting the row
-   wrap leaves the button stranded on a line of its own. Below 620px the label is
-   dropped and the control becomes the icon it already carries — the accessible
-   name is on the button either way.
-   -------------------------------------------------------------------------- */
+/* ----------------------------------------------------------------------------- The greeting row. */
 
 .pager {
   display: flex;

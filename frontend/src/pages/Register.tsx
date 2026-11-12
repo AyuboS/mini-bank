@@ -17,24 +17,7 @@ const PASSWORD_HINT = 'At least 12 characters, with upper and lower case, a digi
 /** Where in the sign-up somebody is. Email-only registration skips straight to `details`. */
 type Step = 'method' | 'verify' | 'details';
 
-/**
- * Opening an account.
- *
- * ## Why the phone is verified before the account exists
- *
- * A verified number is a sign-in credential: anyone holding it can request a
- * code and get in. So it has to be proven, and the honest place to prove it is
- * before the account is created rather than after — otherwise there is a window
- * in which an account exists claiming a number nobody has demonstrated control
- * of, and cleaning that up later is far harder than not creating it.
- *
- * The proof travels as a short-lived ticket handed out when the code checks out
- * and redeemed exactly once at registration. Without it, knowing that a number
- * had just been verified would be enough to register against it.
- *
- * Email registration needs no such step: the address is verified afterwards, by
- * a link, because an unverified email is not a credential and blocks nothing.
- */
+/** Opening an account. */
 export function RegisterPage() {
   const { register } = useAuth();
   const navigate = useNavigate();

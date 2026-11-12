@@ -10,19 +10,7 @@ import { toFriendlyError } from '../utils/errors';
 
 type Step = 'phone' | 'code' | 'password' | 'done';
 
-/**
- * Recovering a forgotten password.
- *
- * Three steps, and the middle one exists for a reason worth stating: the code is
- * exchanged for a short-lived, single-use ticket the moment it is proven, rather
- * than being held by the browser while somebody types a new password. A code
- * that stays valid across that gap is a code that can be attacked across it.
- *
- * The first step answers identically whether or not the number is registered.
- * That is deliberate, and it is why the screen says "if there is an account"
- * rather than "we sent you a code" — a reset form that confirms which numbers
- * exist is a customer list an attacker can enumerate one guess at a time.
- */
+/** Recovering a forgotten password. */
 export function ForgotPasswordPage() {
   const navigate = useNavigate();
 

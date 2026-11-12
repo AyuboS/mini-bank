@@ -33,14 +33,7 @@ const FAQ = [
   },
 ];
 
-/**
- * Support.
- *
- * A ticket goes to a human queue. Nothing here generates a reply, and the
- * interface does not pretend otherwise: an automated "we understand your
- * concern" would be worse than silence, because it would make somebody with an
- * urgent problem believe they had been heard.
- */
+/** Support. */
 export function SupportPage() {
   const tickets = useAsync(() => supportApi.list(), []);
   const [composing, setComposing] = useState(false);

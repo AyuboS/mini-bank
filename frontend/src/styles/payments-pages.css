@@ -47,13 +47,7 @@
   border-top: 1px solid var(--line);
 }
 
-/* -----------------------------------------------------------------------------
-   The review list, shown before anything is confirmed.
-
-   Fees are always on it, even when they are zero — see the Transfer screen. A
-   zero fee stated is a promise; a fee row that only appears when there is one
-   is a surprise waiting to happen.
-   -------------------------------------------------------------------------- */
+/* ----------------------------------------------------------------------------- The review list, shown before anything is confirmed. */
 .review { display: flex; flex-direction: column; gap: 0; }
 
 .review__row {

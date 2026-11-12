@@ -10,14 +10,7 @@ import { EmptyState, ErrorState } from '../../components/States';
 import { RequestCard } from './RequestCard';
 import { RequestSheet } from './RequestSheet';
 
-/**
- * Payment requests.
- *
- * The screen is split by direction because the two sides can do entirely
- * different things: a request you received can be paid or declined, and one you
- * sent can only be withdrawn. Showing both in one list would mean showing
- * controls that do nothing for half the rows.
- */
+/** Payment requests. */
 export function RequestsPage() {
   const [tab, setTab] = useState<'incoming' | 'outgoing'>('incoming');
   const [composing, setComposing] = useState(false);

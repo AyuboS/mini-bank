@@ -1,15 +1,7 @@
 import type { CurrencyCode } from '../api/types';
 import { formatMoney } from './format';
 
-/**
- * Money arithmetic for the browser.
- *
- * Amounts are converted to whole minor units (cents) before any maths, because
- * decimal fractions cannot be added exactly as floating-point numbers:
- * 0.1 + 0.2 is 0.30000000000000004. Whole numbers add exactly.
- *
- * All three supported currencies (EUR, USD, GBP) have two decimal places.
- */
+/** Money arithmetic for the browser. */
 
 const AMOUNT = /^(-?)(\d+)(?:\.(\d+))?$/;
 

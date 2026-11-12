@@ -26,12 +26,7 @@ function time(iso: string): string {
   return new Date(iso).toLocaleTimeString(LOCALE, { hour: '2-digit', minute: '2-digit' });
 }
 
-/**
- * Transactions as ledger lines: date, description, category, amount.
- *
- * Four columns on a wide screen. On a phone the date and category move under
- * the description, so the amount keeps its own column and stays aligned.
- */
+/** Transactions as ledger lines: date, description, category, amount. */
 export function TransactionList({ transactions, onSelect, groupedByDay = false }: TransactionListProps) {
   return (
     <ul className="ledger">

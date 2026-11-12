@@ -1,10 +1,4 @@
-/* =============================================================================
-   Screens
-   -----------------------------------------------------------------------------
-   The pieces belonging to individual screens that are not general enough for
-   components.css and not layout enough for pages.css. Loaded last, so anything
-   here can refine what came before without fighting it on specificity.
-   ========================================================================== */
+/* Screens */
 
 /* =============================================================================
    Small shared pieces
@@ -84,14 +78,7 @@
 .copy-btn:hover { color: var(--ink); border-color: var(--line-strong); }
 .copy-btn svg { width: 13px; height: 13px; }
 
-/*
-   Said plainly, wherever demo credentials are shown.
-
-   MBank has no card processor behind it. A card number that looks real and is
-   not is the one thing in this product that could genuinely mislead somebody,
-   so every screen that reveals one says so on the screen itself rather than in
-   a tooltip or a README.
-*/
+/* Said plainly, wherever demo credentials are shown. */
 .simulated-note {
   display: flex;
   align-items: flex-start;

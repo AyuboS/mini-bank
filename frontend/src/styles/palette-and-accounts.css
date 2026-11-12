@@ -1,9 +1,4 @@
-/* =============================================================================
-   Command palette
-   -----------------------------------------------------------------------------
-   One of the four places translucency survives: it floats over whatever screen
-   was open, and the blur is what keeps it legible over an arbitrary background.
-   ========================================================================== */
+/* Command palette */
 
 .palette-scrim {
   position: fixed;

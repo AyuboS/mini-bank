@@ -8,13 +8,7 @@ interface ProgressProps {
   size?: 'sm' | 'md';
 }
 
-/**
- * A filled cut into the glass.
- *
- * `role="progressbar"` with the three value attributes, so the figure is
- * available to a screen reader — a bar is a picture of a number, and without
- * them the number is only available to people who can see the picture.
- */
+/** A filled cut into the glass. */
 export function Progress({ percent, tone = 'brand', label, size = 'md' }: ProgressProps) {
   const clamped = Math.min(100, Math.max(0, Math.round(percent)));
   return (

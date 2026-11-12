@@ -13,32 +13,7 @@ interface OtpInputProps {
   label?: string;
 }
 
-/**
- * A six-digit code entry.
- *
- * ## One input, drawn as six boxes
- *
- * The obvious build is six `<input maxlength="1">` elements, and it is a trap.
- * Six inputs means six focus states to shuttle between, backspace-into-the-
- * previous-box logic, paste that lands entirely in the first box, and — the one
- * that actually matters — SMS autofill that fills box one with the whole code
- * and boxes two through six with nothing, because the platform sees six
- * unrelated fields.
- *
- * So this is a single `<input>` holding all six digits, made invisible and
- * stretched across the row, with six styled `<div>`s painted underneath it. The
- * platform sees one field of type `one-time-code`:
- *
- *   - iOS and Android offer the code from the SMS above the keyboard, and
- *     filling it fills everything at once;
- *   - paste works, because there is one value to paste into;
- *   - backspace works, because it is just a text field;
- *   - selection, undo and the caret all behave, because none of them have been
- *     reimplemented.
- *
- * The caret is hidden and the box for the next digit is highlighted instead,
- * which is the only piece of the illusion that needs maintaining.
- */
+/** A six-digit code entry. */
 export function OtpInput({
   value,
   onChange,

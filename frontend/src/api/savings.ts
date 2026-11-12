@@ -15,13 +15,7 @@ export interface ContributionBody {
   amount: string;
 }
 
-/**
- * Savings goals.
- *
- * Contributions and withdrawals are POSTs against the goal rather than PATCHes
- * of a balance, because there is no balance field to set: each one performs a
- * real settled transfer between two of the customer's own accounts.
- */
+/** Savings goals. */
 export const savingsApi = {
   list: () => api.get<SavingsGoalResponse[]>('/api/v1/savings/goals'),
 

@@ -12,17 +12,7 @@ interface VerificationPanelProps {
   onVerified: () => Promise<void> | void;
 }
 
-/**
- * Where a customer proves their phone number and email address.
- *
- * A verified phone is a sign-in credential, so this panel is the only way one
- * comes into existence outside registration: the profile form can change the
- * number, but changing it clears the verified flag server-side, and only a code
- * sent to the handset can set it again.
- *
- * The email side is informational rather than gating — an unverified address
- * blocks nothing — which is why it gets a quieter treatment than the phone.
- */
+/** Where a customer proves their phone number and email address. */
 export function VerificationPanel({ user, onVerified }: VerificationPanelProps) {
   const toast = useToast();
 

@@ -26,12 +26,7 @@ export function Money({ amount, currency, direction, muted }: MoneyProps) {
   );
 }
 
-/**
- * The balance, with its minor units set smaller.
- *
- * At display size the cents are noise; shrinking them lets the eye land on the
- * figure that matters without losing the precision.
- */
+/** The balance, with its minor units set smaller. */
 export function DisplayMoney({ amount, currency }: { amount: string | number; currency: CurrencyCode }) {
   const [major, minor] = splitMoney(amount, currency);
   return (

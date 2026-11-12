@@ -5,12 +5,7 @@
    ========================================================================== */
 
 @media (max-width: 767px) {
-  /*
-   * iOS Safari zooms the viewport whenever a focused input is under 16px, and it
-   * does not zoom back out. Every field is therefore 16px on a phone; the
-   * alternative is a customer having to pinch their way back after typing an
-   * amount.
-   */
+  /* iOS Safari zooms the viewport whenever a focused input is under 16px, and it does not zoom back out. */
   .field__input,
   .field__select { font-size: 16px; }
 
@@ -55,28 +50,10 @@
   to { transform: translateY(0); }
 }
 
-/* =============================================================================
-   Touch targets
-   -----------------------------------------------------------------------------
-   Keyed on `pointer: coarse`, not on viewport width. The constraint is the
-   finger, not the screen: a 1280px-wide touchscreen needs 44px targets and a
-   360px browser window on a laptop does not. Viewport queries get this backwards
-   in both directions.
-
-   44px is the smallest target a finger reliably hits. Where an element is
-   visually smaller than that on purpose — a 6px carousel dot, a text link — the
-   *hit area* is enlarged around it rather than the thing itself, so the design
-   is unchanged and only the touchable region grows.
-   ========================================================================== */
+/* Touch targets */
 
 @media (pointer: coarse) {
-  /*
-     Two class names rather than one, deliberately. The `--sm` variants are
-     declared in a later stylesheet, so a single-class rule here would lose on
-     source order — and a fix that depends on which file happens to load last
-     breaks the first time the imports are reordered. Matching both classes wins
-     on specificity instead, which is stable.
-  */
+  /* Two class names rather than one, deliberately. */
   .icon-btn,
   .icon-btn.icon-btn--sm {
     width: 44px;
@@ -93,12 +70,7 @@
     height: 44px;
   }
 
-  /*
-     A text link is 20px tall because that is its line box. Negative margins
-     cancel the padding so the link still sits on its own baseline and the layout
-     does not shift — the target grows into the space around it rather than
-     pushing its neighbours apart.
-  */
+  /* A text link is 20px tall because that is its line box. */
   .btn-quiet {
     padding: 12px var(--space-2);
     margin: -12px calc(var(--space-2) * -1);

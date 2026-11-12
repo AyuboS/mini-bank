@@ -2,19 +2,7 @@ import type { CurrencyCode, InsightResponse } from '../api/types';
 import { CATEGORY_META } from './categories';
 import { formatMoney } from './format';
 
-/**
- * Turns an insight's figures into the sentence a customer reads.
- *
- * The wording lives here rather than on the server for two reasons. Money has to
- * be formatted with the reader's own locale, and a server that formats it
- * produces "€5307.92" next to the client's "€6,650.50" on the same screen.
- * And every sentence a server hard-codes is a sentence no translation can reach;
- * keeping them in one module here is what makes the interface translatable
- * later without touching the analytics.
- *
- * Every string below is a statement about numbers the server computed from real
- * transactions. Nothing here adds a claim the data does not support.
- */
+/** Turns an insight's figures into the sentence a customer reads. */
 export function describeInsight(
   insight: InsightResponse,
   currency: CurrencyCode,

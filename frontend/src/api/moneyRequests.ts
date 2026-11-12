@@ -11,12 +11,7 @@ export interface MoneyRequestBody {
   expiresInDays?: number;
 }
 
-/**
- * Payment requests.
- *
- * A request moves no money by existing. Only the payer can settle one, and doing
- * so creates an ordinary transfer from the payer's own account.
- */
+/** Payment requests. */
 export const moneyRequestsApi = {
   outgoing: () => api.get<MoneyRequestResponse[]>('/api/v1/money-requests/outgoing'),
 

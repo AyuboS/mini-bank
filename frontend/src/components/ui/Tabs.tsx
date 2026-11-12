@@ -20,28 +20,7 @@ interface TabsProps {
   label?: string;
 }
 
-/**
- * A segmented control.
- *
- * Real `role="tab"` semantics rather than styled buttons: without them a screen
- * reader announces a row of unrelated buttons with no indication that one is
- * selected or that they control the same region.
- *
- * ## Why the pill is measured
- *
- * The selected pill is one absolutely-positioned element sliding under the
- * labels, so the movement is a transform on a single node rather than a
- * background repaint on each. An earlier version placed it arithmetically —
- * `width: (100% - 8px) / count`, `translateX(index * 100%)` — which is correct
- * only when every tab is the same width. They are not: the labels differ, some
- * carry a count badge, and the strip is a scroll container whose children
- * cannot shrink below their content. The pill therefore sat under "All" while
- * being as wide as "Completed".
- *
- * Measuring the active tab is the version that cannot drift. It costs one
- * layout read per selection change, plus a `ResizeObserver` so the pill follows
- * a strip that reflows — a font finishing loading, or the window narrowing.
- */
+/** A segmented control. */
 export function Tabs({ tabs, active, onChange, label }: TabsProps) {
   const activeIndex = Math.max(0, tabs.findIndex((tab) => tab.id === active));
   const stripRef = useRef<HTMLDivElement | null>(null);

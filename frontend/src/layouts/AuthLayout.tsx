@@ -10,18 +10,7 @@ interface AuthLayoutProps {
   footer?: ReactNode;
 }
 
-/**
- * The shell for signing in and registering.
- *
- * Two halves: the product states what it is at poster scale on the left, and
- * the form has the right-hand side entirely to itself. The single centred box
- * this replaced is what every framework produces by default, and it says
- * nothing at all about the product behind it.
- *
- * Below 900px the poster is dropped rather than stacked. On a phone the form is
- * the only thing anybody came for, and a marketing panel above it just means
- * scrolling past a headline to reach the password field.
- */
+/** The shell for signing in and registering. */
 export function AuthLayout({ title, subtitle, children, footer }: AuthLayoutProps) {
   return (
     <div className="auth-page">

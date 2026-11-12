@@ -7,17 +7,7 @@ interface SkeletonProps {
   className?: string;
 }
 
-/**
- * A shimmering pane standing in for content that has not arrived.
- *
- * Skeletons rather than a spinner because they say something a spinner cannot:
- * how much is coming and roughly where it will be, so the layout does not jump
- * when it lands. The shimmer is a moving gradient, which stops on
- * `prefers-reduced-motion` and leaves a static block.
- *
- * Marked `aria-hidden`: the loading state is announced once by the region that
- * owns it, not by every placeholder rectangle inside it.
- */
+/** A shimmering pane standing in for content that has not arrived. */
 export function Skeleton({ width = '100%', height = '1rem', circle = false, className = '' }: SkeletonProps) {
   return (
     <span
@@ -39,12 +29,7 @@ export function SkeletonLines({ lines = 3 }: { lines?: number }) {
   );
 }
 
-/**
- * A list of rows that have not loaded.
- *
- * Wrapped in a live region so a screen reader hears "Loading" once, instead of
- * silence followed by content appearing from nowhere.
- */
+/** A list of rows that have not loaded. */
 export function SkeletonRows({ rows = 5 }: { rows?: number }) {
   return (
     <div className="stack" role="status" aria-busy="true">

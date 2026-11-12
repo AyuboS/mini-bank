@@ -23,13 +23,7 @@
 
 .analytics__note { font-size: var(--text-small); color: var(--ink-3); }
 
-/* =============================================================================
-   The daily chart
-   -----------------------------------------------------------------------------
-   Flat bars in two colours, in a sunken track. A gradient on a 6px-wide bar is
-   three colours nobody can distinguish, and it costs the chart the one thing it
-   has to do: let two series be told apart at a glance.
-   ========================================================================== */
+/* The daily chart */
 
 .daily-chart {
   display: flex;

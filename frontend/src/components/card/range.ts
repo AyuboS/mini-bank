@@ -1,15 +1,6 @@
 import type { CardDesign, CardType } from '../../api/types';
 
-/**
- * What a card is made of.
- *
- * Derived rather than stored. The server's `design` enum already encodes the
- * material one-to-one — CARBON is the metal card, HOLOGRAPHIC is the seasonal
- * one, everything else is polycarbonate — so a `material` column would be a
- * second source of truth for a fact the first one already carries, and the two
- * would eventually disagree. Deriving it here keeps the presentation honest and
- * needs no migration.
- */
+/** What a card is made of. */
 export type CardMaterial = 'plastic' | 'metal' | 'special' | 'virtual';
 
 export interface CardRangeEntry {
@@ -47,13 +38,7 @@ export const CARD_RANGE_ORDER: CardDesign[] = [
   'HOLOGRAPHIC',
 ];
 
-/**
- * The material a given card is actually made of.
- *
- * A virtual card has no material — it is a number, not an object — so the type
- * wins over the design. Saying "Metal" on a card that will never be printed
- * would be a small lie in the one part of the interface that has to be exact.
- */
+/** The material a given card is actually made of. */
 export function materialOf(design: CardDesign, type: CardType): CardMaterial {
   if (type === 'VIRTUAL') return 'virtual';
   return CARD_RANGE[design].material;

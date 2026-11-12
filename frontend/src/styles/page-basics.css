@@ -1,10 +1,4 @@
-/* =============================================================================
-   Pages
-   -----------------------------------------------------------------------------
-   Layouts and one-off pieces belonging to individual screens. Everything here
-   consumes tokens and the surfaces in surfaces.css; nothing here invents a
-   value.
-   ========================================================================== */
+/* Pages */
 
 /* =============================================================================
    Page and section headers
@@ -23,14 +17,7 @@
 .page__title { font-size: var(--text-display); letter-spacing: -0.034em; overflow-wrap: anywhere; }
 .page__subtitle,
 .page-header__subtitle { color: var(--ink-2); max-width: 62ch; margin-top: var(--space-2); }
-/*
-   Page actions.
-
-   `flex-shrink: 0` keeps two buttons on one line beside the title while there
-   is room for them. Below 620px there is not: two labelled buttons plus a gap
-   exceed 288px of usable width at 320, so the group takes the full width on its
-   own line and the buttons share it. This was a real overflow on Requests.
-*/
+/* Page actions. */
 .page-header__actions { display: flex; gap: var(--space-3); flex-shrink: 0; flex-wrap: wrap; }
 
 @media (max-width: 620px) {
@@ -62,13 +49,7 @@
 .list-panel { overflow: hidden; display: flex; flex-direction: column; }
 .list-panel > * + * { border-top: 1px solid var(--line); }
 
-/* =============================================================================
-   The balance
-   -----------------------------------------------------------------------------
-   The one block on the dashboard filled with ink. Everything about it is size
-   and space: a quiet label, a very large figure, a row of facts, and the two
-   actions somebody came to the app to take.
-   ========================================================================== */
+/* The balance */
 
 .hero {
   padding: var(--space-7) var(--space-6);
@@ -89,13 +70,7 @@
 .balance__minor { font-size: 0.5em; font-weight: 600; opacity: 0.55; letter-spacing: -0.02em; }
 .balance--sm { font-size: clamp(1.75rem, 4vw, 2.25rem); }
 
-/* =============================================================================
-   Grids
-   -----------------------------------------------------------------------------
-   `minmax(min(X, 100%), 1fr)` throughout. The inner `min()` is what stops a
-   grid track being wider than its container at 320px — the single most common
-   cause of a page that scrolls sideways on a phone.
-   ========================================================================== */
+/* Grids */
 
 .analytics-grid {
   display: grid;
@@ -116,13 +91,7 @@
   gap: var(--space-4);
 }
 
-/* =============================================================================
-   Transactions
-   -----------------------------------------------------------------------------
-   A feed, not a table. Each row is a category glyph, what it was, and what it
-   cost — read left to right in one pass, with the amount right-aligned so a
-   column of them lines up on the decimal point.
-   ========================================================================== */
+/* Transactions */
 
 .txn {
   display: flex;

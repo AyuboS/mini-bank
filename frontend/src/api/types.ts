@@ -7,13 +7,7 @@ export type TransferStatus = 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED' |
 export type EntryType = 'DEBIT' | 'CREDIT';
 export type AccountPurpose = 'SPENDING' | 'SAVINGS';
 
-/**
- * What a payment was for.
- *
- * Thirteen buckets, matching the server's enum exactly. SALARY, SAVINGS and
- * TRANSFER are structural rather than discretionary — see `CATEGORY_META` in
- * utils/categories.ts for which of them count as spending.
- */
+/** What a payment was for. */
 export const TRANSACTION_CATEGORIES = [
   'GROCERIES',
   'DINING',
@@ -107,12 +101,7 @@ export interface CardResponse {
   createdAt: string;
 }
 
-/**
- * What a card may be used for.
- *
- * Enforced server-side on every card operation. The switches here reflect that
- * state; they do not create it.
- */
+/** What a card may be used for. */
 export interface CardControls {
   onlinePayments: boolean;
   contactless: boolean;
@@ -149,12 +138,7 @@ export interface CardSpendingResponse {
 
 export type VerificationPurpose = 'LOGIN' | 'REGISTRATION' | 'CONTACT_VERIFICATION';
 
-/**
- * The answer to "send me a code".
- *
- * Carries no hint of whether an account exists at the destination — an unknown
- * number produces exactly this shape.
- */
+/** The answer to "send me a code". */
 export interface VerificationChallenge {
   destination: string;
   expiresAt: string;
@@ -389,13 +373,7 @@ export interface MonthlySummary {
   largest?: LargestTransaction;
 }
 
-/**
- * One observation about the customer's month.
- *
- * Carries figures rather than a finished sentence: the wording is composed on
- * this side, where the locale and the money formatter live. See
- * `describeInsight` in utils/insights.ts.
- */
+/** One observation about the customer's month. */
 export interface InsightResponse {
   kind: 'NET_POSITIVE' | 'NET_NEGATIVE' | 'TOP_CATEGORY' | 'SPENDING_UP' | 'SPENDING_DOWN' | string;
   tone: 'POSITIVE' | 'NEUTRAL' | 'ATTENTION';
@@ -549,12 +527,7 @@ export interface SupportTicketResponse {
   messages?: SupportMessage[];
 }
 
-/**
- * Confirmation of payee.
- *
- * A first name and last initial only — enough for a payer to notice a mistyped
- * digit, and not enough to turn the endpoint into a directory.
- */
+/** Confirmation of payee. */
 export interface PayeeLookupResponse {
   accountNumber: string;
   holderName: string;

@@ -12,14 +12,7 @@ interface BankCardProps {
   showStatus?: boolean;
 }
 
-/**
- * Everything the face needs.
- *
- * Deliberately not `CardResponse`: the picker in the order flow renders cards
- * that do not exist yet and have no id, account or created date. Taking the
- * smaller shape lets one component serve both without inventing a fake card to
- * preview one.
- */
+/** Everything the face needs. */
 export interface CardPresentation {
   design: CardDesign;
   network: CardNetwork;

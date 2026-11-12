@@ -20,14 +20,7 @@ const FREQUENCY_LABEL: Record<ScheduleFrequency, string> = {
   MONTHLY: 'Every month',
 };
 
-/**
- * Standing orders: scheduled and recurring payments.
- *
- * These execute for real. A background job puts each due order through the same
- * transfer path a manual payment uses, so limits, risk checks and the ledger all
- * apply — and a payment that fails is recorded and shown here rather than
- * retried silently.
- */
+/** Standing orders: scheduled and recurring payments. */
 export function ScheduledPage() {
   const toast = useToast();
   const orders = useAsync(() => scheduledApi.list(), []);

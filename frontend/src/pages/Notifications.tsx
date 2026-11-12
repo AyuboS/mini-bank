@@ -27,13 +27,7 @@ const ICONS: Record<NotificationType, typeof Bell> = {
   SYSTEM: Info,
 };
 
-/**
- * The notification feed.
- *
- * Entries are written by the same transaction that performed the underlying
- * action, so a notification cannot exist for a payment that was rolled back —
- * and a settled payment cannot silently produce none.
- */
+/** The notification feed. */
 export function NotificationsPage() {
   const navigate = useNavigate();
   const toast = useToast();
@@ -148,13 +142,7 @@ export function NotificationsPage() {
   );
 }
 
-/**
- * Where a notification leads.
- *
- * Returns undefined rather than a guess for anything it does not recognise: a
- * notification that navigates somewhere unrelated is worse than one that only
- * marks itself read.
- */
+/** Where a notification leads. */
 function destinationFor(entry: NotificationResponse): string | undefined {
   switch (entry.entityType) {
     case 'Transfer':

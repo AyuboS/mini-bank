@@ -1,12 +1,6 @@
 import { useEffect, useState } from 'react';
 
-/**
- * Tracks a media query from JavaScript.
- *
- * Only for cases where the *markup* has to differ, not merely the styling — a
- * carousel on a phone against a grid on a desktop, for instance. Anything that
- * can be expressed as a style belongs in CSS, where it costs no render.
- */
+/** Tracks a media query from JavaScript. */
 export function useMediaQuery(query: string): boolean {
   const [matches, setMatches] = useState(() =>
     typeof window !== 'undefined' ? window.matchMedia(query).matches : false,

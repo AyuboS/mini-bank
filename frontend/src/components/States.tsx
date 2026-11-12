@@ -9,12 +9,7 @@ interface EmptyStateProps {
   action?: ReactNode;
 }
 
-/**
- * Nothing here yet.
- *
- * An empty state says two things: that the screen is working, and what would
- * put something in it. A blank panel says neither, and reads as a failure.
- */
+/** Nothing here yet. */
 export function EmptyState({ title, body, icon, action }: EmptyStateProps) {
   return (
     <div className="state">
@@ -32,12 +27,7 @@ interface ErrorStateProps {
   onRetry?: () => void;
 }
 
-/**
- * A failure the customer can do something about, rather than a red wall.
- *
- * Announced as an alert, because a screen that silently swaps its content for an
- * error leaves a screen-reader user believing it is still loading.
- */
+/** A failure the customer can do something about, rather than a red wall. */
 export function ErrorState({ title = "We couldn't load this", body, onRetry }: ErrorStateProps) {
   return (
     <div className="state" role="alert">

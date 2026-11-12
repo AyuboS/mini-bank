@@ -28,25 +28,7 @@ function monthKey(iso: string): string {
   return iso.slice(0, 7);
 }
 
-/**
- * Finds the recurring payments in a run of transactions.
- *
- * ## What this is, and what it is not
- *
- * MBank has no merchant registry and no subscription feed from a card network,
- * so this is inference over the customer's own settled outgoing payments: the
- * same description, in at least two different months, for an amount that does
- * not move much. That is enough to surface Netflix and a gym membership, which
- * is the useful half.
- *
- * It will also miss things — a subscription billed annually, or one whose
- * description changes — and it can be wrong about a regular payment to the same
- * person. The screen presents it as "what looks recurring" rather than as a
- * list the bank knows to be subscriptions, because that is what it is.
- *
- * Amounts are compared as numbers rather than as decimals on purpose: this is
- * grouping and display, never arithmetic that lands in a balance.
- */
+/** Finds the recurring payments in a run of transactions. */
 export function findSubscriptions(transactions: TransactionResponse[]): Subscription[] {
   const groups = new Map<string, TransactionResponse[]>();
 

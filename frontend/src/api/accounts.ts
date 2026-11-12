@@ -11,13 +11,7 @@ export const accountsApi = {
 
   open: (currency: CurrencyCode) => api.post<AccountResponse>('/api/v1/accounts', { currency }),
 
-  /**
-   * Who an account number belongs to.
-   *
-   * Confirmation of payee: shown before a transfer is reviewed, so a mistyped
-   * digit is caught while it still costs nothing. Returns a first name and last
-   * initial only.
-   */
+  /** Who an account number belongs to. */
   /** Adds play money to one of your own spending accounts. Reuse the key when retrying the same top-up. */
   topUp: (id: string, amount: string, idempotencyKey: string) =>
     api.post<TransferResponse>(`/api/v1/accounts/${id}/top-up`, { amount }, { 'Idempotency-Key': idempotencyKey }),

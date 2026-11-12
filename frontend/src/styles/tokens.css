@@ -1,10 +1,4 @@
-/* =============================================================================
-   MBank design tokens. See docs/design-system.md for the reasoning.
-
-   The first block is the system. The "legacy aliases" block maps the old token
-   names onto it so screens that have not been rebuilt yet still render; each
-   alias is deleted when the last screen using it is rebuilt.
-   ========================================================================== */
+/* MBank design tokens. See docs/design-system.md for the reasoning. */
 
 :root {
   color-scheme: light;

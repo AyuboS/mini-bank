@@ -52,14 +52,7 @@
 .bank-card--cancelled,
 .bank-card--expired { --card-face: #6a675f; --card-ink: #f4f2ec; box-shadow: none; }
 
-/* =============================================================================
-   The carousel
-   -----------------------------------------------------------------------------
-   A scroll-snap track. Native scrolling means the swipe has the platform's own
-   momentum and rubber-banding, which no JavaScript carousel reproduces
-   convincingly, and it keeps working with a trackpad, a keyboard and a screen
-   reader for free.
-   ========================================================================== */
+/* The carousel */
 
 .card-carousel { position: relative; display: flex; flex-direction: column; gap: var(--space-4); }
 

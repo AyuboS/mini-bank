@@ -8,14 +8,7 @@ interface AsyncState<T> {
   error: FriendlyError | null;
 }
 
-/**
- * Runs an async loader and tracks the three states every screen needs.
- *
- * Centralising this is what keeps "loading", "failed" and "empty" from being
- * reinvented — slightly differently — on each page. The in-flight result is
- * discarded if the component unmounts first, so a slow response cannot set
- * state on something that is gone.
- */
+/** Runs an async loader and tracks the three states every screen needs. */
 export function useAsync<T>(loader: () => Promise<T>, deps: unknown[] = []) {
   const [state, setState] = useState<AsyncState<T>>({ data: null, loading: true, error: null });
   const mounted = useRef(true);
@@ -52,15 +45,7 @@ export function useAsync<T>(loader: () => Promise<T>, deps: unknown[] = []) {
     void run();
   }, [run]);
 
-  /**
-   * Replaces the loaded value, either outright or from the current one.
-   *
-   * The updater form matters for lists that are mutated in place: freezing one
-   * card should swap that card and leave the rest — and the surrounding scroll
-   * position — alone, rather than refetching the page and snapping back to the
-   * top. Taking the current value as an argument avoids the caller closing over
-   * a stale copy.
-   */
+  /** Replaces the loaded value, either outright or from the current one. */
   const setData = useCallback((next: T | ((current: T | null) => T | null)) => {
     setState((state) => ({
       data: typeof next === 'function' ? (next as (current: T | null) => T | null)(state.data) : next,

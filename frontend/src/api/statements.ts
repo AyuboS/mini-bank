@@ -2,12 +2,7 @@ import { api, downloadFile } from './client';
 import type { StatementResponse } from './types';
 import { browserTimezone } from '../utils/format';
 
-/**
- * Monthly account statements.
- *
- * The opening balance is derived from the ledger rather than stored, so
- * `openingBalance + totalIn − totalOut` always equals `closingBalance`.
- */
+/** Monthly account statements. */
 export const statementsApi = {
   get: (accountId: string, month: string) =>
     api.get<StatementResponse>(

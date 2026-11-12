@@ -20,23 +20,7 @@ function groupDigits(number: string): string {
   return number.replace(/(.{4})/g, '$1 ').trim();
 }
 
-/**
- * The card's sensitive details, behind an explicit reveal.
- *
- * ## Why the details are not fetched when the modal opens
- *
- * Opening a card to rename it should not put its number on a screen in an open
- * office. The reveal is a separate, deliberate action, it is rate limited and
- * audited server-side, and the request is a POST so it cannot be cached or
- * replayed from history.
- *
- * ## Why they are dropped again
- *
- * The values live in this component's state and nowhere else — no store, no
- * cache, no parent. They are cleared when the modal closes and, failing that,
- * after a minute, because the realistic failure is somebody revealing a number
- * and walking away from the desk rather than an attacker reading React state.
- */
+/** The card's sensitive details, behind an explicit reveal. */
 export function CardDetailsModal({ open, card, onClose }: CardDetailsModalProps) {
   const [details, setDetails] = useState<CardDetailsResponse | null>(null);
   const [busy, setBusy] = useState(false);

@@ -21,24 +21,11 @@ interface CategoryMeta {
   icon: ReactNode;
   /** The CSS variable the category is drawn in, in charts and on avatars. */
   colour: string;
-  /**
-   * Whether money in this category left the customer's control.
-   *
-   * Mirrors the server's own definition. Salary, savings and transfers are
-   * movement rather than consumption, and a spending chart that counts them
-   * teaches the customer to distrust the whole page.
-   */
+  /** Whether money in this category left the customer's control. */
   spending: boolean;
 }
 
-/**
- * Everything the interface needs to know about a category, in one table.
- *
- * Centralised so that Groceries is the same word, the same icon and the same
- * colour on the transaction list, the analytics chart and the budget page. The
- * alternative — each screen choosing for itself — is how the same category ends
- * up three colours.
- */
+/** Everything the interface needs to know about a category, in one table. */
 export const CATEGORY_META: Record<TransactionCategory, CategoryMeta> = {
   GROCERIES: { label: 'Groceries', icon: <ShoppingCart />, colour: 'var(--c-green)', spending: true },
   DINING: { label: 'Dining', icon: <UtensilsCrossed />, colour: 'var(--c-coral)', spending: true },
@@ -63,13 +50,7 @@ export const UNCATEGORISED: CategoryMeta = {
   spending: true,
 };
 
-/**
- * The metadata for a category, including the null case.
- *
- * Uncategorised is a real state, not a missing value: the server declines to
- * guess when it is not confident, and the interface shows that blank so the
- * customer can see it and correct it.
- */
+/** The metadata for a category, including the null case. */
 export function categoryMeta(category?: TransactionCategory | null): CategoryMeta {
   return category ? CATEGORY_META[category] ?? UNCATEGORISED : UNCATEGORISED;
 }

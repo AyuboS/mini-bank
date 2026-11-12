@@ -1,20 +1,6 @@
-/* =============================================================================
-   Components
-   -----------------------------------------------------------------------------
-   The controls MBank is assembled from. Everything here consumes tokens; nothing
-   here invents a colour, a radius or a duration.
-   ========================================================================== */
+/* Components */
 
-/* =============================================================================
-   Buttons
-   -----------------------------------------------------------------------------
-   Simple on purpose. A button is a rectangle with a label in it: one fill, one
-   radius, no gradient, no glow, no border that glows on hover. The variants
-   differ by how loud they are, and by nothing else.
-
-   Every button is at least 44px tall under `pointer: coarse` — see the foot of
-   this file — which is the smallest target a finger reliably hits.
-   ========================================================================== */
+/* Buttons */
 
 .btn {
   display: inline-flex;
@@ -44,14 +30,7 @@
 .btn-lg { height: 52px; padding: 0 var(--space-6); }
 .btn-block { width: 100%; }
 
-/* -----------------------------------------------------------------------------
-   Primary — the one action a screen is about.
-
-   A flat fill of the brand blue. The previous version painted a three-stop
-   gradient on a pseudo-element so it could be cross-faded on hover; it looked
-   expensive and it made every screen's main action the loudest thing on it,
-   which is only correct when the screen has exactly one.
-   -------------------------------------------------------------------------- */
+/* ----------------------------------------------------------------------------- Primary — the one action a screen is about. */
 .btn-primary {
   background: var(--primary);
   color: var(--primary-ink);
@@ -111,13 +90,7 @@
   border-color: var(--line-strong);
 }
 
-/* -----------------------------------------------------------------------------
-   Danger — anything that removes, cancels or freezes.
-
-   Tinted rather than filled. A solid red button is loud enough that people
-   press it to make it stop, which is the opposite of what a destructive control
-   should encourage.
-   -------------------------------------------------------------------------- */
+/* ----------------------------------------------------------------------------- Danger — anything that removes, cancels or freezes. */
 .btn-danger {
   background: var(--danger-soft);
   color: var(--danger);

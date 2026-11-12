@@ -1,10 +1,4 @@
-/* =============================================================================
-   Base
-   -----------------------------------------------------------------------------
-   Reset, document defaults, typography and the handful of utilities that earn
-   their place. Everything here is a decision about the whole product; anything
-   that belongs to one screen lives in pages.css.
-   ========================================================================== */
+/* Base */
 
 *,
 *::before,
@@ -71,18 +65,7 @@ p a,
 p a:hover,
 .link:hover { text-decoration-color: var(--ink); }
 
-/* -----------------------------------------------------------------------------
-   Money.
-
-   Two things, and both matter more than they sound.
-
-   `tabular-nums` gives every digit the same advance width. Without it, a balance
-   counting up from zero jitters horizontally as the glyphs change, and a column
-   of amounts in a transaction list fails to align on the decimal point.
-
-   The negative letter-spacing is because tabular figures are set wider than
-   proportional ones, and a large balance set in them looks gappy otherwise.
-   -------------------------------------------------------------------------- */
+/* ----------------------------------------------------------------------------- Money. */
 
 .amount {
   font-variant-numeric: tabular-nums;
@@ -171,13 +154,7 @@ img, svg, video, canvas {
   max-width: 100%;
 }
 
-/* =============================================================================
-   Focus
-   -----------------------------------------------------------------------------
-   One ring, everywhere, never removed. `:focus-visible` rather than `:focus`, so
-   a mouse click does not leave a ring behind but a keyboard user always gets
-   one.
-   ========================================================================== */
+/* Focus */
 
 :focus-visible {
   outline: none;
@@ -220,20 +197,9 @@ img, svg, video, canvas {
 
 .skip-link:focus-visible { transform: translateY(0); }
 
-/* =============================================================================
-   Layout utilities
-   -----------------------------------------------------------------------------
-   A deliberately short list. Anything more specific belongs to the component
-   that needs it.
-   ========================================================================== */
+/* Layout utilities */
 
-/*
-   Both row utilities wrap. A row of two buttons, or a title beside an action, is
-   the single most common source of horizontal page overflow at 320px, and a
-   generic utility that cannot wrap makes every one of those a bug waiting to be
-   found on somebody's phone. Use `.nowrap` where a row genuinely must stay on
-   one line.
-*/
+/* Both row utilities wrap. */
 .row { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; }
 .row-between { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap; }
 .spread { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
@@ -291,12 +257,7 @@ img, svg, video, canvas {
   color: var(--ink);
 }
 
-/* =============================================================================
-   Reduced motion
-   -----------------------------------------------------------------------------
-   1ms rather than 0s: a zero-duration transition never fires `transitionend`,
-   and any component waiting on that event to unmount would hang.
-   ========================================================================== */
+/* Reduced motion */
 
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -309,12 +270,7 @@ img, svg, video, canvas {
   }
 }
 
-/* =============================================================================
-   Print
-   -----------------------------------------------------------------------------
-   Statements and receipts get printed. The chrome goes, the ambient wash goes,
-   and every surface falls back to ink on paper.
-   ========================================================================== */
+/* Print */
 
 @media print {
   body { background: #fff; color: #000; }

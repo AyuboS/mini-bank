@@ -1,9 +1,4 @@
-/* =============================================================================
-   Toasts
-   -----------------------------------------------------------------------------
-   One of the four places translucency survives: a toast interrupts whatever was
-   on screen, and a blur is what keeps it legible over an arbitrary background.
-   ========================================================================== */
+/* Toasts */
 
 .toast-region {
   position: fixed;

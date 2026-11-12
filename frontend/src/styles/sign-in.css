@@ -1,22 +1,8 @@
-/* =============================================================================
-   Sign in and register
-   -----------------------------------------------------------------------------
-   Two halves. The product states what it is at poster scale on the left, and the
-   form sits on the right where the eye ends up. Below 900px the poster is
-   dropped entirely rather than stacked — a marketing panel above a login form is
-   something to scroll past, which is the last thing a returning customer wants.
-   ========================================================================== */
+/* Sign in and register */
 
 .auth-page { display: grid; grid-template-columns: 1fr 1fr; min-height: 100dvh; }
 
-/*
-   Pinned to ink in both themes, rather than following --surface-inverse.
-
-   Everywhere else in the product the inverse surface flips with the theme, so
-   the hero block is always the opposite of its page. The poster is the one
-   place that would be wrong: it is brand furniture, not a block on a page, and
-   in dark mode it would become a white slab beside a dark sign-in form.
-*/
+/* Pinned to ink in both themes, rather than following --surface-inverse. */
 .auth-poster {
   position: relative;
   display: flex;

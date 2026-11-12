@@ -44,12 +44,7 @@ export function filterProblem(filters: TransactionFilters): string | null {
   return null;
 }
 
-/**
- * Turns the controls into API parameters.
- *
- * The API filters on an instant, so a picked day becomes that day's first and
- * last millisecond in the browser's own timezone.
- */
+/** Turns the controls into API parameters. */
 export function toTransactionQuery(filters: TransactionFilters): TransactionQuery {
   const query: TransactionQuery = {};
   const q = filters.q.trim();

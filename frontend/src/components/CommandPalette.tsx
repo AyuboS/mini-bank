@@ -29,14 +29,7 @@ import { categoryMeta } from '../utils/categories';
 /** How long to wait after the last keystroke before asking the server. */
 const SEARCH_DEBOUNCE_MS = 220;
 
-/**
- * Opens the palette from anywhere.
- *
- * A custom event rather than a context, because the two call sites — the search
- * button in the desktop bar and the icon on a phone — are in the layout, while
- * the palette itself sits at the application root. Threading a setter down
- * through both would be more plumbing than the feature is worth.
- */
+/** Opens the palette from anywhere. */
 export function openCommandPalette() {
   window.dispatchEvent(new CustomEvent('mbank:command-palette'));
 }
@@ -52,18 +45,7 @@ interface Command {
   keywords?: string;
 }
 
-/**
- * Search and quick actions, on ⌘K.
- *
- * Two things at once, deliberately. Somebody who types "netflix" wants their
- * transactions; somebody who types "freeze" wants an action. Splitting them
- * across two surfaces would mean guessing which one to open before knowing what
- * you were looking for.
- *
- * Navigation is filtered locally and instantly. Transactions, payees and cards
- * come from the server, debounced, and only once there is enough of a query to
- * be worth a request.
- */
+/** Search and quick actions, on ⌘K. */
 export function CommandPalette() {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);

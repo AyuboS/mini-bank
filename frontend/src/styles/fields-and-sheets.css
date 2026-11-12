@@ -1,9 +1,4 @@
-/* =============================================================================
-   Fields
-   -----------------------------------------------------------------------------
-   A modern fintech form: a well cut into the card, a hairline that turns brand
-   on focus, and no glow. Focus is the same 2px ink ring as every other control.
-   ========================================================================== */
+/* Fields */
 
 .field { display: flex; flex-direction: column; gap: var(--space-2); }
 
@@ -101,14 +96,7 @@
 
 .field__reveal:hover { color: var(--ink); }
 
-/* =============================================================================
-   Sheets and dialogs
-   -----------------------------------------------------------------------------
-   One component, two presentations. On a wide screen it is a centred dialog; on
-   a phone it is a bottom sheet — see the media query below. The two are the same
-   thing seen at two viewport widths, and building them separately is how the
-   two drift apart.
-   ========================================================================== */
+/* Sheets and dialogs */
 
 .sheet-scrim {
   position: fixed;

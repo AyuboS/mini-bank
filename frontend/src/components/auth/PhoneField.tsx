@@ -1,14 +1,7 @@
 import { useId } from 'react';
 import { Phone } from 'lucide-react';
 
-/**
- * Dialling codes offered in the picker.
- *
- * A short, explicit list rather than all 200-odd: this is a demo bank operating
- * in a handful of places, and a 200-row select is worse than a text field for
- * everyone. Anything not listed can still be typed in full, because the number
- * is normalised server-side from whatever arrives.
- */
+/** Dialling codes offered in the picker. */
 const DIALLING_CODES = [
   { code: '+998', label: 'Uzbekistan' },
   { code: '+7', label: 'Kazakhstan / Russia' },
@@ -37,15 +30,7 @@ export function toE164(dialCode: string, number: string): string {
   return `${dialCode}${number.replace(/\D/g, '')}`;
 }
 
-/**
- * A phone number entry: dialling code beside the rest.
- *
- * Split in two on purpose. A single free-text field means half the people type
- * a local number with no country code and get an error they do not understand,
- * because "+998 90 123 45 67" and "90 123 45 67" look equally complete to
- * somebody standing in Tashkent. Making the country an explicit, always-visible
- * choice removes the ambiguity before it can be entered.
- */
+/** A phone number entry: dialling code beside the rest. */
 export function PhoneField({
   dialCode,
   onDialCodeChange,

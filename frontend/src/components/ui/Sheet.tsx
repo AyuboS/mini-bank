@@ -18,18 +18,7 @@ interface SheetProps {
   initialFocus?: 'first-field' | 'panel';
 }
 
-/**
- * A modal on a desktop, a bottom sheet on a phone.
- *
- * One component rather than two because it is one thing: a surface that comes
- * forward and takes the interaction. Which way it arrives is a property of the
- * viewport, decided in CSS, so no screen has to know which it is getting.
- *
- * The behaviour that makes it a dialog rather than a floating div — the focus
- * trap, the escape key, the scroll lock, the restored focus on close — is all
- * here, because getting it wrong is invisible to a sighted mouse user and
- * completely disabling to everybody else.
- */
+/** A modal on a desktop, a bottom sheet on a phone. */
 export function Sheet({
   open,
   onClose,

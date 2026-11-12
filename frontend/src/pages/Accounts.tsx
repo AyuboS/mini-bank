@@ -22,14 +22,7 @@ import { fromMinorUnits, toMinorUnits } from '../utils/money';
 
 const CURRENCIES: CurrencyCode[] = ['EUR', 'USD', 'GBP'];
 
-/**
- * The customer's accounts.
- *
- * Spending and savings are shown apart, and the totals are per currency rather
- * than summed. There is no FX in this product, so adding a USD balance to a EUR
- * one would require a rate that does not exist — and a single "total" made from
- * two currencies is a number that means nothing.
- */
+/** The customer's accounts. */
 export function AccountsPage() {
   const navigate = useNavigate();
   const toast = useToast();

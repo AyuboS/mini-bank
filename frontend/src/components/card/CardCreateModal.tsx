@@ -16,14 +16,7 @@ interface CardCreateModalProps {
   cardholderName: string;
 }
 
-/**
- * The six steps of ordering a card.
- *
- * A virtual card skips `material` and `delivery`: it has no finish and there is
- * nothing to post. Skipping is handled by the step list itself rather than by
- * rendering an empty screen, so the progress counter stays honest — "3 of 4"
- * for a virtual card and "5 of 6" for a metal one.
- */
+/** The six steps of ordering a card. */
 type Step = 'type' | 'material' | 'design' | 'customise' | 'delivery' | 'confirm';
 
 const PHYSICAL_STEPS: Step[] = ['type', 'material', 'design', 'customise', 'delivery', 'confirm'];
@@ -53,20 +46,7 @@ const MATERIALS: { id: CardMaterial; title: string; body: string; icon: React.Re
 
 type Delivery = 'standard' | 'express';
 
-/**
- * Ordering a card.
- *
- * The preview is a real {@link BankCard} at every step, not a swatch. Choosing a
- * finish from three coloured rectangles and meeting the actual card afterwards
- * is how people end up with one they did not mean to pick.
- *
- * Two things on this screen are honest about what MBank is. The number on the
- * preview is invented and says so — the real one is generated server-side and is
- * not knowable until the card exists. And the delivery step is marked as
- * simulated, because there is no card bureau behind this product: a physical
- * card here is modelled, not manufactured, and a flow that implied otherwise
- * would be the one genuinely misleading thing in the interface.
- */
+/** Ordering a card. */
 export function CardCreateModal({
   open,
   onClose,
@@ -117,12 +97,7 @@ export function CardCreateModal({
     if (next) setStep(next);
   };
 
-  /**
-   * Narrowing the finish can leave the chosen design outside it — pick Metal
-   * after choosing Ocean and the order would carry a face that finish does not
-   * come in. Selecting a material therefore also moves the design to the first
-   * one available in it.
-   */
+  /** Narrowing the finish can leave the chosen design outside it — pick Metal after choosing Ocean and the order would carry a face that finish does not come in. */
   const chooseMaterial = (chosen: CardMaterial) => {
     setMaterial(chosen);
     const first = CARD_RANGE_ORDER.find((option) => CARD_RANGE[option].material === chosen);

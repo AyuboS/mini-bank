@@ -5,14 +5,7 @@ import { formatMoney, toNumber } from '../../utils/format';
 
 /* ---------------------------------------------------------------------------- */
 
-/**
- * Spending and income, one bar pair per day.
- *
- * Drawn as divs rather than SVG, because the bars are a flex row of rectangles
- * and a chart library would bring its own visual language to override. The
- * heights are percentages of the busiest day, so the shape of the month is
- * legible regardless of its scale.
- */
+/** Spending and income, one bar pair per day. */
 export function DailyChart({ series, currency }: { series: { date: string; spending: string; income: string }[]; currency: CurrencyCode }) {
   // Bar heights only; nothing here is added up or shown as money.
   const peak = useMemo(

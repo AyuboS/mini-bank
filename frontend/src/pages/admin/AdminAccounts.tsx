@@ -8,6 +8,7 @@ import { useAsync } from '../../hooks/useAsync';
 import { toFriendlyError } from '../../utils/errors';
 import { currencySymbol, formatDay, formatMoney } from '../../utils/format';
 import { cleanAmountInput, formatMinorUnits, toMinorUnits } from '../../utils/money';
+import { AdminPager } from './AdminParts';
 
 type Action = { kind: 'freeze' | 'unfreeze' | 'deposit'; account: AccountResponse };
 
@@ -119,17 +120,7 @@ export function AdminAccounts() {
         </tbody>
       </table>
 
-      <div className="admin-pager">
-        <span>
-          Page {data.page + 1} of {Math.max(1, data.totalPages)} · {data.totalElements} accounts
-        </span>
-        <Button size="sm" variant="ghost" disabled={data.first} onClick={() => setPage((p) => Math.max(0, p - 1))}>
-          Previous
-        </Button>
-        <Button size="sm" variant="ghost" disabled={data.last} onClick={() => setPage((p) => p + 1)}>
-          Next
-        </Button>
-      </div>
+      <AdminPager page={data} noun="accounts" onPage={setPage} />
 
       <Sheet
         open={action?.kind === 'freeze' || action?.kind === 'unfreeze'}

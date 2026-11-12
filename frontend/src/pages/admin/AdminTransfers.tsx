@@ -1,22 +1,14 @@
 import { useState } from 'react';
-import { AlertTriangle, Check, RotateCcw, X } from 'lucide-react';
 import { adminApi } from '../../api/admin';
 import type { PageResponse, TransferResponse, TransferStatus } from '../../api/types';
-import { useAsync } from '../../hooks/useAsync';
-import { useToast } from '../../components/ToastProvider';
 import { RiskGauge } from '../../components/RiskGauge';
 import { ErrorState } from '../../components/States';
-import {
-  Button,
-  Surface,
-  Input,
-  Sheet,
-  Skeleton,
-  Tabs,
-  StatusBadge,
-} from '../../components/ui';
-import { formatDateTime, formatMoney } from '../../utils/format';
+import { useToast } from '../../components/ToastProvider';
+import { Button, Input, Sheet, Skeleton } from '../../components/ui';
+import { useAsync } from '../../hooks/useAsync';
 import { toFriendlyError } from '../../utils/errors';
+import { formatDateTime, formatMoney, humanise } from '../../utils/format';
+import { AdminPager, FilterRow } from './AdminParts';
 
 const FILTERS = [
   { id: 'PENDING', label: 'Awaiting review' },
@@ -27,8 +19,23 @@ const FILTERS = [
 ] as const;
 
 type Filter = (typeof FILTERS)[number]['id'];
-type Action = 'approve' | 'reject' | 'reverse';
+type Action = 'review' | 'approve' | 'reject' | 'reverse';
 
+const CONFIRM_COPY: Record<Exclude<Action, 'review'>, { title: string; body: string; verb: string }> = {
+  approve: {
+    title: 'Approve transfer?',
+    body: 'Balances are checked again under lock, so approval can still fail if the money is no longer there.',
+    verb: 'Approve',
+  },
+  reject: { title: 'Reject transfer?', body: 'The transfer is marked failed. No money moves.', verb: 'Reject' },
+  reverse: {
+    title: 'Reverse transfer?',
+    body: 'A compensating transfer with opposite ledger entries is created. The original stays, marked reversed.',
+    verb: 'Reverse',
+  },
+};
+
+/** Held, settled and failed transfers, with approve, reject and reverse. */
 export function AdminTransfers() {
   const toast = useToast();
   const [filter, setFilter] = useState<Filter>('PENDING');
@@ -43,23 +50,32 @@ export function AdminTransfers() {
     [page, filter],
   );
 
-  const run = async () => {
-    if (!selected || !action) return;
+  const open = (transfer: TransferResponse, next: Action) => {
+    setSelected(transfer);
+    setAction(next);
+    setReason('');
+  };
+
+  const close = () => {
+    setSelected(null);
+    setAction(null);
+  };
+
+  const confirm = async () => {
+    if (!selected || !action || action === 'review') return;
     setBusy(true);
     try {
       if (action === 'approve') {
         const settled = await adminApi.approve(selected.id);
         toast.success('Transfer approved', `${settled.reference} has settled.`);
       } else if (action === 'reject') {
-        await adminApi.reject(selected.id, reason);
+        await adminApi.reject(selected.id, reason.trim());
         toast.success('Transfer rejected', 'No money moved.');
       } else {
-        const reversal = await adminApi.reverse(selected.id, reason);
-        toast.success('Transfer reversed', `Compensating transfer ${reversal.reference} created.`);
+        const reversal = await adminApi.reverse(selected.id, reason.trim());
+        toast.success('Transfer reversed', `Compensating transfer ${reversal.reference}.`);
       }
-      setSelected(null);
-      setAction(null);
-      setReason('');
+      close();
       await reload();
     } catch (err) {
       const friendly = toFriendlyError(err);
@@ -69,187 +85,116 @@ export function AdminTransfers() {
     }
   };
 
-  const openAction = (transfer: TransferResponse, next: Action) => {
-    setSelected(transfer);
-    setAction(next);
-    setReason('');
-  };
+  const copy = action && action !== 'review' ? CONFIRM_COPY[action] : null;
 
   return (
     <>
-      <Surface tone="chrome" className="filter-bar">
-        <Tabs
-          tabs={FILTERS}
-          active={filter}
-          label="Filter transfers"
-          onChange={(value) => {
-            setFilter(value as Filter);
-            setPage(0);
-          }}
-        />
-      </Surface>
+      <FilterRow
+        label="Filter transfers"
+        options={FILTERS}
+        value={filter}
+        onChange={(value) => {
+          setFilter(value);
+          setPage(0);
+        }}
+      />
 
-      {loading && <Skeleton height={320} />}
-
-      {!loading && (error || !data) && (
+      {loading && !data ? (
+        <Skeleton height={320} />
+      ) : error || !data ? (
         <ErrorState body={error?.body ?? 'We could not load transfers.'} onRetry={reload} />
-      )}
-
-      {!loading && data && data.content.length === 0 && (
-        <Surface style={{ padding: 'var(--space-7)' }}>
-          <p className="small dim" style={{ textAlign: 'center' }}>
-            No transfers match this filter.
-          </p>
-        </Surface>
-      )}
-
-      {!loading && data && data.content.length > 0 && (
+      ) : data.content.length === 0 ? (
+        <p className="quiet-empty">No transfers match this filter.</p>
+      ) : (
         <>
-          <Surface className="table-wrap">
-            <div className="table-scroll">
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th>Reference</th>
-                    <th>From → To</th>
-                    <th>Amount</th>
-                    <th>Risk</th>
-                    <th>Status</th>
-                    <th aria-label="Actions" />
-                  </tr>
-                </thead>
-                <tbody>
-                  {data.content.map((transfer) => (
-                    <tr key={transfer.id}>
-                      <td>
-                        <div className="mono">{transfer.reference}</div>
-                        <div className="dim" style={{ fontSize: 11 }}>
-                          {formatDateTime(transfer.createdAt)}
-                        </div>
-                      </td>
-                      <td className="mono" style={{ fontSize: 11 }}>
-                        <div>{transfer.fromAccountNumber}</div>
-                        <div className="dim">→ {transfer.toAccountNumber}</div>
-                      </td>
-                      <td className="tnum" style={{ fontWeight: 560, whiteSpace: 'nowrap' }}>
-                        {formatMoney(transfer.amount, transfer.currency)}
-                      </td>
-                      <td>
-                        {transfer.risk && transfer.risk.decision !== 'ALLOW' ? (
-                          <button
-                            type="button"
-                            className="chip"
-                            onClick={() => {
-                              setSelected(transfer);
-                              setAction(null);
-                            }}
-                          >
-                            <AlertTriangle aria-hidden="true" style={{ width: 13, height: 13 }} />
-                            {transfer.risk.riskScore}
-                          </button>
-                        ) : (
-                          <span className="dim">—</span>
-                        )}
-                      </td>
-                      <td>
-                        <StatusBadge status={transfer.status} />
-                      </td>
-                      <td>
-                        <div className="row gap-2" style={{ justifyContent: 'flex-end' }}>
-                          {transfer.status === 'PENDING' && (
-                            <>
-                              <Button
-                                variant="secondary"
-                                className="btn-icon"
-                                onClick={() => openAction(transfer, 'approve')}
-                                aria-label={`Approve ${transfer.reference}`}
-                              >
-                                <Check aria-hidden="true" />
-                              </Button>
-                              <Button
-                                variant="danger"
-                                className="btn-icon"
-                                onClick={() => openAction(transfer, 'reject')}
-                                aria-label={`Reject ${transfer.reference}`}
-                              >
-                                <X aria-hidden="true" />
-                              </Button>
-                            </>
-                          )}
-                          {transfer.status === 'COMPLETED' && (
-                            <Button
-                              variant="secondary"
-                              className="btn-icon"
-                              onClick={() => openAction(transfer, 'reverse')}
-                              aria-label={`Reverse ${transfer.reference}`}
-                            >
-                              <RotateCcw aria-hidden="true" />
-                            </Button>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </Surface>
-
-          <div className="pager">
-            <Button variant="ghost" disabled={data.first} onClick={() => setPage((p) => Math.max(0, p - 1))}>
-              Previous
-            </Button>
-            <span className="small dim">
-              Page {data.page + 1} of {Math.max(1, data.totalPages)} · {data.totalElements} total
-            </span>
-            <Button variant="ghost" disabled={data.last} onClick={() => setPage((p) => p + 1)}>
-              Next
-            </Button>
-          </div>
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th>Reference</th>
+                <th>From → to</th>
+                <th>Risk</th>
+                <th>Status</th>
+                <th className="admin-table__num">Amount</th>
+                <th>
+                  <span className="sr-only">Actions</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.content.map((transfer) => (
+                <tr key={transfer.id}>
+                  <td>
+                    <span className="admin-table__mono">{transfer.reference}</span>
+                    <span className="admin-table__sub">{formatDateTime(transfer.createdAt)}</span>
+                  </td>
+                  <td data-wide-only className="admin-table__mono">
+                    {transfer.fromAccountNumber}
+                    <span className="admin-table__sub">→ {transfer.toAccountNumber}</span>
+                  </td>
+                  <td data-wide-only>
+                    {transfer.risk && transfer.risk.decision !== 'ALLOW' ? (
+                      <button type="button" className="link" onClick={() => open(transfer, 'review')}>
+                        {transfer.risk.riskScore} · {humanise(transfer.risk.decision)}
+                      </button>
+                    ) : (
+                      <span className="dim">—</span>
+                    )}
+                  </td>
+                  <td className={transfer.status === 'FAILED' ? 'admin-table__flagged' : undefined}>
+                    {humanise(transfer.status)}
+                  </td>
+                  <td className="admin-table__num">{formatMoney(transfer.amount, transfer.currency)}</td>
+                  <td>
+                    <div className="admin-table__actions">
+                      {transfer.status === 'PENDING' && (
+                        <>
+                          <Button size="sm" variant="secondary" onClick={() => open(transfer, 'approve')} aria-label={`Approve ${transfer.reference}`}>
+                            Approve
+                          </Button>
+                          <Button size="sm" variant="ghost" onClick={() => open(transfer, 'reject')} aria-label={`Reject ${transfer.reference}`}>
+                            Reject
+                          </Button>
+                        </>
+                      )}
+                      {transfer.status === 'COMPLETED' && (
+                        <Button size="sm" variant="ghost" onClick={() => open(transfer, 'reverse')} aria-label={`Reverse ${transfer.reference}`}>
+                          Reverse
+                        </Button>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <AdminPager page={data} noun="transfers" onPage={setPage} />
         </>
       )}
 
-      {/* Risk detail, opened from the score chip. */}
-      <Sheet
-        open={selected !== null && action === null}
-        onClose={() => setSelected(null)}
-        title="Risk review"
-        subtitle={selected?.reference}
-        wide
-      >
+      <Sheet open={action === 'review' && selected !== null} onClose={close} title="Risk review" subtitle={selected?.reference} wide>
         {selected?.risk && (
           <>
-            <div className="review-amount">
-              <div className="review-amount__value">
-                {formatMoney(selected.amount, selected.currency)}
-              </div>
-              <div className="review-amount__to">
-                {selected.fromAccountNumber} → {selected.toAccountNumber}
-              </div>
-            </div>
-
-            <hr className="divider" />
-
+            <p className="admin-review__amount">{formatMoney(selected.amount, selected.currency)}</p>
+            <p className="admin-table__sub admin-table__mono">
+              {selected.fromAccountNumber} → {selected.toAccountNumber}
+            </p>
             <div className="risk">
               <RiskGauge score={selected.risk.riskScore} decision={selected.risk.decision} />
-              <div className="risk__reasons">
-                <span className="label">Decision: {selected.risk.decision}</span>
+              <ul className="risk__reasons">
                 {selected.risk.reasons.length === 0 ? (
-                  <span className="small dim">No individual rule explanations were recorded.</span>
+                  <li className="dim">No rule explanations were recorded.</li>
                 ) : (
                   selected.risk.reasons.map((entry) => (
-                    <span className="risk__reason" key={entry}>
-                      <AlertTriangle aria-hidden="true" />
+                    <li className="risk__reason" key={entry}>
                       {entry}
-                    </span>
+                    </li>
                   ))
                 )}
-              </div>
+              </ul>
             </div>
-
             {selected.status === 'PENDING' && (
               <div className="modal-actions">
-                <Button variant="danger" onClick={() => setAction('reject')}>
+                <Button variant="secondary" onClick={() => setAction('reject')}>
                   Reject
                 </Button>
                 <Button variant="primary" onClick={() => setAction('approve')}>
@@ -261,60 +206,40 @@ export function AdminTransfers() {
         )}
       </Sheet>
 
-      {/* Confirmation, with a reason where the API requires one. */}
-      <Sheet
-        open={action !== null}
-        onClose={() => {
-          setAction(null);
-          setSelected(null);
-        }}
-        title={
-          action === 'approve' ? 'Approve transfer?' : action === 'reject' ? 'Reject transfer?' : 'Reverse transfer?'
-        }
-        subtitle={selected?.reference}
-      >
-        <p className="small dim">
-          {action === 'approve' &&
-            'Balances are re-checked under lock at this point, so approval can still fail if the funds are no longer there.'}
-          {action === 'reject' && 'The transfer is marked failed. No money moves.'}
-          {action === 'reverse' &&
-            'A compensating transfer is created with opposite ledger entries. The original is kept and marked reversed.'}
-        </p>
-
-        {action !== 'approve' && (
-          <div style={{ marginTop: 'var(--space-5)' }}>
+      <Sheet open={copy !== null} onClose={close} title={copy?.title ?? ''} subtitle={selected?.reference}>
+        <form
+          className="sheet-form"
+          onSubmit={(event) => {
+            event.preventDefault();
+            void confirm();
+          }}
+        >
+          <p className="admin-note">{copy?.body}</p>
+          {action !== 'approve' && (
             <Input
               label="Reason"
-              placeholder="Confirmed with customer by phone"
+              placeholder="Confirmed with the customer by phone"
               value={reason}
               onChange={(event) => setReason(event.target.value)}
               maxLength={200}
               required
               hint="Recorded in the audit trail."
             />
+          )}
+          <div className="modal-actions">
+            <Button type="button" variant="secondary" onClick={close} disabled={busy}>
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              variant={action === 'approve' ? 'primary' : 'danger'}
+              loading={busy}
+              disabled={action !== 'approve' && reason.trim().length === 0}
+            >
+              {copy?.verb}
+            </Button>
           </div>
-        )}
-
-        <div className="modal-actions">
-          <Button
-            variant="secondary"
-            onClick={() => {
-              setAction(null);
-              setSelected(null);
-            }}
-            disabled={busy}
-          >
-            Cancel
-          </Button>
-          <Button
-            variant={action === 'approve' ? 'primary' : 'danger'}
-            loading={busy}
-            disabled={action !== 'approve' && reason.trim().length === 0}
-            onClick={run}
-          >
-            {action === 'approve' ? 'Approve' : action === 'reject' ? 'Reject' : 'Reverse'}
-          </Button>
-        </div>
+        </form>
       </Sheet>
     </>
   );

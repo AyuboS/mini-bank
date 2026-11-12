@@ -37,7 +37,6 @@ const TITLES: [prefix: string, title: string][] = [
   ['/statements', 'Statements'],
   ['/support', 'Support'],
   ['/security', 'Security'],
-  ['/settings', 'Settings'],
   ['/profile', 'Profile'],
   ['/admin', 'Administration'],
 ];

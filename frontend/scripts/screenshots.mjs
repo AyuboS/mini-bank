@@ -37,7 +37,6 @@ const CUSTOMER = [
   '/statements',
   '/support',
   '/security',
-  '/settings',
   '/profile',
 ];
 const ADMIN = ['/admin', '/admin/transfers', '/admin/users', '/admin/accounts', '/admin/audit'];

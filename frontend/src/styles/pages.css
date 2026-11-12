@@ -478,43 +478,6 @@
    Security
    ========================================================================== */
 
-.security-status { padding: var(--space-5); display: flex; flex-direction: row; align-items: flex-start; gap: var(--space-4); }
-
-.security-status__icon {
-  display: grid;
-  place-items: center;
-  width: 48px;
-  height: 48px;
-  flex-shrink: 0;
-  border-radius: var(--radius-md);
-  color: var(--positive);
-  background: var(--positive-soft);
-}
-
-.security-status--attention .security-status__icon {
-  color: var(--warning);
-  background: var(--warning-soft);
-}
-
-.security-status__icon svg { width: 22px; height: 22px; }
-.security-status__verdict { font-size: var(--text-title); font-weight: 640; letter-spacing: -0.026em; }
-
-.security-status__list {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding-top: var(--space-2);
-  font-size: var(--text-small);
-  color: var(--ink-2);
-  list-style: none;
-}
-
-.security-status__list li::before { content: '· '; color: var(--warning); }
-
-.session-row,
-.history-row,
-.setting-row,
-.setting-link,
 .ticket-row {
   display: flex;
   align-items: center;
@@ -524,16 +487,10 @@
   text-align: left;
 }
 
-.setting-link,
 .ticket-row { cursor: pointer; transition: background-color var(--dur-micro) var(--ease); }
-.setting-link:hover,
 .ticket-row:hover { background-color: var(--surface-sunken); }
-.ticket-row:focus-visible,
-.setting-link:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.ticket-row:focus-visible { outline: none; box-shadow: var(--focus-ring); }
 
-.session-row__icon,
-.history-row__icon,
-.setting-row__icon,
 .ticket-row__icon {
   display: grid;
   place-items: center;
@@ -545,24 +502,8 @@
   background: var(--surface-sunken);
 }
 
-.session-row__icon svg,
-.history-row__icon svg,
-.setting-row__icon svg,
 .ticket-row__icon svg { width: 17px; height: 17px; }
-
-.history-row__icon { color: var(--positive); background: var(--positive-soft); }
-.history-row__icon--failed { color: var(--danger); background: var(--danger-soft); }
-
-.session-row__device { font-size: var(--text-small); font-weight: 560; }
-.session-row__meta,
-.history-row__meta,
 .ticket-row__meta { font-size: var(--text-label); color: var(--ink-3); }
-.history-row__action { font-size: var(--text-small); font-weight: 540; }
-.history-row__time { font-size: var(--text-label); color: var(--ink-3); flex-shrink: 0; }
-
-.setting-row__label { font-size: var(--text-small); font-weight: 580; }
-.setting-row__body { font-size: var(--text-label); color: var(--ink-3); }
-.settings__note { font-size: var(--text-label); color: var(--ink-3); }
 
 .security-note {
   padding: var(--space-4);
@@ -987,7 +928,6 @@
 
   .panel,
   .account-card,
-  .security-status,
 
   .txn { padding: var(--space-3); gap: var(--space-3); }
   .notice { padding: var(--space-3); }

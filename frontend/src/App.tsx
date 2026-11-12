@@ -26,8 +26,7 @@ import { NotificationsPage } from './pages/Notifications';
 import { StatementsPage } from './pages/Statements';
 import { SupportPage } from './pages/Support';
 import { ProfilePage } from './pages/Profile';
-import { SecurityPage } from './pages/Security';
-import { SettingsPage } from './pages/Settings';
+import { SecurityPage } from './pages/security/SecurityPage';
 import { NotFoundPage } from './pages/NotFound';
 
 import { AdminLayout } from './pages/admin/AdminLayout';
@@ -89,7 +88,7 @@ export function App() {
               <Route path="/statements" element={<StatementsPage />} />
               <Route path="/support" element={<SupportPage />} />
               <Route path="/security" element={<SecurityPage />} />
-              <Route path="/settings" element={<SettingsPage />} />
+              <Route path="/settings" element={<Moved to="/profile" />} />
               <Route path="/profile" element={<ProfilePage />} />
 
               <Route

@@ -16,7 +16,6 @@ const LINKS = [
   { to: '/analytics', label: 'Analytics' },
   { to: '/statements', label: 'Statements' },
   { to: '/security', label: 'Security' },
-  { to: '/settings', label: 'Settings' },
   { to: '/support', label: 'Support' },
 ];
 

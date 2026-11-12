@@ -3,7 +3,7 @@ import { AtSign, BadgeCheck, Phone, ShieldAlert } from 'lucide-react';
 import { usersApi } from '../../api/users';
 import type { UserResponse, VerificationChallenge } from '../../api/types';
 import { useToast } from '../ToastProvider';
-import { Button, Surface, Sheet } from '../ui';
+import { Button, Sheet } from '../ui';
 import { OtpInput } from './OtpInput';
 import { toFriendlyError } from '../../utils/errors';
 
@@ -89,19 +89,19 @@ export function VerificationPanel({ user, onVerified }: VerificationPanelProps) 
   // Nothing to prompt about once both are proven.
   if (phoneDone && emailDone) {
     return (
-      <Surface className="verify-panel verify-panel--done">
+      <div className="verify-panel verify-panel--done">
         <BadgeCheck aria-hidden="true" />
         <div>
           <p className="verify-panel__title">Your contact details are verified</p>
           <p className="small muted">Both your phone number and your email address are confirmed.</p>
         </div>
-      </Surface>
+      </div>
     );
   }
 
   return (
     <>
-      <Surface className="verify-panel">
+      <div className="verify-panel" role="region" aria-label="Verification">
         <ShieldAlert aria-hidden="true" />
         <div className="grow">
           <p className="verify-panel__title">Finish verifying your account</p>
@@ -140,11 +140,11 @@ export function VerificationPanel({ user, onVerified }: VerificationPanelProps) 
             )}
           </div>
 
-          <p className="small muted" style={{ marginTop: 'var(--space-3)' }}>
+          <p className="verify-panel__note">
             A verified phone number lets you sign in without a password.
           </p>
         </div>
-      </Surface>
+      </div>
 
       <Sheet
         open={challenge !== null}

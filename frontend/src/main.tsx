@@ -20,6 +20,7 @@ import './styles/send.css';
 import './styles/admin.css';
 import './styles/statements.css';
 import './styles/savings.css';
+import './styles/profile.css';
 
 const container = document.getElementById('root');
 if (!container) {

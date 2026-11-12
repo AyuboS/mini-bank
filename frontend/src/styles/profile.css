@@ -1,0 +1,70 @@
+/* Profile and Security: sections of rows between rules, forms on the page. */
+
+.profile { max-width: 720px; }
+
+.profile__section { margin-top: var(--space-7); }
+.profile__copy { margin: var(--space-3) 0; max-width: 62ch; font-size: var(--text-3); color: var(--ink-2); }
+
+.section-title--with-action {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.section-title--with-action h2 { font-size: inherit; font-weight: inherit; letter-spacing: inherit; }
+
+/* Inside a titled section the title already draws the top rule. */
+.settings-list--flush { border-top: 0; }
+
+a.settings-list__row { color: var(--ink); text-decoration: none; }
+a.settings-list__row:hover .settings-list__label { text-decoration: underline; text-underline-offset: 3px; }
+a.settings-list__row:focus-visible { outline: none; box-shadow: var(--focus-ring); border-radius: 2px; }
+
+.settings-list__value--warn { color: var(--red); }
+.settings-list__value--time { max-width: none; font-size: var(--text-2); font-variant-numeric: tabular-nums; }
+.settings-list__label--failed { color: var(--red); }
+
+.profile-form { display: flex; flex-direction: column; gap: var(--space-4); margin-top: var(--space-4); }
+.profile-form__names { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
+
+.profile-fixed { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
+.profile-fixed dt { font-size: var(--text-1); font-weight: var(--weight-medium); color: var(--ink-3); }
+.profile-fixed dd { margin-top: 2px; font-size: var(--text-3); overflow-wrap: anywhere; }
+
+/* A plain note with a rule on the left, for things that need doing. */
+.attention {
+  margin-top: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-left: 2px solid var(--red);
+  background: var(--surface);
+  font-size: var(--text-3);
+}
+
+.attention__title { font-weight: var(--weight-medium); }
+.attention ul { margin-top: var(--space-1); padding-left: 1.1em; color: var(--ink-2); }
+
+/* The verification prompt on Profile uses the same note. */
+.verify-panel {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-left: 2px solid var(--red);
+  background: var(--surface);
+}
+
+.verify-panel > svg { width: 18px; height: 18px; flex-shrink: 0; margin-top: 2px; color: var(--ink-3); }
+.verify-panel--done { border-left-color: var(--green); }
+.verify-panel__title { font-size: var(--text-3); font-weight: var(--weight-medium); }
+.verify-panel__rows { display: flex; flex-direction: column; gap: var(--space-2); margin-top: var(--space-2); }
+.verify-panel__row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap; }
+.verify-panel__label { display: inline-flex; align-items: center; gap: var(--space-2); font-size: var(--text-2); color: var(--ink-2); overflow-wrap: anywhere; }
+.verify-panel__label svg { width: 14px; height: 14px; }
+.verify-panel__note { margin-top: var(--space-2); font-size: var(--text-2); color: var(--ink-3); }
+
+@media (max-width: 767px) {
+  .profile-form__names,
+  .profile-fixed { grid-template-columns: minmax(0, 1fr); }
+  .settings-list__value--time { max-width: 40%; white-space: normal; text-align: right; }
+}

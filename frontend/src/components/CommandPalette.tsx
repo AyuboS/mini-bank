@@ -200,7 +200,7 @@ export function CommandPalette() {
       { id: 'scheduled', label: 'Scheduled payments', icon: <CalendarClock />, group: 'Go to', run: () => go('/payments/scheduled'), keywords: 'recurring standing order' },
       { id: 'payees', label: 'Payees', icon: <Users />, group: 'Go to', run: () => go('/payments/payees'), keywords: 'beneficiaries contacts' },
       { id: 'security', label: 'Security', icon: <Shield />, group: 'Go to', run: () => go('/security'), keywords: 'sessions devices password' },
-      { id: 'settings', label: 'Settings', icon: <Settings />, group: 'Go to', run: () => go('/settings'), keywords: 'preferences' },
+      { id: 'settings', label: 'Settings', icon: <Settings />, group: 'Go to', run: () => go('/profile'), keywords: 'preferences theme' },
       { id: 'support', label: 'Support', icon: <LifeBuoy />, group: 'Go to', run: () => go('/support'), keywords: 'help contact problem' },
     ],
     [go],

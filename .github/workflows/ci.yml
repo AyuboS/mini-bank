@@ -76,7 +76,7 @@ jobs:
             }' "$REPORT" >> "$GITHUB_STEP_SUMMARY"
 
   frontend:
-    name: Frontend type check and build
+    name: Frontend lint, tests and build
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -100,6 +100,14 @@ jobs:
       - name: Type check
         working-directory: frontend
         run: npm run typecheck
+
+      - name: Lint
+        working-directory: frontend
+        run: npm run lint
+
+      - name: Unit tests
+        working-directory: frontend
+        run: npm test
 
       - name: Build
         working-directory: frontend
@@ -194,6 +202,31 @@ jobs:
             -H "Idempotency-Key: $KEY" -d "$BODY" | jq -r .reference)
           test "$REPLAY" = "$REF"
           echo "  replay returned $REPLAY, no second payment"
+
+      - name: Set up Node ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: End-to-end test against the running stack
+        working-directory: frontend
+        env:
+          E2E_BASE_URL: http://localhost:3000
+          E2E_API_URL: http://localhost:8080
+        run: |
+          npm ci --no-audit --no-fund
+          npx playwright install --with-deps chromium
+          npm run test:e2e
+
+      - name: Publish the Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: frontend/playwright-report/
+          retention-days: 7
 
       - name: Dump container logs on failure
         if: failure()

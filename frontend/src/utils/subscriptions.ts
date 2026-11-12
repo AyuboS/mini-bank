@@ -1,11 +1,11 @@
 import type { CurrencyCode, TransactionResponse } from '../api/types';
-import { toNumber } from './format';
+import { toMinorUnits } from './money';
 
 export interface Subscription {
   /** The merchant, as it appears on the statement. */
   name: string;
-  /** The most recent amount charged. */
-  amount: number;
+  /** The most recent amount charged, in cents. */
+  amountMinor: number;
   currency: CurrencyCode;
   /** How many distinct months it has been seen in. */
   months: number;
@@ -68,7 +68,7 @@ export function findSubscriptions(transactions: TransactionResponse[]): Subscrip
     const months = new Set(charges.map((charge) => monthKey(charge.createdAt)));
     if (months.size < MIN_MONTHS) continue;
 
-    const amounts = charges.map((charge) => toNumber(charge.amount));
+    const amounts = charges.map((charge) => toMinorUnits(charge.amount));
     const average = amounts.reduce((total, value) => total + value, 0) / amounts.length;
     if (average <= 0) continue;
 
@@ -84,7 +84,7 @@ export function findSubscriptions(transactions: TransactionResponse[]): Subscrip
 
     found.push({
       name: latest.description!.trim(),
-      amount: toNumber(latest.amount),
+      amountMinor: toMinorUnits(latest.amount),
       currency: latest.currency,
       months: months.size,
       lastCharged: latest.createdAt,
@@ -92,10 +92,11 @@ export function findSubscriptions(transactions: TransactionResponse[]): Subscrip
     });
   }
 
-  return found.sort((a, b) => b.amount - a.amount);
+  return found.sort((a, b) => b.amountMinor - a.amountMinor);
 }
 
 /** What the recurring payments come to in a month. */
+/** In cents. */
 export function monthlyTotal(subscriptions: Subscription[]): number {
-  return subscriptions.reduce((total, subscription) => total + subscription.amount, 0);
+  return subscriptions.reduce((total, subscription) => total + subscription.amountMinor, 0);
 }

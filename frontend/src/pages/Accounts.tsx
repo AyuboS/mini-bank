@@ -16,8 +16,9 @@ import {
 } from '../components/ui';
 import { PageHeader } from '../components/PageHeader';
 import { EmptyState, ErrorState } from '../components/States';
-import { formatDay, splitMoney, toNumber } from '../utils/format';
+import { formatDay, splitMoney } from '../utils/format';
 import { toFriendlyError } from '../utils/errors';
+import { fromMinorUnits, toMinorUnits } from '../utils/money';
 
 const CURRENCIES: CurrencyCode[] = ['EUR', 'USD', 'GBP'];
 
@@ -50,7 +51,7 @@ export function AccountsPage() {
   const totals = useMemo(() => {
     const byCurrency = new Map<CurrencyCode, number>();
     for (const account of spending) {
-      byCurrency.set(account.currency, (byCurrency.get(account.currency) ?? 0) + toNumber(account.balance));
+      byCurrency.set(account.currency, (byCurrency.get(account.currency) ?? 0) + toMinorUnits(account.balance));
     }
     return [...byCurrency.entries()];
   }, [spending]);
@@ -82,7 +83,7 @@ export function AccountsPage() {
       {totals.length > 0 && (
         <div className="stat-grid">
           {totals.map(([currency, total]) => {
-            const [major, minor] = splitMoney(total, currency);
+            const [major, minor] = splitMoney(fromMinorUnits(total), currency);
             return (
               <Surface tone="hero" className="hero hero--compact" key={currency}>
                 <span className="label">{currency} available</span>

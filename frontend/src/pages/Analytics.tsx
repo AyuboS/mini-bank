@@ -32,6 +32,7 @@ import { EmptyState, ErrorState } from '../components/States';
 import { CATEGORY_META, categoryMeta } from '../utils/categories';
 import { describeInsight } from '../utils/insights';
 import { formatDay, formatMoney, toMonthKey, toNumber } from '../utils/format';
+import { formatMinorUnits, toMinorUnits } from '../utils/money';
 import { findSubscriptions, monthlyTotal, type Subscription } from '../utils/subscriptions';
 import { toFriendlyError } from '../utils/errors';
 
@@ -63,9 +64,9 @@ export function AnalyticsPage() {
     [history.data],
   );
 
-  const spending = toNumber(summary.data?.spending);
-  const income = toNumber(summary.data?.income);
-  const net = toNumber(summary.data?.net);
+  const spending = toMinorUnits(summary.data?.spending);
+  const income = toMinorUnits(summary.data?.income);
+  const net = toMinorUnits(summary.data?.net);
 
   return (
     <div className="stack-lg">
@@ -89,18 +90,18 @@ export function AnalyticsPage() {
           <div className="stat-grid">
             <Stat
               label="Money in"
-              value={summary.loading ? '—' : formatMoney(income, currency)}
+              value={summary.loading ? '—' : formatMinorUnits(income, currency)}
               tone="positive"
               icon={<TrendingUp />}
             />
             <Stat
               label="Money out"
-              value={summary.loading ? '—' : formatMoney(spending, currency)}
+              value={summary.loading ? '—' : formatMinorUnits(spending, currency)}
               icon={<TrendingDown />}
             />
             <Stat
               label={net >= 0 ? 'Put aside' : 'Overspent by'}
-              value={summary.loading ? '—' : formatMoney(Math.abs(net), currency)}
+              value={summary.loading ? '—' : formatMinorUnits(Math.abs(net), currency)}
               tone={net >= 0 ? 'positive' : 'danger'}
               detail={`${summary.data?.transactionCount ?? 0} transactions`}
               icon={<Wallet />}
@@ -113,7 +114,7 @@ export function AnalyticsPage() {
             moved €500 into savings would look at "money out" and wonder where
             it went.
           */}
-          {toNumber(summary.data?.internalMovement) > 0 && (
+          {toMinorUnits(summary.data?.internalMovement) > 0 && (
             <p className="dim analytics__note">
               {formatMoney(summary.data?.internalMovement ?? 0, currency)} moved between your own accounts.
               Counted as neither money in nor money out.
@@ -300,7 +301,7 @@ function SubscriptionsPanel({
         <h2 className="section__title">Subscriptions</h2>
         {subscriptions.length > 0 && (
           <span className="amount">
-            {formatMoney(monthlyTotal(subscriptions), currency)}
+            {formatMinorUnits(monthlyTotal(subscriptions), currency)}
             <span className="dim"> a month</span>
           </span>
         )}
@@ -326,7 +327,7 @@ function SubscriptionsPanel({
                 </span>
               </span>
               <span className="txn__right">
-                <span className="amount">{formatMoney(subscription.amount, subscription.currency)}</span>
+                <span className="amount">{formatMinorUnits(subscription.amountMinor, subscription.currency)}</span>
               </span>
             </div>
           ))
@@ -353,6 +354,7 @@ function SubscriptionsPanel({
  * legible regardless of its scale.
  */
 function DailyChart({ series, currency }: { series: { date: string; spending: string; income: string }[]; currency: CurrencyCode }) {
+  // Bar heights only; nothing here is added up or shown as money.
   const peak = useMemo(
     () => Math.max(1, ...series.map((point) => Math.max(toNumber(point.spending), toNumber(point.income)))),
     [series],
@@ -438,8 +440,8 @@ function BudgetRow({ budget, onChanged }: { budget: BudgetResponse; onChanged: (
 
       <span className={`budget-row__state budget-row__state--${budget.state.toLowerCase()}`}>
         {budget.state === 'OVER'
-          ? `${budget.usedPercentRaw}% used — over by ${formatMoney(
-              toNumber(budget.spent) - toNumber(budget.amount),
+          ? `${budget.usedPercentRaw}% used — over by ${formatMinorUnits(
+              toMinorUnits(budget.spent) - toMinorUnits(budget.amount),
               budget.currency,
             )}`
           : `${budget.usedPercentRaw}% used · ${formatMoney(budget.remaining, budget.currency)} left`}

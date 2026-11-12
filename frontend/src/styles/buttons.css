@@ -1,0 +1,207 @@
+/* =============================================================================
+   Components
+   -----------------------------------------------------------------------------
+   The controls MBank is assembled from. Everything here consumes tokens; nothing
+   here invents a colour, a radius or a duration.
+   ========================================================================== */
+
+/* =============================================================================
+   Buttons
+   -----------------------------------------------------------------------------
+   Simple on purpose. A button is a rectangle with a label in it: one fill, one
+   radius, no gradient, no glow, no border that glows on hover. The variants
+   differ by how loud they are, and by nothing else.
+
+   Every button is at least 44px tall under `pointer: coarse` — see the foot of
+   this file — which is the smallest target a finger reliably hits.
+   ========================================================================== */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  height: 44px;
+  padding: 0 var(--space-5);
+  border-radius: var(--radius-1);
+  border: 1px solid transparent;
+  font-size: var(--text-3);
+  font-weight: var(--weight-medium);
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color var(--dur-micro) var(--ease),
+    border-color var(--dur-micro) var(--ease),
+    color var(--dur-micro) var(--ease);
+}
+
+.btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+.btn-sm { height: 36px; padding: 0 var(--space-4); font-size: var(--text-2); }
+.btn-lg { height: 52px; padding: 0 var(--space-6); }
+.btn-block { width: 100%; }
+
+/* -----------------------------------------------------------------------------
+   Primary — the one action a screen is about.
+
+   A flat fill of the brand blue. The previous version painted a three-stop
+   gradient on a pseudo-element so it could be cross-faded on hover; it looked
+   expensive and it made every screen's main action the loudest thing on it,
+   which is only correct when the screen has exactly one.
+   -------------------------------------------------------------------------- */
+.btn-primary {
+  background: var(--primary);
+  color: var(--primary-ink);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--primary) 84%, var(--bg));
+  color: var(--primary-ink);
+}
+
+/* -----------------------------------------------------------------------------
+   Secondary — the other action beside it.
+   -------------------------------------------------------------------------- */
+.btn-secondary {
+  background: transparent;
+  color: var(--ink);
+  border-color: var(--line-strong);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--surface-sunken);
+  border-color: var(--ink-3);
+}
+
+/* On the ink-filled hero block the sunken grey disappears, so the secondary
+   button borrows the surround instead. */
+.surface--hero .btn-secondary {
+  background: rgba(255, 255, 255, 0.14);
+  color: var(--ink-on-inverse);
+}
+
+.surface--hero .btn-secondary:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+[data-theme='dark'] .surface--hero .btn-secondary {
+  background: rgba(11, 13, 18, 0.10);
+  color: var(--ink-on-inverse);
+}
+
+[data-theme='dark'] .surface--hero .btn-secondary:hover:not(:disabled) {
+  background: rgba(11, 13, 18, 0.16);
+}
+
+/* -----------------------------------------------------------------------------
+   Ghost — no body until touched.
+   -------------------------------------------------------------------------- */
+.btn-ghost {
+  background: transparent;
+  color: var(--ink-2);
+  border-color: var(--line);
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background: var(--surface-sunken);
+  color: var(--ink);
+  border-color: var(--line-strong);
+}
+
+/* -----------------------------------------------------------------------------
+   Danger — anything that removes, cancels or freezes.
+
+   Tinted rather than filled. A solid red button is loud enough that people
+   press it to make it stop, which is the opposite of what a destructive control
+   should encourage.
+   -------------------------------------------------------------------------- */
+.btn-danger {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: var(--danger-fill);
+  color: #fff;
+}
+
+/* -----------------------------------------------------------------------------
+   Quiet — a text link with a target big enough to hit.
+   -------------------------------------------------------------------------- */
+.btn-quiet {
+  background: transparent;
+  color: var(--ink-3);
+  padding: 0 var(--space-2);
+}
+
+.btn-quiet:hover:not(:disabled) { color: var(--ink); }
+
+.btn__spinner {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* =============================================================================
+   Icon buttons
+   ========================================================================== */
+
+.icon-btn {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--ink-2);
+  cursor: pointer;
+  transition:
+    background-color var(--dur-micro) var(--ease),
+    color var(--dur-micro) var(--ease),
+    transform var(--dur-micro) var(--ease);
+}
+
+.icon-btn svg { width: 18px; height: 18px; }
+
+.icon-btn:hover {
+  background: var(--surface-sunken);
+  color: var(--ink);
+}
+
+.icon-btn:active { transform: scale(0.94); }
+.icon-btn:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.icon-btn--sm { width: 34px; height: 34px; border-radius: var(--radius-sm); }
+.icon-btn--sm svg { width: 16px; height: 16px; }
+
+/* An unread marker with no number, for the phone's top bar where there is no
+   room for one. */
+
+.icon-btn__count {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-pill);
+  background: var(--count-fill);
+  color: #fff;
+  font-size: 0.625rem;
+  font-weight: 680;
+  font-variant-numeric: tabular-nums;
+  border: 2px solid var(--bg);
+}

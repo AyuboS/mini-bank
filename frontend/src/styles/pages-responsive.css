@@ -1,0 +1,96 @@
+/* =============================================================================
+   Breakpoints
+   ========================================================================== */
+
+@media (max-width: 900px) {
+  .auth-page { grid-template-columns: 1fr; }
+  .auth-poster { display: none; }
+  .auth-brand { display: flex; }
+}
+
+@media (max-width: 1100px) {
+  .analytics-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 767px) {
+  .hero { padding: var(--space-6) var(--space-5); gap: var(--space-4); }
+
+  .panel,
+  .account-card,
+
+  .txn { padding: var(--space-3); gap: var(--space-3); }
+  .notice { padding: var(--space-3); }
+  .thread__message { max-width: 90%; }
+  .notfound__panel { padding: var(--space-7) var(--space-5); }
+
+  .palette-scrim { padding: 8vh var(--space-4) var(--space-4); }
+  .palette { max-height: 72dvh; }
+}
+
+@media (max-width: 359px) {
+  .hero { padding: var(--space-5) var(--space-4); }
+}
+
+/* =============================================================================
+   Dashboard
+   -----------------------------------------------------------------------------
+   The pieces that exist only on the home screen.
+   ========================================================================== */
+
+/*
+   The month's change, beside the balance.
+
+   A tinted pill rather than coloured text, so it reads as a separate fact and
+   not as part of the figure. On the ink block the tint is a wash of white, since
+   a soft green on near-black is neither legible nor calm.
+*/
+.delta {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px var(--space-3);
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--ink-on-inverse);
+  font-size: var(--text-small);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.delta svg { width: 14px; height: 14px; }
+/* Both resolve against the hero's own background — see surfaces.css. */
+
+[data-theme='dark'] .delta { background: rgba(11, 13, 18, 0.08); }
+
+/* -----------------------------------------------------------------------------
+   Favourite payees.
+
+   A horizontal strip of faces. It scrolls rather than wrapping, because a
+   second row of payees pushes the transaction list below the fold on a phone
+   for no gain — the people somebody sends to most are the first three.
+   -------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+   The home editor.
+   -------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+   The greeting row.
+
+   "Good evening, Ayubkhon" and a button do not share 390px, and letting the row
+   wrap leaves the button stranded on a line of its own. Below 620px the label is
+   dropped and the control becomes the icon it already carries — the accessible
+   name is on the button either way.
+   -------------------------------------------------------------------------- */
+
+.pager {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--line);
+  font-size: var(--text-small);
+  color: var(--ink-3);
+}

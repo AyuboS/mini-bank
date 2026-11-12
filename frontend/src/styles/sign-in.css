@@ -1,0 +1,96 @@
+/* =============================================================================
+   Sign in and register
+   -----------------------------------------------------------------------------
+   Two halves. The product states what it is at poster scale on the left, and the
+   form sits on the right where the eye ends up. Below 900px the poster is
+   dropped entirely rather than stacked — a marketing panel above a login form is
+   something to scroll past, which is the last thing a returning customer wants.
+   ========================================================================== */
+
+.auth-page { display: grid; grid-template-columns: 1fr 1fr; min-height: 100dvh; }
+
+/*
+   Pinned to ink in both themes, rather than following --surface-inverse.
+
+   Everywhere else in the product the inverse surface flips with the theme, so
+   the hero block is always the opposite of its page. The poster is the one
+   place that would be wrong: it is brand furniture, not a block on a page, and
+   in dark mode it would become a white slab beside a dark sign-in form.
+*/
+.auth-poster {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--space-7);
+  padding: var(--space-8) var(--space-7);
+  background: #0B0D12;
+  color: #fff;
+  overflow: hidden;
+}
+
+/* The poster's only decoration: one soft field of brand colour in the lower
+   left, well under the type. */
+.auth-poster__bloom {
+  position: absolute;
+  bottom: -22%;
+  left: -18%;
+  width: 68%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(43, 84, 240, 0.42) 0%, transparent 68%);
+  pointer-events: none;
+}
+
+.auth-poster__brand { display: flex; align-items: center; gap: var(--space-3); position: relative; }
+
+.auth-poster__name {
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: #fff;
+}
+
+.auth-poster__statement {
+  position: relative;
+  font-size: clamp(2rem, 3.6vw, 3rem);
+  font-weight: 680;
+  line-height: 1.08;
+  letter-spacing: -0.038em;
+  color: #fff;
+  max-width: 15ch;
+}
+
+.auth-poster__statement em { font-style: normal; color: #6E8DFF; }
+
+.auth-poster__sub {
+  position: relative;
+  color: rgba(255, 255, 255, 0.62);
+  font-size: var(--text-body);
+  max-width: 40ch;
+  margin-top: var(--space-4);
+}
+
+.auth-poster__points { position: relative; display: flex; flex-direction: column; gap: var(--space-3); }
+
+.auth-poster__point {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--text-small);
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.auth-poster__point svg { width: 17px; height: 17px; color: #6E8DFF; flex-shrink: 0; }
+
+.auth-form-side {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-7) var(--space-5);
+}
+
+.auth-card { width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: var(--space-4); }
+.auth-brand { display: none; align-items: center; gap: var(--space-3); margin-bottom: var(--space-4); }
+.auth-title { font-size: clamp(1.75rem, 4vw, 2.25rem); letter-spacing: -0.036em; }
+.auth-sub { color: var(--ink-2); font-size: var(--text-small); }

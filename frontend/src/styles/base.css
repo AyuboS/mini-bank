@@ -83,11 +83,6 @@ p a:hover,
    The negative letter-spacing is because tabular figures are set wider than
    proportional ones, and a large balance set in them looks gappy otherwise.
    -------------------------------------------------------------------------- */
-.num,
-.tnum {
-  font-variant-numeric: tabular-nums;
-  font-feature-settings: 'tnum' 1;
-}
 
 .amount {
   font-variant-numeric: tabular-nums;
@@ -242,19 +237,14 @@ img, svg, video, canvas {
 .row { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; }
 .row-between { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap; }
 .spread { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
-.nowrap { flex-wrap: nowrap; }
 .stack { display: flex; flex-direction: column; gap: var(--space-3); }
 .stack-lg { display: flex; flex-direction: column; gap: var(--space-6); }
 .grow { flex: 1; min-width: 0; }
-.wrap { flex-wrap: wrap; }
 .center { display: flex; align-items: center; justify-content: center; }
 .divider { height: 1px; background: var(--line); border: none; }
-
-.gap-1 { gap: var(--space-1); }
 .gap-2 { gap: var(--space-2); }
 .gap-3 { gap: var(--space-3); }
 .gap-4 { gap: var(--space-4); }
-.gap-5 { gap: var(--space-5); }
 
 /* A single line that ends in an ellipsis rather than overflowing. `min-width: 0`
    is the part people forget: without it a flex child refuses to shrink below its
@@ -329,7 +319,7 @@ img, svg, video, canvas {
 @media print {
   body { background: #fff; color: #000; }
 
-  .sidebar, .mobile-nav, .mobile-topbar, .topbar, .no-print { display: none !important; }
+  .sidebar, .mobile-nav, .mobile-topbar, .topbar { display: none !important; }
 
   .surface, .surface--chrome, .surface--raised, .surface--hero {
     background: #fff !important;

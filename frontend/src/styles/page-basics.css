@@ -1,0 +1,174 @@
+/* =============================================================================
+   Pages
+   -----------------------------------------------------------------------------
+   Layouts and one-off pieces belonging to individual screens. Everything here
+   consumes tokens and the surfaces in surfaces.css; nothing here invents a
+   value.
+   ========================================================================== */
+
+/* =============================================================================
+   Page and section headers
+   ========================================================================== */
+
+.page-header,
+.page__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-5);
+}
+
+.page__title { font-size: var(--text-display); letter-spacing: -0.034em; overflow-wrap: anywhere; }
+.page__subtitle,
+.page-header__subtitle { color: var(--ink-2); max-width: 62ch; margin-top: var(--space-2); }
+/*
+   Page actions.
+
+   `flex-shrink: 0` keeps two buttons on one line beside the title while there
+   is room for them. Below 620px there is not: two labelled buttons plus a gap
+   exceed 288px of usable width at 320, so the group takes the full width on its
+   own line and the buttons share it. This was a real overflow on Requests.
+*/
+.page-header__actions { display: flex; gap: var(--space-3); flex-shrink: 0; flex-wrap: wrap; }
+
+@media (max-width: 620px) {
+  .page-header__actions { width: 100%; gap: var(--space-2); }
+  .page-header__actions > .btn { flex: 1 1 0; min-width: 0; }
+  /* An icon-only action keeps its square footprint rather than stretching. */
+  .page-header__actions > .btn-icon { flex: 0 0 auto; }
+}
+
+.section { display: flex; flex-direction: column; gap: var(--space-4); }
+
+.section-head,
+.section__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.section-head h2,
+.section__title { font-size: var(--text-title); letter-spacing: -0.026em; }
+
+/* A surface with padding. The default content block. */
+.panel { padding: var(--space-5); display: flex; flex-direction: column; gap: var(--space-4); }
+
+/* A surface holding rows that meet edge to edge, divided by hairlines rather
+   than separated by gaps. */
+.list-panel { overflow: hidden; display: flex; flex-direction: column; }
+.list-panel > * + * { border-top: 1px solid var(--line); }
+
+/* =============================================================================
+   The balance
+   -----------------------------------------------------------------------------
+   The one block on the dashboard filled with ink. Everything about it is size
+   and space: a quiet label, a very large figure, a row of facts, and the two
+   actions somebody came to the app to take.
+   ========================================================================== */
+
+.hero {
+  padding: var(--space-7) var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.hero--compact { padding: var(--space-5); gap: var(--space-3); }
+
+/* A text link is 20px tall because that is its line box. The padding grows the
+   hit area to 44px and the negative margin cancels it, so the link still sits
+   on its own baseline and the header does not shift. */
+
+/* The decimal part, set smaller and quieter. A balance is read as "four
+   thousand two hundred and fifty" first and the cents second, and the type
+   should say so. */
+.balance__minor { font-size: 0.5em; font-weight: 600; opacity: 0.55; letter-spacing: -0.02em; }
+.balance--sm { font-size: clamp(1.75rem, 4vw, 2.25rem); }
+
+/* =============================================================================
+   Grids
+   -----------------------------------------------------------------------------
+   `minmax(min(X, 100%), 1fr)` throughout. The inner `min()` is what stops a
+   grid track being wider than its container at 320px — the single most common
+   cause of a page that scrolls sideways on a phone.
+   ========================================================================== */
+
+.analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr));
+  gap: var(--space-5);
+  align-items: start;
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr));
+  gap: var(--space-4);
+}
+
+.account-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
+  gap: var(--space-4);
+}
+
+/* =============================================================================
+   Transactions
+   -----------------------------------------------------------------------------
+   A feed, not a table. Each row is a category glyph, what it was, and what it
+   cost — read left to right in one pass, with the amount right-aligned so a
+   column of them lines up on the decimal point.
+   ========================================================================== */
+
+.txn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--dur-micro) var(--ease);
+}
+
+.txn:hover { background-color: var(--surface-sunken); }
+.detail-category { margin-top: var(--space-4); }
+.txn--static { cursor: default; }
+.txn--static:hover { background-color: transparent; }
+.txn:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+.txn__glyph {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: var(--radius-sm);
+  color: var(--ink-2);
+  background: var(--surface-sunken);
+}
+
+.txn__glyph svg { width: 17px; height: 17px; }
+.txn__glyph--in { color: var(--positive); background: var(--positive-soft); }
+
+.txn__body { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+.txn__title { font-size: var(--text-body); font-weight: 540; }
+.txn__meta { font-size: var(--text-small); color: var(--ink-3); }
+
+.txn__right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.amount--muted { opacity: 0.5; }
+
+.category-icon svg { width: 17px; height: 17px; }
+.avatar--sm.category-icon svg { width: 14px; height: 14px; }

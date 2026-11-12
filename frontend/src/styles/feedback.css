@@ -1,0 +1,141 @@
+/* =============================================================================
+   Toasts
+   -----------------------------------------------------------------------------
+   One of the four places translucency survives: a toast interrupts whatever was
+   on screen, and a blur is what keeps it legible over an arbitrary background.
+   ========================================================================== */
+
+.toast-region {
+  position: fixed;
+  z-index: 300;
+  right: var(--space-5);
+  bottom: calc(var(--space-5) + var(--safe-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  /* The stack must not swallow clicks on the page beneath; the toasts
+     themselves re-enable pointer events. */
+  pointer-events: none;
+  max-width: min(380px, calc(100vw - var(--space-6)));
+}
+
+.toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  background: var(--surface-chrome);
+  backdrop-filter: blur(16px) saturate(150%);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-lg);
+  animation: toast-in var(--dur-panel) var(--ease-spring);
+}
+
+.toast__icon { display: flex; flex-shrink: 0; margin-top: 1px; }
+.toast__icon svg { width: 18px; height: 18px; }
+.toast--success .toast__icon { color: var(--positive); }
+.toast--error .toast__icon { color: var(--danger); }
+.toast--info .toast__icon { color: var(--brand); }
+.toast__title { font-weight: 600; font-size: var(--text-body); }
+.toast__body { font-size: var(--text-small); color: var(--ink-2); }
+.toast__close { display: flex; color: var(--ink-3); background: none; cursor: pointer; }
+.toast__close:hover { color: var(--ink); }
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* On a phone the stack spans the width above the navigation, rather than
+   floating in a corner where it would sit under the thumb. */
+@media (max-width: 767px) {
+  .toast-region {
+    right: var(--space-4);
+    left: var(--space-4);
+    bottom: calc(var(--mobile-nav-height) + var(--safe-bottom) + var(--space-4));
+    max-width: none;
+  }
+}
+
+/* =============================================================================
+   Empty, error and loading states
+   ========================================================================== */
+
+.state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-3);
+  padding: var(--space-8) var(--space-5);
+}
+
+.state__icon {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-lg);
+  color: var(--ink-3);
+  background: var(--surface-sunken);
+}
+
+.state__icon svg { width: 22px; height: 22px; }
+.state__title { font-size: var(--text-heading); font-weight: 640; }
+.state__body { font-size: var(--text-small); color: var(--ink-3); max-width: 42ch; }
+
+/* =============================================================================
+   Switches
+   ========================================================================== */
+
+.switch {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.switch__track {
+  position: relative;
+  width: 46px;
+  height: 28px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-sunken);
+  border: 1px solid var(--line-strong);
+  transition: background-color var(--dur-control) var(--ease), border-color var(--dur-control) var(--ease);
+}
+
+.switch input:checked + .switch__track {
+  background: var(--green-fill);
+  border-color: var(--green-fill);
+}
+
+.switch__thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--dur-control) var(--ease);
+}
+
+.switch input:checked + .switch__track .switch__thumb { transform: translateX(18px); }
+
+.switch input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.switch input:focus-visible + .switch__track { box-shadow: var(--focus-ring); }
+
+/* =============================================================================
+   Chips
+   ========================================================================== */

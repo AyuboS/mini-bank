@@ -1,0 +1,237 @@
+/* =============================================================================
+   Standing orders
+   ========================================================================== */
+
+.order-card { padding: var(--space-4) var(--space-5); display: flex; flex-direction: column; gap: var(--space-3); }
+.order-card__main { display: flex; align-items: center; gap: var(--space-3); }
+.order-card__name { font-size: var(--text-body); font-weight: 560; }
+.order-card__meta { font-size: var(--text-small); color: var(--ink-3); }
+.order-card__right { display: flex; flex-direction: column; align-items: flex-end; flex-shrink: 0; }
+.order-card__right .amount { font-size: 1.0625rem; }
+
+.order-card__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--line);
+}
+
+.order-card__failure {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-sm);
+  background: var(--danger-soft);
+  color: var(--danger);
+  font-size: var(--text-small);
+}
+
+.order-card__done { padding: var(--space-3) var(--space-4); }
+
+/* =============================================================================
+   Money requests
+   ========================================================================== */
+
+.request-card { padding: var(--space-4) var(--space-5); display: flex; flex-direction: column; gap: var(--space-3); }
+.request-card__who { font-size: var(--text-body); font-weight: 580; }
+.request-card__amount { font-size: 1.125rem; }
+
+.request-card__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--line);
+}
+
+/* -----------------------------------------------------------------------------
+   The review list, shown before anything is confirmed.
+
+   Fees are always on it, even when they are zero — see the Transfer screen. A
+   zero fee stated is a promise; a fee row that only appears when there is one
+   is a surprise waiting to happen.
+   -------------------------------------------------------------------------- */
+.review { display: flex; flex-direction: column; gap: 0; }
+
+.review__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.review__row dt { font-size: var(--text-small); color: var(--ink-3); }
+.review__row dd { font-size: var(--text-body); text-align: right; }
+
+.review__row--total {
+  border-bottom: none;
+  padding-top: var(--space-4);
+  margin-top: var(--space-1);
+  border-top: 1px solid var(--line-strong);
+}
+
+.review__row--total dt { color: var(--ink); font-weight: 600; }
+.review__row--total dd { font-size: 1.25rem; font-weight: 660; }
+
+/* =============================================================================
+   Notifications
+   ========================================================================== */
+
+.notice {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-4);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--dur-micro) var(--ease);
+}
+
+.notice:hover { background-color: var(--surface-sunken); }
+.notice:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.notice--unread { background-color: var(--brand-soft); }
+
+.notice__icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: var(--radius-sm);
+  color: var(--ink-2);
+  background: var(--surface-sunken);
+}
+
+.notice__icon svg { width: 16px; height: 16px; }
+.notice__icon--success { color: var(--positive); background: var(--positive-soft); }
+.notice__icon--warning { color: var(--warning); background: var(--warning-soft); }
+.notice__icon--critical { color: var(--danger); background: var(--danger-soft); }
+.notice__icon--info { color: var(--brand); background: var(--brand-soft); }
+
+.notice__body { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+.notice__title { font-size: var(--text-small); font-weight: 600; }
+.notice__text { font-size: var(--text-small); color: var(--ink-2); }
+.notice__time { font-size: var(--text-label); color: var(--ink-3); padding-top: 2px; }
+
+.notice__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--brand);
+  flex-shrink: 0;
+  margin-top: 6px;
+}
+
+/* =============================================================================
+   Security
+   ========================================================================== */
+
+.ticket-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-4);
+  text-align: left;
+}
+
+.ticket-row { cursor: pointer; transition: background-color var(--dur-micro) var(--ease); }
+.ticket-row:hover { background-color: var(--surface-sunken); }
+.ticket-row:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+.ticket-row__icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: var(--radius-sm);
+  color: var(--ink-2);
+  background: var(--surface-sunken);
+}
+
+.ticket-row__icon svg { width: 17px; height: 17px; }
+.ticket-row__meta { font-size: var(--text-label); color: var(--ink-3); }
+
+.security-note {
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--surface-sunken);
+  font-size: var(--text-small);
+  color: var(--ink-2);
+}
+
+/* =============================================================================
+   Support
+   ========================================================================== */
+
+.faq { border-bottom: 1px solid var(--line); }
+.faq:last-of-type { border-bottom: none; }
+
+.faq__q {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4) 0;
+  font-size: var(--text-small);
+  font-weight: 560;
+  cursor: pointer;
+  list-style: none;
+}
+
+.faq__q::-webkit-details-marker { display: none; }
+
+/* A plus that becomes a cross. One glyph, one rotation — cheaper than swapping
+   two icons and it animates for free. */
+.faq__q::before {
+  content: '+';
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  font-size: 1.125rem;
+  font-weight: 400;
+  color: var(--ink-3);
+  transition: transform var(--dur-control) var(--ease);
+}
+
+.faq[open] .faq__q::before { transform: rotate(45deg); }
+.faq__a { padding: 0 0 var(--space-4) calc(20px + var(--space-3)); font-size: var(--text-small); color: var(--ink-2); }
+
+.ticket-row__subject { font-size: var(--text-small); font-weight: 560; }
+
+.thread { display: flex; flex-direction: column; gap: var(--space-3); }
+
+.thread__message {
+  max-width: 82%;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.thread__message--mine {
+  align-self: flex-end;
+  background: var(--brand-fill);
+  color: var(--brand-ink);
+}
+
+.thread__message--mine .thread__author,
+.thread__message--mine .thread__time { color: rgba(255, 255, 255, 0.72); }
+
+.thread__message--staff {
+  align-self: flex-start;
+  background: var(--surface-sunken);
+}
+
+.thread__author { font-size: var(--text-label); font-weight: 620; color: var(--ink-3); }
+.thread__body { font-size: var(--text-small); white-space: pre-wrap; }
+.thread__time { font-size: var(--text-label); color: var(--ink-3); }

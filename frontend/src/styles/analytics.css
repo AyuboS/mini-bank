@@ -1,0 +1,107 @@
+/* =============================================================================
+   Spending breakdown
+   ========================================================================== */
+.cat-bar__track { height: 6px; border-radius: var(--radius-pill); overflow: hidden; background: var(--track); }
+
+.cat-bar__fill {
+  display: block;
+  height: 100%;
+  border-radius: var(--radius-pill);
+  transition: width var(--dur-panel) var(--ease);
+}
+
+.cat-row { display: flex; gap: var(--space-3); align-items: flex-start; }
+.cat-row__name { font-size: var(--text-small); font-weight: 540; }
+.cat-row__amount { font-size: var(--text-small); }
+.cat-row__share { font-size: var(--text-label); color: var(--ink-3); }
+
+.largest {
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--surface-sunken);
+}
+
+.analytics__note { font-size: var(--text-small); color: var(--ink-3); }
+
+/* =============================================================================
+   The daily chart
+   -----------------------------------------------------------------------------
+   Flat bars in two colours, in a sunken track. A gradient on a 6px-wide bar is
+   three colours nobody can distinguish, and it costs the chart the one thing it
+   has to do: let two series be told apart at a glance.
+   ========================================================================== */
+
+.daily-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 160px;
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--surface-sunken);
+  overflow-x: auto;
+}
+
+.daily-chart__day {
+  flex: 1;
+  min-width: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  height: 100%;
+  justify-content: flex-end;
+}
+
+.daily-chart__bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+}
+
+.daily-chart__bar {
+  width: 44%;
+  min-height: 2px;
+  border-radius: 2px 2px 0 0;
+  transition: height var(--dur-panel) var(--ease);
+}
+
+.daily-chart__bar--in { background: var(--green-fill); }
+.daily-chart__bar--out { background: var(--c-violet); }
+
+.daily-chart__label {
+  font-size: 0.625rem;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+
+/* =============================================================================
+   Insights
+   ========================================================================== */
+
+.insight {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--brand);
+  background: var(--surface-sunken);
+}
+
+.insight--positive { border-left-color: var(--positive); }
+.insight--attention { border-left-color: var(--warning); }
+.insight--neutral { border-left-color: var(--brand); }
+.insight__headline { font-size: var(--text-small); font-weight: 560; }
+.insight__detail { font-size: var(--text-label); color: var(--ink-3); padding-top: 2px; }
+
+/* =============================================================================
+   Budgets
+   ========================================================================== */
+
+.budget-row { display: flex; flex-direction: column; gap: var(--space-2); }
+.budget-row__name { font-size: var(--text-small); font-weight: 540; }
+.budget-row__amount { font-size: var(--text-small); }
+.budget-row__state { font-size: var(--text-label); color: var(--ink-3); }
+.budget-row__state--over { color: var(--danger); }
+.budget-row__state--nearing { color: var(--warning); }

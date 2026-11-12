@@ -1,0 +1,226 @@
+/* =============================================================================
+   Badges
+   -----------------------------------------------------------------------------
+   A tinted pill. No border: at this size a border and a fill of the same hue
+   read as a smudge, and the fill alone is enough to separate it from the row.
+   ========================================================================== */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 24px;
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-pill);
+  font-size: var(--text-label);
+  font-weight: 600;
+  letter-spacing: -0.002em;
+  white-space: nowrap;
+}
+
+.badge__dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+
+.badge--neutral { color: var(--ink-2); background: var(--neutral-soft); }
+.badge--positive,
+.badge--success { color: var(--positive); background: var(--positive-soft); }
+.badge--warning { color: var(--warning); background: var(--warning-soft); }
+.badge--danger { color: var(--danger); background: var(--danger-soft); }
+.badge--brand { color: var(--brand); background: var(--brand-soft); }
+
+/* =============================================================================
+   Avatars
+   ========================================================================== */
+
+.avatar {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  border-radius: var(--radius-sm);
+  font-weight: 640;
+  letter-spacing: 0.01em;
+  /*
+     A tint of the accent with the accent as the ink, rather than a filled
+     circle: a page of filled avatars is a page of coloured dots competing with
+     the amounts beside them.
+
+     In the light theme the ink is the accent taken 66% of the way to black.
+     The chart palette is tuned to be vivid as a bar, and several of those hues
+     — amber at 2.4:1, green at 2.8:1 — are illegible drawn on a pale tint of
+     themselves. Darkening at the point of use puts every category between 4.8
+     and 7.8:1 while leaving the bars and series alone. The dark theme needs no
+     such correction: its accents are already light against their own tint.
+  */
+  color: color-mix(in srgb, var(--avatar-accent) 66%, #000);
+  background: color-mix(in srgb, var(--avatar-accent) 14%, var(--surface));
+}
+
+[data-theme='dark'] .avatar {
+  color: var(--avatar-accent);
+  background: color-mix(in srgb, var(--avatar-accent) 16%, var(--surface));
+}
+
+.avatar--sm { width: 32px; height: 32px; font-size: 0.6875rem; border-radius: var(--radius-xs); }
+.avatar--md { width: 40px; height: 40px; font-size: var(--text-small); }
+.avatar--lg { width: 56px; height: 56px; font-size: 1rem; border-radius: var(--radius-md); }
+
+/* =============================================================================
+   Tabs
+   -----------------------------------------------------------------------------
+   A segmented control: a sunken track with a solid pill sliding under the
+   labels. The pill is one absolutely-positioned element being transformed,
+   rather than a background repaint on each tab.
+
+   The strip scrolls rather than overflowing. Five tabs at a legible size do not
+   fit across 320px, and the alternatives — shrinking the type or wrapping to two
+   rows — are both worse than a swipe.
+   ========================================================================== */
+
+.tabs {
+  position: relative;
+  display: flex;
+  gap: 0;
+  padding: 4px;
+  border-radius: var(--radius-md);
+  background: var(--surface-sunken);
+  border: none;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.tabs::-webkit-scrollbar { display: none; }
+
+/* Positioned from the strip's padding box, so `left: 0` plus the measured
+   offset minus the 4px padding lands it exactly on the active tab. */
+.tabs__pill {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  bottom: 4px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  box-shadow: var(--shadow-xs);
+  transition: transform var(--dur-control) var(--ease);
+  pointer-events: none;
+}
+
+[data-theme='dark'] .tabs__pill { background: var(--surface-2); }
+
+.tabs__tab {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  height: 36px;
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-small);
+  font-weight: 560;
+  color: var(--ink-3);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color var(--dur-micro) var(--ease);
+}
+
+.tabs__tab:hover { color: var(--ink-2); }
+.tabs__tab--active { color: var(--ink); font-weight: 620; }
+.tabs__tab:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+/*
+   A segmented control whose selection is not animated.
+
+   Used where the tabs are links and the selected one is decided by the route:
+   there is no controlled index to measure a sliding pill against, so the active
+   tab paints the pill's appearance on itself instead.
+*/
+
+.tabs__count {
+  min-width: 18px;
+  padding: 0 5px;
+  border-radius: var(--radius-pill);
+  background: var(--brand-soft);
+  color: var(--brand);
+  font-size: 0.625rem;
+  font-weight: 680;
+  font-variant-numeric: tabular-nums;
+}
+
+/* =============================================================================
+   Statistics
+   ========================================================================== */
+
+.stat { padding: var(--space-4) var(--space-5); display: flex; flex-direction: column; gap: var(--space-2); }
+.stat__head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); }
+.stat__icon { color: var(--ink-3); display: flex; }
+.stat__icon svg { width: 16px; height: 16px; }
+.stat__value { font-size: 1.5rem; font-weight: 640; letter-spacing: -0.028em; }
+.stat__value--positive { color: var(--positive); }
+.stat__value--warning { color: var(--warning); }
+.stat__value--danger { color: var(--danger); }
+.stat__detail { font-size: var(--text-small); color: var(--ink-3); }
+
+/* =============================================================================
+   Progress
+   -----------------------------------------------------------------------------
+   A flat fill in a flat track. The gradients that used to be here made a 5px
+   bar carry three colours, none of which were legible at that height.
+   ========================================================================== */
+
+.progress { position: relative; width: 100%; overflow: hidden; border-radius: var(--radius-pill); background: var(--track); }
+.progress--md { height: 8px; }
+.progress--sm { height: 6px; }
+
+.progress__fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  transition: width var(--dur-panel) var(--ease);
+}
+
+.progress__fill--brand { background: var(--brand-fill); }
+.progress__fill--positive { background: var(--green-fill); }
+.progress__fill--warning { background: var(--yellow-fill); }
+.progress__fill--over { background: var(--danger-fill); }
+
+/* =============================================================================
+   Skeletons
+   -----------------------------------------------------------------------------
+   Placeholders rather than a spinner: they say how much is coming and roughly
+   where it will land, so the layout does not jump when it does.
+   ========================================================================== */
+
+.skeleton {
+  display: block;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(
+    90deg,
+    var(--surface-sunken) 0%,
+    color-mix(in srgb, var(--surface-sunken) 70%, var(--ink-4)) 40%,
+    var(--surface-sunken) 80%
+  );
+  /* The gradient is three times the element's width and slides across it, which
+     is what produces the sweep. */
+  background-size: 300% 100%;
+  animation: shimmer 1.4s var(--ease-in-out) infinite;
+}
+
+.skeleton--circle { border-radius: 50%; }
+
+.skeleton-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+}
+
+@keyframes shimmer {
+  from { background-position: 180% 0; }
+  to { background-position: -80% 0; }
+}
+
+/* A static block rather than an animation stopped mid-sweep. */
+@media (prefers-reduced-motion: reduce) {
+  .skeleton { animation: none; background: var(--surface-sunken); }
+}

@@ -93,7 +93,7 @@ export function CardDetailsModal({ open, card, onClose }: CardDetailsModalProps)
   return (
     <Sheet open={open} onClose={onClose} title="Card details" subtitle={card.label}>
       {error && (
-        <div className="auth-error" role="alert" style={{ marginBottom: 'var(--space-4)' }}>
+        <div className="auth-error mb-4" role="alert">
           <AlertTriangle aria-hidden="true" />
           <span>{error}</span>
         </div>
@@ -156,11 +156,11 @@ export function CardDetailsModal({ open, card, onClose }: CardDetailsModalProps)
             loading={busy}
             icon={<Eye aria-hidden="true" />}
             onClick={reveal}
-            style={{ marginTop: 'var(--space-5)' }}
+            className="mt-5"
           >
             {busy ? 'Revealing…' : 'Reveal details'}
           </Button>
-          <p className="field-hint" style={{ marginTop: 'var(--space-3)' }}>
+          <p className="field-hint mt-3">
             Revealing is recorded against your account, and limited to a few times an hour.
           </p>
         </>
@@ -183,11 +183,11 @@ export function CardDetailsModal({ open, card, onClose }: CardDetailsModalProps)
             variant="secondary"
             block
             onClick={clearDetails}
-            style={{ marginTop: 'var(--space-4)' }}
+            className="mt-4"
           >
             Hide details
           </Button>
-          <p className="field-hint" style={{ marginTop: 'var(--space-2)' }}>
+          <p className="field-hint mt-2">
             Hidden automatically after a minute.
           </p>
         </>

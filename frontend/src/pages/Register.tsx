@@ -213,18 +213,18 @@ export function RegisterPage() {
               block
               loading={busy}
               disabled={number.replace(/\D/g, '').length < 6}
-              style={{ marginTop: 'var(--space-6)' }}
+              className="mt-6"
             >
               {busy ? 'Sending…' : 'Send code'}
             </Button>
 
-            <p className="field-hint" style={{ marginTop: 'var(--space-3)', textAlign: 'center' }}>
+            <p className="field-hint mt-3 text-center">
               We verify your number first, so you can sign in with it later.
             </p>
           </form>
         ) : (
           <>
-            <p className="small muted" style={{ marginBottom: 'var(--space-4)' }}>
+            <p className="small muted mb-4">
               You can add and verify a phone number later, from your profile.
             </p>
             <Button variant="primary" size="lg" block onClick={() => setStep('details')}>
@@ -256,7 +256,7 @@ export function RegisterPage() {
           />
 
           {challenge?.developmentCode && (
-            <div className="auth-demo" style={{ marginTop: 0 }}>
+            <div className="auth-demo mt-0">
               <span className="label">Development only — no SMS was sent</span>
               <button
                 type="button"
@@ -278,7 +278,7 @@ export function RegisterPage() {
           loading={busy}
           disabled={code.length < 6}
           onClick={() => confirmRef.current(code)}
-          style={{ marginTop: 'var(--space-6)' }}
+          className="mt-6"
         >
           {busy ? 'Verifying…' : 'Verify number'}
         </Button>
@@ -389,7 +389,7 @@ export function RegisterPage() {
           block
           loading={busy}
           icon={<UserPlus aria-hidden="true" />}
-          style={{ marginTop: 'var(--space-6)' }}
+          className="mt-6"
         >
           {busy ? 'Creating account…' : 'Create account'}
         </Button>

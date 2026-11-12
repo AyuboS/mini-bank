@@ -334,7 +334,7 @@ export function CommandPalette() {
                   onMouseEnter={() => setCursor(index)}
                 >
                   <span className="palette__icon">{command.icon}</span>
-                  <span className="grow truncate" style={{ textAlign: 'left' }}>
+                  <span className="grow truncate text-left">
                     {command.label}
                   </span>
                   {command.hint && <span className="palette__hint truncate">{command.hint}</span>}

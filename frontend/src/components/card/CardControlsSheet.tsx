@@ -109,7 +109,7 @@ export function CardControlsSheet({ open, card, onClose, onUpdated }: CardContro
                 {control.icon}
               </span>
 
-              <span className="grow stack" style={{ gap: 2 }}>
+              <span className="grow stack gap-tight">
                 <span className="control-row__label">{control.label}</span>
                 <span className="dim control-row__body">{control.body}</span>
               </span>
@@ -137,7 +137,7 @@ export function CardControlsSheet({ open, card, onClose, onUpdated }: CardContro
       </div>
 
       {card.status !== 'ACTIVE' && (
-        <p className="dim" style={{ marginTop: 'var(--space-4)', fontSize: 'var(--text-small)' }}>
+        <p className="dim mt-4 text-small">
           Controls cannot be changed while the card is {card.status.toLowerCase()}.
         </p>
       )}

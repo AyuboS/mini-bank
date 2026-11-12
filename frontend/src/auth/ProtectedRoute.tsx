@@ -7,7 +7,7 @@ import { Logo } from '../components/Logo';
 function SessionLoading() {
   return (
     <div className="auth-page">
-      <div className="stack center gap-4" style={{ opacity: 0.6 }}>
+      <div className="stack center gap-4 is-faint">
         <Logo size={44} />
         <span className="small dim">Restoring your session…</span>
       </div>

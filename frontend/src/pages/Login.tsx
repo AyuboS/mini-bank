@@ -155,7 +155,7 @@ export function LoginPage() {
             refuses to start with the flag enabled at all.
           */}
           {challenge.developmentCode && (
-            <div className="auth-demo" style={{ marginTop: 0 }}>
+            <div className="auth-demo mt-0">
               <span className="label">Development only — no SMS was sent</span>
               <button
                 type="button"
@@ -177,7 +177,7 @@ export function LoginPage() {
           loading={busy}
           disabled={code.length < 6}
           onClick={() => submitCodeRef.current(code)}
-          style={{ marginTop: 'var(--space-6)' }}
+          className="mt-6"
         >
           {busy ? 'Verifying…' : 'Verify'}
         </Button>
@@ -275,12 +275,12 @@ export function LoginPage() {
             block
             loading={busy}
             disabled={number.replace(/\D/g, '').length < 6}
-            style={{ marginTop: 'var(--space-6)' }}
+            className="mt-6"
           >
             {busy ? 'Sending…' : 'Send code'}
           </Button>
 
-          <p className="field-hint" style={{ marginTop: 'var(--space-3)', textAlign: 'center' }}>
+          <p className="field-hint mt-3 text-center">
             We will text you a 6-digit code. Standard rates apply.
           </p>
         </form>
@@ -316,7 +316,7 @@ export function LoginPage() {
             block
             loading={busy}
             icon={<LogIn aria-hidden="true" />}
-            style={{ marginTop: 'var(--space-6)' }}
+            className="mt-6"
           >
             {busy ? 'Signing in…' : 'Sign in'}
           </Button>

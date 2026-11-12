@@ -155,7 +155,7 @@ export function AnalyticsPage() {
                     return (
                       <div className="cat-row" key={slice.category ?? 'none'}>
                         <CategoryIcon category={slice.category} size="sm" />
-                        <div className="grow stack" style={{ gap: 4 }}>
+                        <div className="grow stack gap-1">
                           <div className="row-between">
                             <span className="cat-row__name">{meta.label}</span>
                             <span className="amount cat-row__amount">
@@ -416,11 +416,11 @@ function BudgetRow({ budget, onChanged }: { budget: BudgetResponse; onChanged: (
   return (
     <div className="budget-row">
       <div className="row-between">
-        <span className="row" style={{ gap: 'var(--space-2)' }}>
+        <span className="row gap-2">
           <CategoryIcon category={budget.category} size="sm" />
           <span className="budget-row__name">{meta.label}</span>
         </span>
-        <span className="row" style={{ gap: 'var(--space-2)' }}>
+        <span className="row gap-2">
           <span className="amount budget-row__amount">
             {formatMoney(budget.spent, budget.currency)}
             <span className="dim"> / {formatMoney(budget.amount, budget.currency)}</span>

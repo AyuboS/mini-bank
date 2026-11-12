@@ -117,7 +117,7 @@ export function BeneficiariesPage() {
                   initials={initials(payee.holderName?.split(' ')[0], payee.holderName?.split(' ')[1])}
                   tone={toneFor(payee.accountNumber)}
                 />
-                <div className="grow" style={{ minWidth: 0 }}>
+                <div className="grow min-w-0">
                   <div className="payee-card__name truncate">{payee.nickname}</div>
                   {payee.holderName && <div className="small dim truncate">{payee.holderName}</div>}
                   <div className="payee-card__number truncate">{payee.accountNumber}</div>

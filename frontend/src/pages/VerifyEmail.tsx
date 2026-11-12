@@ -80,7 +80,7 @@ export function VerifyEmailPage() {
           size="lg"
           block
           onClick={() => window.location.assign(user ? '/' : '/login')}
-          style={{ marginTop: 'var(--space-6)' }}
+          className="mt-6"
         >
           {user ? 'Back to MBank' : 'Sign in'}
         </Button>
@@ -101,7 +101,7 @@ export function VerifyEmailPage() {
       <div className="verify-result verify-result--bad">
         <XCircle aria-hidden="true" />
       </div>
-      <p className="small muted" style={{ textAlign: 'center', marginTop: 'var(--space-5)' }}>
+      <p className="small muted text-center mt-5">
         Verification links last 24 hours and work once. You can request a new one from your profile
         after signing in.
       </p>

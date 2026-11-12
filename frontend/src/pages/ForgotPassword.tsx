@@ -106,7 +106,7 @@ export function ForgotPasswordPage() {
       footer={
         step !== 'done' ? (
           <p className="auth-footer">
-            <Link to="/login" className="row" style={{ gap: 'var(--space-2)', justifyContent: 'center' }}>
+            <Link to="/login" className="row gap-2 justify-center">
               <ArrowLeft size={16} aria-hidden="true" /> Back to sign in
             </Link>
           </p>

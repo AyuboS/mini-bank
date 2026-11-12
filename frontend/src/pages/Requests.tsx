@@ -171,13 +171,13 @@ function RequestCard({
   return (
     <Surface className="request-card">
       <div className="row-between">
-        <div className="stack" style={{ gap: 2 }}>
+        <div className="stack gap-tight">
           <span className="request-card__who">
             {incoming ? request.requesterName : `To ${maskAccountNumber(request.payerAccountNumber)}`}
           </span>
           {request.description && <span className="dim truncate">{request.description}</span>}
         </div>
-        <div className="stack" style={{ gap: 4, alignItems: 'flex-end' }}>
+        <div className="stack gap-1 items-end">
           <span className="amount request-card__amount">{formatMoney(request.amount, request.currency)}</span>
           <StatusBadge status={request.status} />
         </div>
@@ -189,7 +189,7 @@ function RequestCard({
         </span>
 
         {pending && (
-          <div className="row" style={{ gap: 'var(--space-2)' }}>
+          <div className="row gap-2">
             {incoming ? (
               <>
                 <Button

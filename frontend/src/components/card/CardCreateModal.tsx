@@ -388,7 +388,7 @@ export function CardCreateModal({
         <div className="stack gap-4">
           <div className="card-confirm">
             <BankCard card={preview} size="md" showStatus={false} />
-            <p className="field-hint" style={{ textAlign: 'center', marginTop: 'var(--space-3)' }}>
+            <p className="field-hint text-center mt-3">
               The number shown is a placeholder. Your real one is generated when the card is issued.
             </p>
           </div>

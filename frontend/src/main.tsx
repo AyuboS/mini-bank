@@ -31,6 +31,7 @@ import './styles/admin.css';
 import './styles/statements.css';
 import './styles/savings.css';
 import './styles/profile.css';
+import './styles/utilities.css';
 
 const container = document.getElementById('root');
 if (!container) {

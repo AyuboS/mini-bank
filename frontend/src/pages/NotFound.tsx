@@ -24,7 +24,7 @@ export function NotFoundPage() {
           The link may be out of date, or the address mistyped. Nothing has happened to your money.
         </p>
 
-        <div className="row" style={{ justifyContent: 'center', gap: 'var(--space-3)' }}>
+        <div className="row justify-center gap-3">
           <Link to="/">
             <Button variant="primary" icon={<Home />}>
               Back to overview

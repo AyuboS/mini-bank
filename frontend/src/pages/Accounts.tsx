@@ -176,11 +176,11 @@ function AccountCard({
   return (
     <Surface className="account-card">
       <div className="row-between">
-        <span className="row" style={{ gap: 'var(--space-2)' }}>
+        <span className="row gap-2">
           <span className="account-card__icon" aria-hidden="true">
             {savings ? <PiggyBank /> : <Wallet />}
           </span>
-          <span className="stack" style={{ gap: 0 }}>
+          <span className="stack gap-0">
             <span className="account-card__name">{goalName ?? `${account.currency} account`}</span>
             <span className="dim account-card__number mono">{account.accountNumber}</span>
           </span>
@@ -195,7 +195,7 @@ function AccountCard({
 
       <div className="row-between account-card__foot">
         <span className="dim">Opened {formatDay(account.createdAt)}</span>
-        <span className="row" style={{ gap: 'var(--space-1)' }}>
+        <span className="row gap-1">
           <Button
             size="sm"
             variant="ghost"
@@ -259,7 +259,7 @@ function OpenAccountForm({
         ))}
       </Select>
 
-      <p className="dim" style={{ fontSize: 'var(--text-small)' }}>
+      <p className="dim text-small">
         Accounts are held separately per currency. Money cannot be moved between two different
         currencies inside MBank.
       </p>

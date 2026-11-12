@@ -121,7 +121,7 @@ export function SupportPage() {
                 <span className="ticket-row__icon" aria-hidden="true">
                   <MessageSquare />
                 </span>
-                <span className="grow stack" style={{ gap: 2, minWidth: 0 }}>
+                <span className="grow stack gap-tight min-w-0">
                   <span className="ticket-row__subject truncate">{ticket.subject}</span>
                   <span className="dim ticket-row__meta">
                     {ticket.reference} · {relativeTime(ticket.updatedAt)}

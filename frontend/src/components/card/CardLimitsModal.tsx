@@ -81,7 +81,7 @@ export function CardLimitsModal({ open, card, onClose, onSaved }: CardLimitsModa
       subtitle={`${card.label} · •••• ${card.lastFour}`}
     >
       {error && (
-        <div className="auth-error" role="alert" style={{ marginBottom: 'var(--space-4)' }}>
+        <div className="auth-error mb-4" role="alert">
           <span>{error}</span>
         </div>
       )}

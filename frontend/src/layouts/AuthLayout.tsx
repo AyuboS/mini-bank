@@ -64,8 +64,8 @@ export function AuthLayout({ title, subtitle, children, footer }: AuthLayoutProp
           {/* Shown only on narrow screens, where the poster is not rendered. */}
           <div className="auth-brand">
             <Logo size={40} />
-            <span className="auth-poster__name">MBank</span>
-            <span style={{ marginLeft: 'auto' }}>
+            <span className="auth-poster__name ml-auto">MBank</span>
+            <span>
               <ThemeToggle />
             </span>
           </div>

@@ -94,18 +94,18 @@ export function ScheduledPage() {
               <div className="order-card__main">
                 <CategoryIcon category={order.category} />
 
-                <div className="grow stack" style={{ gap: 2 }}>
+                <div className="grow stack gap-tight">
                   <span className="order-card__name truncate">
                     {order.description || order.payeeName || 'Scheduled payment'}
                   </span>
-                  <span className="dim order-card__meta truncate">
+                  <span className="dim order-card__meta truncate inline-icon">
                     {order.payeeName ?? maskAccountNumber(order.toAccountNumber)} ·{' '}
-                    <Repeat size={12} style={{ display: 'inline', verticalAlign: '-2px' }} aria-hidden="true" />{' '}
+                    <Repeat size={12} aria-hidden="true" />{' '}
                     {FREQUENCY_LABEL[order.frequency]}
                   </span>
                 </div>
 
-                <div className="stack order-card__right" style={{ gap: 2 }}>
+                <div className="stack order-card__right gap-tight">
                   <span className="amount">{formatMoney(order.amount, order.currency)}</span>
                   <StatusBadge status={order.status} />
                 </div>
@@ -117,7 +117,7 @@ export function ScheduledPage() {
                   {order.runsCompleted > 0 && ` · ${order.runsCompleted} sent so far`}
                 </span>
 
-                <div className="row" style={{ gap: 'var(--space-1)' }}>
+                <div className="row gap-1">
                   {order.status === 'SCHEDULED' ? (
                     <Button
                       size="sm"
@@ -170,7 +170,7 @@ export function ScheduledPage() {
             {finished.map((order) => (
               <div className="row-between order-card__done" key={order.id}>
                 <span className="dim truncate">{order.description || order.payeeName || 'Payment'}</span>
-                <span className="row" style={{ gap: 'var(--space-3)' }}>
+                <span className="row gap-3">
                   <span className="amount dim">{formatMoney(order.amount, order.currency)}</span>
                   <StatusBadge status={order.status} />
                 </span>

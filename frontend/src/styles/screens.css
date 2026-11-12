@@ -124,109 +124,9 @@
   font-weight: 540;
 }
 
-/* =============================================================================
-   Send money
-   -----------------------------------------------------------------------------
-   The fastest flow in the product, and the one held to the tightest column. A
-   transfer form spread across 1180px makes somebody's eye travel the width of a
-   monitor between the amount and the button that sends it.
-   ========================================================================== */
-
-.transfer-shell { display: flex; justify-content: center; padding-bottom: var(--space-6); }
-.transfer-panel { width: 100%; max-width: 480px; padding: var(--space-6); display: flex; flex-direction: column; gap: var(--space-5); }
-
-.transfer-head { text-align: center; }
-.transfer-head__title { font-size: var(--text-title); letter-spacing: -0.03em; }
-.transfer-head__sub { color: var(--ink-3); font-size: var(--text-small); margin-top: var(--space-2); }
-
-.transfer-arrow {
-  display: grid;
-  place-items: center;
-  width: 32px;
-  height: 32px;
-  margin: calc(var(--space-2) * -1) auto;
-  border-radius: 50%;
-  color: var(--ink-3);
-  background: var(--surface-sunken);
-}
-
-.transfer-arrow svg { width: 15px; height: 15px; }
-.payee-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-3); }
-
-/* -----------------------------------------------------------------------------
-   The amount field.
-
-   The largest input in the product, because it holds the only number that
-   matters on the screen. The currency symbol is a separate element rather than
-   a prefix on the value, so the caret never lands to the left of it.
-   -------------------------------------------------------------------------- */
-.amount-field {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-5);
-  border-radius: var(--radius-lg);
-  background: var(--surface-sunken);
-  border: 1px solid transparent;
-  transition: border-color var(--dur-micro) var(--ease), box-shadow var(--dur-micro) var(--ease);
-}
-
-.amount-field:focus-within {
-  border-color: var(--brand);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand) 16%, transparent);
-}
-
-.amount-field__symbol { font-size: 1.75rem; font-weight: 580; color: var(--ink-3); }
-
-.amount-field input {
-  flex: 1;
-  min-width: 0;
-  font-size: 2rem;
-  font-weight: 660;
-  letter-spacing: -0.034em;
-  color: var(--ink);
-  font-variant-numeric: tabular-nums;
-}
-
-.amount-field input::placeholder { color: var(--ink-4); font-weight: 560; }
-.amount-available { font-size: var(--text-small); color: var(--ink-3); margin-top: var(--space-2); }
-
 .review-amount { text-align: center; }
 .review-amount__value { font-size: 2.25rem; font-weight: 680; letter-spacing: -0.038em; font-variant-numeric: tabular-nums; }
 .review-amount__to { color: var(--ink-3); font-size: var(--text-small); margin-top: var(--space-2); }
-
-.transfer-submit { margin-top: var(--space-4); }
-
-/* =============================================================================
-   Transfer success
-   ========================================================================== */
-
-.success { text-align: center; padding: var(--space-5) 0; display: flex; flex-direction: column; align-items: center; gap: var(--space-3); }
-
-.success__mark {
-  display: grid;
-  place-items: center;
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  color: var(--brand-ink);
-  background: var(--green-fill);
-  animation: mark-in var(--dur-panel) var(--ease-spring);
-}
-
-.success__mark svg { width: 28px; height: 28px; }
-.success__title { font-size: var(--text-title); font-weight: 640; letter-spacing: -0.026em; }
-.success__amount { font-size: 2rem; font-weight: 680; letter-spacing: -0.036em; font-variant-numeric: tabular-nums; }
-.success__ref { font-family: var(--font-mono); font-size: var(--text-small); color: var(--ink-3); }
-
-@keyframes mark-in {
-  from { opacity: 0; transform: scale(0.6); }
-  to { opacity: 1; transform: scale(1); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .success__mark { animation: none; }
-}
 
 /* =============================================================================
    Risk
@@ -725,9 +625,6 @@
    ========================================================================== */
 
 @media (max-width: 767px) {
-  .transfer-panel { padding: var(--space-5) var(--space-4); }
-  .amount-field { padding: var(--space-4); }
-  .amount-field input { font-size: 1.75rem; }
   .otp__cell { height: 52px; font-size: 1.25rem; }
   .card-detail,
   .verify-panel,

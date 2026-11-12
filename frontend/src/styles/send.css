@@ -1,0 +1,150 @@
+/* Send money: one narrow column, four visible steps. */
+
+.send {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  max-width: 480px;
+}
+
+.steps {
+  display: flex;
+  gap: var(--space-4);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--line);
+  list-style: none;
+  font-size: var(--text-2);
+  color: var(--ink-3);
+}
+
+.steps__item { display: flex; align-items: center; gap: var(--space-2); }
+
+.steps__number {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  font-size: var(--text-1);
+  font-variant-numeric: tabular-nums;
+}
+
+.steps__item--current { color: var(--ink); font-weight: var(--weight-medium); }
+.steps__item--current .steps__number { border-color: var(--ink); background: var(--ink); color: var(--primary-ink); }
+.steps__item--done .steps__number { border-color: var(--ink); color: var(--ink); }
+
+.send-step { display: flex; flex-direction: column; gap: var(--space-4); }
+
+.send-actions { display: flex; justify-content: flex-end; gap: var(--space-2); margin-top: var(--space-2); }
+
+/* --- Recipient ------------------------------------------------------------- */
+
+.send-lookup {
+  display: flex;
+  flex-direction: column;
+  min-height: 2.75em;
+  font-size: var(--text-2);
+  color: var(--ink-3);
+}
+
+.send-lookup__name { font-size: var(--text-3); font-weight: var(--weight-medium); color: var(--ink); }
+.send-lookup__problem { color: var(--red); }
+
+.send-subhead {
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--line-strong);
+  font-size: var(--text-2);
+  font-weight: var(--weight-medium);
+  letter-spacing: 0;
+  color: var(--ink-3);
+}
+
+.send-payees { list-style: none; }
+
+.send-payee {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+  width: 100%;
+  min-height: 48px;
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--line);
+  font-size: var(--text-3);
+  text-align: left;
+}
+
+.send-payee:hover,
+.send-payee[aria-pressed='true'] { background: var(--surface-sunken); }
+.send-payee:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.send-payee__name { font-weight: var(--weight-medium); }
+.send-payee__number { flex-shrink: 0; font-size: var(--text-2); color: var(--ink-3); font-variant-numeric: tabular-nums; }
+
+/* --- Amount ---------------------------------------------------------------- */
+
+.send-amount { height: 64px; }
+.send-amount__symbol { font-size: var(--text-5); color: var(--ink-3); }
+
+.send-amount .field__input {
+  font-size: var(--text-5);
+  font-weight: var(--weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Review and receipt ---------------------------------------------------- */
+
+.send-summary > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-5);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.send-summary dt { flex-shrink: 0; font-size: var(--text-2); color: var(--ink-3); }
+
+.send-summary dd {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  min-width: 0;
+  font-size: var(--text-3);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.send-summary__sub { font-size: var(--text-2); color: var(--ink-3); }
+.send-summary__total dd { font-size: var(--text-4); font-weight: var(--weight-semibold); }
+.send-summary__reference { font-family: var(--font-mono); font-size: var(--text-2); }
+
+.send-alert {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--red);
+  border-radius: var(--radius-1);
+  background: var(--red-soft);
+  font-size: var(--text-2);
+  color: var(--ink);
+}
+
+.send-alert__title { font-weight: var(--weight-medium); color: var(--red); }
+
+.send-receipt__title { font-size: var(--text-4); font-weight: var(--weight-semibold); }
+.send-receipt__note { margin-top: var(--space-1); font-size: var(--text-2); color: var(--ink-2); }
+
+@media (max-width: 767px) {
+  /* The top bar says Payments and the tab says Send. */
+  .send > .page__title { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+
+  .steps { gap: var(--space-3); }
+  /* Only the current step keeps its word; the others are their numbers. */
+  .steps__item:not(.steps__item--current) { font-size: 0; gap: 0; }
+
+  .send-actions { flex-direction: column-reverse; }
+  .send-actions .btn { width: 100%; }
+}

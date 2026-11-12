@@ -14,7 +14,7 @@ import { VerifyEmailPage } from './pages/VerifyEmail';
 import { HomePage } from './pages/Home';
 import { AccountsPage } from './pages/Accounts';
 import { CardsPage } from './pages/Cards';
-import { TransferPage } from './pages/Transfer';
+import { SendPage } from './pages/send/SendPage';
 import { TransactionsPage } from './pages/Transactions';
 import { BeneficiariesPage } from './pages/Beneficiaries';
 import { SavingsPage } from './pages/Savings';
@@ -72,7 +72,7 @@ export function App() {
               <Route path="/savings" element={<SavingsPage />} />
               <Route path="/payments" element={<PaymentsLayout />}>
                 <Route index element={<Navigate to="/payments/send" replace />} />
-                <Route path="send" element={<TransferPage />} />
+                <Route path="send" element={<SendPage />} />
                 <Route path="payees" element={<BeneficiariesPage />} />
                 <Route path="scheduled" element={<ScheduledPage />} />
                 <Route path="requests" element={<RequestsPage />} />

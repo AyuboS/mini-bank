@@ -911,8 +911,6 @@
 
   /* The field is the target; the input inside it should fill that height so a
      tap anywhere in the well lands on the caret. */
-  .amount-field { padding: var(--space-4); }
-  .amount-field input { min-height: 44px; }
 
   /* Rows in a list are already tall, but the chips beside them are not.
      A min-height rather than tuned padding: the padding that reaches 44px

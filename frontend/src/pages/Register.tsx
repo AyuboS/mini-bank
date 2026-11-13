@@ -349,7 +349,7 @@ export function RegisterPage() {
             onChange={update('email')}
             autoComplete="email"
             required
-            hint="We will send a link to confirm it."
+            hint={CAN_VERIFY_BY_MESSAGE ? 'We will send a link to confirm it.' : 'This demo sends no email; any address in a valid format will do.'}
             {...(error?.fields['email'] ? { error: error.fields['email'] } : {})}
           />
 

@@ -98,7 +98,7 @@ export function ConnectionBanner() {
         <strong className="conn__title">{PUBLIC_DEMO ? 'The demo server is starting' : 'MBank is not responding'}</strong>
         <span className="conn__detail">
           {PUBLIC_DEMO
-            ? 'It sleeps when nobody is using it and takes up to a minute to wake. This message goes away when it is ready.'
+            ? 'It sleeps when nobody is using it and takes two or three minutes to wake. This message goes away when it is ready.'
             : 'We are checking again automatically. This message goes away when the connection is back.'}
           {import.meta.env.DEV && (
             <>

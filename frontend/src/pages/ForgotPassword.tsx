@@ -6,6 +6,7 @@ import { AuthLayout } from '../layouts/AuthLayout';
 import { Button, Input, Surface } from '../components/ui';
 import { OtpInput } from '../components/auth/OtpInput';
 import { PhoneField, toE164 } from '../components/auth/PhoneField';
+import { CAN_VERIFY_BY_MESSAGE } from '../utils/deployment';
 import { toFriendlyError } from '../utils/errors';
 
 type Step = 'phone' | 'code' | 'password' | 'done';
@@ -79,6 +80,26 @@ export function ForgotPasswordPage() {
     }
   };
 
+  const backToSignIn = (
+    <p className="auth-footer">
+      <Link to="/login" className="row gap-2 justify-center">
+        <ArrowLeft size={16} aria-hidden="true" /> Back to sign in
+      </Link>
+    </p>
+  );
+
+  if (!CAN_VERIFY_BY_MESSAGE) {
+    return (
+      <AuthLayout
+        title="Reset your password"
+        subtitle="A reset needs a code sent by text message, and this demo sends none."
+        footer={backToSignIn}
+      >
+        <p className="field-hint">Sign in with one of the demo accounts instead. Their passwords are on the sign-in page.</p>
+      </AuthLayout>
+    );
+  }
+
   return (
     <AuthLayout
       title={step === 'done' ? 'Password changed' : 'Reset your password'}
@@ -91,15 +112,7 @@ export function ForgotPasswordPage() {
               ? 'Choose a new password. Every device will be signed out.'
               : 'You can sign in with your new password now.'
       }
-      footer={
-        step !== 'done' ? (
-          <p className="auth-footer">
-            <Link to="/login" className="row gap-2 justify-center">
-              <ArrowLeft size={16} aria-hidden="true" /> Back to sign in
-            </Link>
-          </p>
-        ) : undefined
-      }
+      footer={step !== 'done' ? backToSignIn : undefined}
     >
       {error && (
         <p className="auth-error" role="alert">

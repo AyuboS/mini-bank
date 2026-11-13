@@ -9,6 +9,7 @@ import { AuthLayout } from '../layouts/AuthLayout';
 import { OtpInput } from '../components/auth/OtpInput';
 import { PhoneField, toE164 } from '../components/auth/PhoneField';
 import { Button, Input } from '../components/ui';
+import { CAN_VERIFY_BY_MESSAGE } from '../utils/deployment';
 import { toFriendlyError } from '../utils/errors';
 import type { FriendlyError } from '../utils/errors';
 
@@ -22,8 +23,9 @@ export function RegisterPage() {
   const { register } = useAuth();
   const navigate = useNavigate();
 
-  const [step, setStep] = useState<Step>('method');
-  const [withPhone, setWithPhone] = useState(true);
+  // A public demo cannot text a code, so it goes straight to the details.
+  const [step, setStep] = useState<Step>(CAN_VERIFY_BY_MESSAGE ? 'method' : 'details');
+  const [withPhone, setWithPhone] = useState(CAN_VERIFY_BY_MESSAGE);
 
   const [dialCode, setDialCode] = useState('+998');
   const [number, setNumber] = useState('');

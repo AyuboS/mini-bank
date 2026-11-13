@@ -5,6 +5,7 @@ import type { UserResponse, VerificationChallenge } from '../../api/types';
 import { useToast } from '../ToastProvider';
 import { Button, Sheet } from '../ui';
 import { OtpInput } from './OtpInput';
+import { CAN_VERIFY_BY_MESSAGE } from '../../utils/deployment';
 import { toFriendlyError } from '../../utils/errors';
 
 interface VerificationPanelProps {
@@ -85,6 +86,16 @@ export function VerificationPanel({ user, onVerified }: VerificationPanelProps) 
           <p className="verify-panel__title">Your contact details are verified</p>
           <p className="small muted">Both your phone number and your email address are confirmed.</p>
         </div>
+      </div>
+    );
+  }
+
+  if (!CAN_VERIFY_BY_MESSAGE) {
+    return (
+      <div className="verify-panel verify-panel--info">
+        <p className="verify-panel__note">
+          This demo sends no texts or emails, so contact details cannot be verified here.
+        </p>
       </div>
     );
   }

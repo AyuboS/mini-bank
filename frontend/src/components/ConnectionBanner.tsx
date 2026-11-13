@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { CloudOff, Loader2, RefreshCw } from 'lucide-react';
 import { API_BASE_URL, pingApi } from '../api/client';
+import { PUBLIC_DEMO } from '../utils/deployment';
 
 /** Tells the reader the API is down, rather than letting every screen fail on its own. */
 export function ConnectionBanner() {
@@ -94,9 +95,11 @@ export function ConnectionBanner() {
         <CloudOff aria-hidden="true" />
       </span>
       <span className="conn__body">
-        <strong className="conn__title">MBank is not responding</strong>
+        <strong className="conn__title">{PUBLIC_DEMO ? 'The demo server is starting' : 'MBank is not responding'}</strong>
         <span className="conn__detail">
-          We are checking again automatically. This message goes away when the connection is back.
+          {PUBLIC_DEMO
+            ? 'It sleeps when nobody is using it and takes up to a minute to wake. This message goes away when it is ready.'
+            : 'We are checking again automatically. This message goes away when the connection is back.'}
           {import.meta.env.DEV && (
             <>
               {' '}

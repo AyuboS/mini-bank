@@ -56,6 +56,8 @@ a.settings-list__row:focus-visible { outline: none; box-shadow: var(--focus-ring
 
 .verify-panel > svg { width: 18px; height: 18px; flex-shrink: 0; margin-top: 2px; color: var(--ink-3); }
 .verify-panel--done { border-left-color: var(--green); }
+.verify-panel--info { border-left-color: var(--line-strong); }
+.verify-panel--info .verify-panel__note { margin-top: 0; }
 .verify-panel__title { font-size: var(--text-3); font-weight: var(--weight-medium); }
 .verify-panel__rows { display: flex; flex-direction: column; gap: var(--space-2); margin-top: var(--space-2); }
 .verify-panel__row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap; }

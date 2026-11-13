@@ -22,7 +22,9 @@ async function recipientAccountNumber(page: Page): Promise<string> {
 
 async function signIn(page: Page) {
   await page.goto('/login');
-  await page.getByRole('tab', { name: 'Password' }).click();
+  // A public demo build has no Phone tab: password is the only way in.
+  const passwordTab = page.getByRole('tab', { name: 'Password' });
+  if (await passwordTab.isVisible()) await passwordTab.click();
   await page.getByLabel('Username, email or phone').fill(SENDER.username);
   await page.getByLabel('Password', { exact: true }).fill(SENDER.password);
   await page.getByRole('button', { name: 'Sign in', exact: true }).click();

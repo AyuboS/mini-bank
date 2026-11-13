@@ -8,11 +8,10 @@ import { AuthLayout } from '../layouts/AuthLayout';
 import { OtpInput } from '../components/auth/OtpInput';
 import { PhoneField, toE164 } from '../components/auth/PhoneField';
 import { Button, Input } from '../components/ui';
+import { CAN_VERIFY_BY_MESSAGE, SHOW_DEMO_ACCOUNTS } from '../utils/deployment';
 import { toFriendlyError } from '../utils/errors';
 import type { FriendlyError } from '../utils/errors';
 
-// Shown only in development, or in a build made with VITE_DEMO_MODE=true.
-const SHOW_DEMO_ACCOUNTS = import.meta.env.DEV || import.meta.env.VITE_DEMO_MODE === 'true';
 
 const DEMO_ACCOUNTS = [
   { label: 'Customer', username: 'customer.a', password: 'Customer#2026!A' },
@@ -27,7 +26,7 @@ export function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [method, setMethod] = useState<Method>('phone');
+  const [method, setMethod] = useState<Method>(CAN_VERIFY_BY_MESSAGE ? 'phone' : 'password');
   const [error, setError] = useState<FriendlyError | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -207,34 +206,36 @@ export function LoginPage() {
         </p>
       }
     >
-      <div className="method-switch" role="tablist" aria-label="Sign-in method">
-        <button
-          type="button"
-          role="tab"
-          aria-selected={method === 'phone'}
-          className={`method-switch__tab ${method === 'phone' ? 'method-switch__tab--active' : ''}`}
-          onClick={() => {
-            setMethod('phone');
-            setError(null);
-          }}
-        >
-          <Phone aria-hidden="true" />
-          Phone
-        </button>
-        <button
-          type="button"
-          role="tab"
-          aria-selected={method === 'password'}
-          className={`method-switch__tab ${method === 'password' ? 'method-switch__tab--active' : ''}`}
-          onClick={() => {
-            setMethod('password');
-            setError(null);
-          }}
-        >
-          <KeyRound aria-hidden="true" />
-          Password
-        </button>
-      </div>
+      {CAN_VERIFY_BY_MESSAGE && (
+        <div className="method-switch" role="tablist" aria-label="Sign-in method">
+          <button
+            type="button"
+            role="tab"
+            aria-selected={method === 'phone'}
+            className={`method-switch__tab ${method === 'phone' ? 'method-switch__tab--active' : ''}`}
+            onClick={() => {
+              setMethod('phone');
+              setError(null);
+            }}
+          >
+            <Phone aria-hidden="true" />
+            Phone
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={method === 'password'}
+            className={`method-switch__tab ${method === 'password' ? 'method-switch__tab--active' : ''}`}
+            onClick={() => {
+              setMethod('password');
+              setError(null);
+            }}
+          >
+            <KeyRound aria-hidden="true" />
+            Password
+          </button>
+        </div>
+      )}
 
       {banner}
 
@@ -312,41 +313,48 @@ export function LoginPage() {
         </form>
       )}
 
-      <div className="auth-alt">
-        <span>or</span>
-      </div>
+      {CAN_VERIFY_BY_MESSAGE && (
+        <>
+        <div className="auth-alt">
+          <span>or</span>
+        </div>
 
-      <button
-        type="button"
-        className="btn btn-secondary btn-block"
-        onClick={() => {
-          setMethod(method === 'phone' ? 'password' : 'phone');
-          setError(null);
-        }}
-      >
-        {method === 'phone' ? (
-          <>
-            <Mail aria-hidden="true" />
-            Sign in with a password
-          </>
-        ) : (
-          <>
-            <Phone aria-hidden="true" />
-            Sign in with your phone
-          </>
-        )}
-      </button>
+        <button
+          type="button"
+          className="btn btn-secondary btn-block"
+          onClick={() => {
+            setMethod(method === 'phone' ? 'password' : 'phone');
+            setError(null);
+          }}
+        >
+          {method === 'phone' ? (
+            <>
+              <Mail aria-hidden="true" />
+              Sign in with a password
+            </>
+          ) : (
+            <>
+              <Phone aria-hidden="true" />
+              Sign in with your phone
+            </>
+          )}
+        </button>
+        </>
+      )}
 
       {SHOW_DEMO_ACCOUNTS && (
         <div className="auth-demo">
           <span className="label">Demo accounts</span>
-        {DEMO_ACCOUNTS.map((demo) => (
-          <button key={demo.username} type="button" className="auth-demo__row" onClick={() => fillDemoAccount(demo)}>
-            <span>{demo.username}</span>
-            <span className="dim">{demo.label}</span>
-          </button>
-        ))}
-          <p className="field-hint">Tap to fill. These accounts exist only in the demo database.</p>
+          {DEMO_ACCOUNTS.map((demo) => (
+            <button key={demo.username} type="button" className="auth-demo__row" onClick={() => fillDemoAccount(demo)}>
+              <span>{demo.username}</span>
+              <span className="dim">{demo.label}</span>
+            </button>
+          ))}
+          <p className="field-hint">
+            Tap to fill. These accounts exist only in the demo database.
+            {!CAN_VERIFY_BY_MESSAGE && ' This demo sends no text messages, so signing in by phone is switched off.'}
+          </p>
         </div>
       )}
     </AuthLayout>

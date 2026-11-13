@@ -97,6 +97,31 @@ npm run dev
 
 The dev server runs on <http://localhost:5173> and forwards `/api` to `http://localhost:8080`.
 
+## Deploy
+
+The public demo runs in two places: the web app on Vercel, and the API with its database on Render.
+[render.yaml](render.yaml) describes the Render side.
+
+1. Push the code to GitHub. Render builds from the repository.
+2. In Render, choose **New → Blueprint** and pick the repository and branch. Render reads
+   `render.yaml`, creates the `mbank-db` database and the `mbank-api` web service in Frankfurt, and
+   generates `JWT_SECRET`. The first build takes several minutes.
+3. Copy the service's address, for example `https://mbank-api.onrender.com`.
+4. In the Vercel project, under **Settings → Environment Variables**, set `VITE_API_BASE_URL` to that
+   address and `VITE_DEMO_MODE` to `true`, then redeploy. Both are read at build time.
+5. If the web app is not at `https://mini-bank-silk.vercel.app`, change `CORS_ALLOWED_ORIGINS` and
+   `APP_BASE_URL` on the Render service to its address.
+
+The API runs with the `demo` profile. It has the same startup checks as `prod`, but SMS and email are
+simulated (written to the log), so the demo users can be seeded without a messaging provider. A web
+build with `VITE_DEMO_MODE=true` therefore offers sign-in by password only, and hides the password
+reset and contact verification, which would wait for a message that never comes.
+
+Render's free instance has 512 MB of memory and a tenth of a CPU, and sleeps after a quiet spell.
+Run locally with the same limits and `render.yaml`'s settings, the API took 137 seconds to start and
+used about 290 MB; the first sign-in took 5 seconds and later requests about 1.5. While it wakes, the
+web app says so and retries by itself.
+
 ## Tests
 
 | Command | What it checks |
@@ -107,11 +132,12 @@ The dev server runs on <http://localhost:5173> and forwards `/api` to `http://lo
 
 Last full run, on 12–13 November 2026 on Windows 11 with Docker Desktop:
 
-- Backend: 187 unit tests and 281 integration tests, no failures. Coverage from that run's JaCoCo
-  report: 86.9% of instructions, 67.9% of branches.
-- Frontend: 66 Vitest tests; ESLint and the TypeScript check clean.
-- Playwright: the end-to-end test passed at both sizes against the Vite dev server and against the
-  Docker build on port 3000.
+- Backend: 198 unit tests and 281 integration tests, no failures. Coverage from that run's JaCoCo
+  report: 87.1% of instructions, 68.8% of branches.
+- Frontend: 69 Vitest tests; ESLint and the TypeScript check clean.
+- Playwright: the end-to-end test passed at both sizes against the Vite dev server, the Docker build
+  on port 3000, and a public demo build talking to the API under the `demo` profile, run with
+  `render.yaml`'s settings and Render's free-plan limits.
 - A screenshot script (`frontend/scripts/screenshots.mjs`) loaded every screen at 375 and 1440px and
   found no horizontal overflow.
 
@@ -121,8 +147,10 @@ That workflow has not yet run with the lint and Playwright steps added on this b
 
 ## Known limits
 
-- **The deployed frontend has no backend.** <https://mini-bank-silk.vercel.app> serves the web app
-  only, so signing in there fails. Run it locally to try it.
+- **The deployed frontend has no backend yet.** Until the Render service from `render.yaml` exists
+  and Vercel has `VITE_API_BASE_URL`, signing in at <https://mini-bank-silk.vercel.app> fails.
+- Anyone can sign in to the public demo, including as the seeded administrator, and change its data.
+  Nothing resets it automatically.
 - Access and refresh tokens are kept in `localStorage`, not in httpOnly cookies.
 - Rate limits are counted in memory, so they reset on restart and are per server instance.
 - Two top-ups sent at the same moment are each checked against the daily cap before either one
@@ -134,8 +162,8 @@ That workflow has not yet run with the lint and Playwright steps added on this b
   still use the previous card-based layout. Login, Register, the card order dialog and the command
   palette are each still one file of 350 to 450 lines.
 - Email and SMS are logged rather than sent in the Docker setup, and the one-time code is returned
-  in the API response so phone sign-in can be tried without a phone. The `prod` profile refuses to
-  start with that switched on.
+  in the API response so phone sign-in can be tried without a phone. The `prod` and `demo` profiles
+  refuse to start with that switched on.
 
 ## License
 

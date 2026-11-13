@@ -2,8 +2,8 @@
 # from the environment. Unlike prod, SMS and email are simulated and the demo users are seeded.
 spring:
   datasource:
-    # Render gives the database's host, port and name separately rather than as a JDBC URL.
-    url: ${DB_URL:jdbc:postgresql://${DB_HOST}:${DB_PORT:5432}/${DB_NAME}}
+    # On Render these three come from DATABASE_URL (see DatabaseUrlEnvironmentPostProcessor).
+    url: ${DB_URL}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     hikari:

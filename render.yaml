@@ -21,26 +21,11 @@ services:
       # Sized for a 512 MB instance: a smaller heap, the serial collector and a quicker start.
       - key: JAVA_OPTS
         value: -XX:MaxRAMPercentage=60 -XX:+UseSerialGC -XX:TieredStopAtLevel=1 -Xss512k -XX:+ExitOnOutOfMemoryError
-      - key: DB_HOST
+      # One URL for the database; the API turns it into a JDBC URL and credentials.
+      - key: DATABASE_URL
         fromDatabase:
           name: mbank-db
-          property: host
-      - key: DB_PORT
-        fromDatabase:
-          name: mbank-db
-          property: port
-      - key: DB_NAME
-        fromDatabase:
-          name: mbank-db
-          property: database
-      - key: DB_USERNAME
-        fromDatabase:
-          name: mbank-db
-          property: user
-      - key: DB_PASSWORD
-        fromDatabase:
-          name: mbank-db
-          property: password
+          property: connectionString
       # Generated once by Render and kept. With no CARD_ENCRYPTION_KEY the card keys are derived
       # from it too, so changing it later signs everyone out and makes stored cards unreadable.
       - key: JWT_SECRET

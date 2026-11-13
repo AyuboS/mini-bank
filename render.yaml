@@ -1,0 +1,62 @@
+# Render Blueprint: the API of the public demo, and its database. See "Deploy" in README.md.
+# Free plans sleep when idle and the free database has limits; check Render's current terms.
+services:
+  - type: web
+    name: mbank-api
+    runtime: docker
+    region: frankfurt
+    plan: free
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    healthCheckPath: /actuator/health/readiness
+    buildFilter:
+      paths:
+        - backend/**
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: demo
+      # The app listens on 8080; this tells Render to route there.
+      - key: PORT
+        value: "8080"
+      # Sized for a 512 MB instance: a smaller heap, the serial collector and a quicker start.
+      - key: JAVA_OPTS
+        value: -XX:MaxRAMPercentage=60 -XX:+UseSerialGC -XX:TieredStopAtLevel=1 -Xss512k -XX:+ExitOnOutOfMemoryError
+      - key: DB_HOST
+        fromDatabase:
+          name: mbank-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: mbank-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: mbank-db
+          property: database
+      - key: DB_USERNAME
+        fromDatabase:
+          name: mbank-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: mbank-db
+          property: password
+      # Generated once by Render and kept. With no CARD_ENCRYPTION_KEY the card keys are derived
+      # from it too, so changing it later signs everyone out and makes stored cards unreadable.
+      - key: JWT_SECRET
+        generateValue: true
+      # The web app's address. Change both if the Vercel domain changes.
+      - key: CORS_ALLOWED_ORIGINS
+        value: https://mini-bank-silk.vercel.app
+      - key: APP_BASE_URL
+        value: https://mini-bank-silk.vercel.app
+      - key: SEED_DEMO_DATA
+        value: "true"
+
+databases:
+  - name: mbank-db
+    databaseName: minibank
+    user: minibank
+    plan: free
+    region: frankfurt
+    postgresMajorVersion: "16"

@@ -38,6 +38,8 @@ public enum ErrorCode {
     // --- Transfers ---
     TRANSFER_NOT_FOUND(HttpStatus.NOT_FOUND, "Transfer not found"),
     TRANSFER_LIMIT_EXCEEDED(HttpStatus.UNPROCESSABLE_ENTITY, "Transfer limit exceeded"),
+    TOP_UP_LIMIT_EXCEEDED(HttpStatus.UNPROCESSABLE_ENTITY, "Top-up limit exceeded"),
+    TOP_UP_NOT_ALLOWED(HttpStatus.UNPROCESSABLE_ENTITY, "Top-ups can only go to your own spending account"),
     CURRENCY_MISMATCH(HttpStatus.UNPROCESSABLE_ENTITY, "Source and destination currencies do not match"),
     SAME_ACCOUNT_TRANSFER(HttpStatus.UNPROCESSABLE_ENTITY, "Source and destination accounts must differ"),
     INVALID_AMOUNT(HttpStatus.BAD_REQUEST, "Transfer amount is invalid"),

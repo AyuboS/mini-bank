@@ -6,14 +6,7 @@ interface CategoryIconProps {
   size?: 'sm' | 'md' | 'lg';
 }
 
-/**
- * The tinted glyph that stands in front of a transaction.
- *
- * Coloured by category rather than by counterparty, so a list becomes scannable
- * by colour before it is read — all the groceries are green, all the bills
- * amber. The colour is looked up in one table (utils/categories) so it is the
- * same here, in the analytics chart and on the budget page.
- */
+/** The tinted glyph that stands in front of a transaction. */
 export function CategoryIcon({ category, size = 'md' }: CategoryIconProps) {
   const meta = categoryMeta(category);
   return (

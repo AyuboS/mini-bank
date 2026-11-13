@@ -12,20 +12,13 @@ interface SheetProps {
   dismissible?: boolean;
   /** Wider than the default, for tables and multi-column forms. */
   wide?: boolean;
+  /** Docks to the right edge on a wide screen, for a detail read beside the list. */
+  side?: boolean;
+  /** Where focus lands on open. Use `panel` for a read-first view that happens to contain a field. */
+  initialFocus?: 'first-field' | 'panel';
 }
 
-/**
- * A modal on a desktop, a bottom sheet on a phone.
- *
- * One component rather than two because it is one thing: a surface that comes
- * forward and takes the interaction. Which way it arrives is a property of the
- * viewport, decided in CSS, so no screen has to know which it is getting.
- *
- * The behaviour that makes it a dialog rather than a floating div — the focus
- * trap, the escape key, the scroll lock, the restored focus on close — is all
- * here, because getting it wrong is invisible to a sighted mouse user and
- * completely disabling to everybody else.
- */
+/** A modal on a desktop, a bottom sheet on a phone. */
 export function Sheet({
   open,
   onClose,
@@ -34,9 +27,15 @@ export function Sheet({
   children,
   dismissible = true,
   wide = false,
+  side = false,
+  initialFocus = 'first-field',
 }: SheetProps) {
   const panelRef = useRef<HTMLDivElement | null>(null);
   const restoreFocusTo = useRef<HTMLElement | null>(null);
+
+  // Read through a ref so a parent re-render (new onClose) does not re-run the focus effect.
+  const latest = useRef({ onClose, dismissible, initialFocus });
+  latest.current = { onClose, dismissible, initialFocus };
 
   useEffect(() => {
     if (!open) return;
@@ -46,8 +45,8 @@ export function Sheet({
     restoreFocusTo.current = document.activeElement as HTMLElement | null;
 
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && dismissible) {
-        onClose();
+      if (event.key === 'Escape' && latest.current.dismissible) {
+        latest.current.onClose();
         return;
       }
       if (event.key !== 'Tab') return;
@@ -81,12 +80,20 @@ export function Sheet({
     document.body.style.overflow = 'hidden';
     if (scrollbar > 0) document.body.style.paddingRight = `${scrollbar}px`;
 
-    // Focus lands inside the dialog on the next frame, once it is in the DOM.
+    // Focus the first field if there is one, otherwise the first button.
     const raf = requestAnimationFrame(() => {
-      const target = panelRef.current?.querySelector<HTMLElement>(
-        'input:not([type="hidden"]), textarea, select, button',
-      );
-      (target ?? panelRef.current)?.focus();
+      const panel = panelRef.current;
+      if (latest.current.initialFocus === 'panel') {
+        panel?.focus();
+        return;
+      }
+      const target =
+        panel?.querySelector<HTMLElement>(
+          'input:not([type="hidden"]):not([disabled]), textarea:not([disabled]), select:not([disabled])',
+        ) ??
+        panel?.querySelector<HTMLElement>('.sheet__body button:not([disabled])') ??
+        panel?.querySelector<HTMLElement>('button:not([disabled])');
+      (target ?? panel)?.focus();
     });
 
     return () => {
@@ -96,15 +103,15 @@ export function Sheet({
       cancelAnimationFrame(raf);
       restoreFocusTo.current?.focus?.();
     };
-  }, [open, onClose, dismissible]);
+  }, [open]);
 
   if (!open) return null;
 
   return (
-    <div className="sheet-scrim" onClick={dismissible ? onClose : undefined}>
+    <div className={`sheet-scrim ${side ? 'sheet-scrim--side' : ''}`} onClick={dismissible ? onClose : undefined}>
       <div
         ref={panelRef}
-        className={`sheet surface--raised ${wide ? 'sheet--wide' : ''}`}
+        className={`sheet surface--raised ${wide ? 'sheet--wide' : ''} ${side ? 'sheet--side' : ''}`}
         role="dialog"
         aria-modal="true"
         aria-label={title}

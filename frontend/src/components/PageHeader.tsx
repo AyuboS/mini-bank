@@ -8,13 +8,7 @@ interface PageHeaderProps {
   actions?: ReactNode;
 }
 
-/**
- * The title block every screen opens with.
- *
- * `h1` per page, always. The desktop chrome deliberately carries no page title,
- * so this is the document's only top-level heading and the anchor a screen
- * reader's heading navigation lands on.
- */
+/** The title block every screen opens with. */
 export function PageHeader({ title, subtitle, actions }: PageHeaderProps) {
   return (
     <header className="page-header">

@@ -17,18 +17,7 @@ interface SplitBillSheetProps {
   onCreated: (count: number) => void;
 }
 
-/**
- * How the pennies are handled.
- *
- * An equal split of £120.00 between seven people is £17.142857…, and seven
- * requests of £17.14 collect £119.98. The two pence have to go somewhere, and
- * the only honest place is the person doing the splitting: everybody else is
- * asked for a round share, and the organiser absorbs the remainder rather than
- * being quietly overpaid.
- *
- * Returns minor units throughout, because this is the one calculation in the
- * browser where a floating-point cent would end up in a real request.
- */
+/** How the pennies are handled. */
 export function splitEvenly(totalMinor: number, people: number): { share: number; organiser: number } {
   if (people < 1) return { share: 0, organiser: totalMinor };
   const share = Math.floor(totalMinor / people);
@@ -48,17 +37,7 @@ function fromMinor(minor: number): string {
   return (minor / 100).toFixed(2);
 }
 
-/**
- * Splitting a bill.
- *
- * Built on money requests rather than on anything new: one request per person,
- * each for their own share, each of which only that person can settle. Nothing
- * here moves money — the requests are real, they are created server-side, and
- * every one of them still has to be paid by the person it was sent to.
- *
- * The organiser's own share is shown but never requested. Asking yourself for
- * money is not a thing, and a total that included it would not add up.
- */
+/** Splitting a bill. */
 export function SplitBillSheet({ open, onClose, accounts, onCreated }: SplitBillSheetProps) {
   const [total, setTotal] = useState('');
   const [note, setNote] = useState('');
@@ -102,14 +81,7 @@ export function SplitBillSheet({ open, onClose, accounts, onCreated }: SplitBill
     const selected = (payees.data ?? []).filter((payee) => chosen.includes(payee.id));
 
     try {
-      /*
-        Sequential rather than Promise.all.
-
-        Each of these is a write, and the server rate-limits writes. Firing five
-        at once is the reliable way to have the fourth rejected and leave the
-        split half-created, with no way for the customer to tell which of their
-        friends were asked.
-      */
+      /* Sequential rather than Promise.all. */
       for (const payee of selected) {
         await moneyRequestsApi.create({
           toAccountId: account.id,

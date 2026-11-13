@@ -12,14 +12,7 @@ interface CardLimitsModalProps {
   onSaved: (card: CardResponse) => void;
 }
 
-/**
- * Card spending caps, and how much of them is gone.
- *
- * The usage bars are honest about what they measure: MBank has no card
- * acquiring, so "spent" is money that left the account the card is attached to,
- * not a stream of card authorisations. Labelling that precisely costs one line
- * and avoids implying a precision the data does not have.
- */
+/** Card spending caps, and how much of them is gone. */
 export function CardLimitsModal({ open, card, onClose, onSaved }: CardLimitsModalProps) {
   const [daily, setDaily] = useState('');
   const [monthly, setMonthly] = useState('');
@@ -81,7 +74,7 @@ export function CardLimitsModal({ open, card, onClose, onSaved }: CardLimitsModa
       subtitle={`${card.label} · •••• ${card.lastFour}`}
     >
       {error && (
-        <div className="auth-error" role="alert" style={{ marginBottom: 'var(--space-4)' }}>
+        <div className="auth-error mb-4" role="alert">
           <span>{error}</span>
         </div>
       )}

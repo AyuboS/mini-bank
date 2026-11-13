@@ -5,16 +5,24 @@ import com.minibank.account.dto.AccountResponse;
 import com.minibank.account.dto.BalanceResponse;
 import com.minibank.account.dto.CreateAccountRequest;
 import com.minibank.account.service.AccountService;
+import com.minibank.common.error.ErrorCode;
+import com.minibank.common.error.NotFoundException;
 import com.minibank.common.security.AuthenticatedUser;
 import com.minibank.common.security.SecurityUtils;
 import com.minibank.common.web.PageResponse;
 import com.minibank.common.web.SortWhitelist;
 import com.minibank.transfer.domain.TransferStatus;
+import com.minibank.transfer.dto.TopUpRequest;
 import com.minibank.transfer.dto.TransactionResponse;
+import com.minibank.transfer.dto.TransferResponse;
+import com.minibank.transfer.service.TopUpService;
+import com.minibank.transfer.service.TransferService;
 import com.minibank.transfer.service.TransferQueryService;
 import com.minibank.user.service.UserService;
 import com.minibank.account.dto.PayeeLookupResponse;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -32,8 +40,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -44,6 +54,7 @@ import org.springframework.web.bind.annotation.RestController;
  * caller does not own. The controller never compares ids itself.
  */
 @RestController
+@Validated
 @RequestMapping("/api/v1/accounts")
 @Tag(name = "Accounts", description = "Bank accounts, balances and per-account history")
 public class AccountController {
@@ -54,16 +65,19 @@ public class AccountController {
     private final AccountService accountService;
     private final UserService userService;
     private final TransferQueryService transferQueryService;
+    private final TopUpService topUpService;
     private final Clock clock;
 
     public AccountController(
             AccountService accountService,
             UserService userService,
             TransferQueryService transferQueryService,
+            TopUpService topUpService,
             Clock clock) {
         this.accountService = accountService;
         this.userService = userService;
         this.transferQueryService = transferQueryService;
+        this.topUpService = topUpService;
         this.clock = clock;
     }
 
@@ -101,6 +115,26 @@ public class AccountController {
         return ResponseEntity.ok(BalanceResponse.from(account, clock.instant()));
     }
 
+    @PostMapping("/{id}/top-up")
+    @Operation(
+            summary = "Simulated top-up of my own account",
+            description = "Adds play money to one of the caller's active spending accounts, funded by the "
+                    + "bank's system account so the ledger stays balanced. Requires an Idempotency-Key. "
+                    + "Capped per top-up and per day (minibank.top-up.*). No real money moves.")
+    @ApiResponse(responseCode = "201", description = "Topped up")
+    @ApiResponse(responseCode = "404", description = "No such account, or it belongs to somebody else")
+    @ApiResponse(responseCode = "422", description = "Over a cap, or not a spending account")
+    public ResponseEntity<TransferResponse> topUp(
+            @PathVariable UUID id,
+            @RequestHeader("Idempotency-Key") @NotBlank @Size(min = 8, max = 100) String idempotencyKey,
+            @Valid @RequestBody TopUpRequest request) {
+        AuthenticatedUser caller = SecurityUtils.requireCurrentUser();
+        TransferService.TransferOutcome outcome = topUpService.topUp(id, request, caller, idempotencyKey);
+        return ResponseEntity.status(outcome.status())
+                .header("Idempotent-Replay", String.valueOf(outcome.replayed()))
+                .body(outcome.transfer());
+    }
+
     @GetMapping("/lookup")
     @Operation(
             summary = "Who an account number belongs to",
@@ -115,7 +149,10 @@ public class AccountController {
         // Authentication is required by the security chain; the caller's identity
         // is not used beyond that, because a payee's name is the same whoever asks.
         SecurityUtils.requireCurrentUser();
-        BankAccount account = accountService.getByAccountNumber(accountNumber);
+        // Loaded with its owner: the holder name is read after the transaction has closed.
+        BankAccount account = accountService.findAllByAccountNumbers(List.of(accountNumber)).stream()
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException(ErrorCode.ACCOUNT_NOT_FOUND));
         return ResponseEntity.ok(new PayeeLookupResponse(
                 account.getAccountNumber(), abbreviatedHolderName(account), account.getCurrency(), "MBank"));
     }

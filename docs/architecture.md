@@ -449,7 +449,7 @@ hour. A `GET` would be cacheable, linkable and replayable from browser history.
 | Metrics | Micrometer with a Prometheus endpoint |
 | Business metrics | `minibank.transfers{status,currency}`, `minibank.transfers.amount`, `minibank.risk.decisions{decision}`, `minibank.idempotency.replays`, `minibank.login.failures` |
 | Correlation | `X-Request-Id` accepted (validated) or generated, put in the MDC, echoed in the response, stored on every audit row |
-| Structured logs | JSON via `logstash-logback-encoder` under the `docker` and `prod` profiles |
+| Structured logs | JSON via `logstash-logback-encoder` under the `docker`, `demo` and `prod` profiles |
 
 Heap usage and request latency come free from Actuator. What an operator actually needs during an
 incident is whether transfers are still settling and whether the risk engine has started blocking

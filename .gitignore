@@ -34,3 +34,10 @@ Thumbs.db
 # Logs and temporary files
 *.log
 logs/
+
+# Playwright output
+frontend/test-results/
+frontend/playwright-report/
+
+# Scratch screenshots
+docs/screenshots/wip/

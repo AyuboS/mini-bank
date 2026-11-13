@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react';
-import { Landmark, Lock, ShieldCheck } from 'lucide-react';
 import { Logo } from '../components/Logo';
 import { ThemeToggle } from '../components/ThemeToggle';
 
@@ -10,53 +9,29 @@ interface AuthLayoutProps {
   footer?: ReactNode;
 }
 
-/**
- * The shell for signing in and registering.
- *
- * Two halves: the product states what it is at poster scale on the left, and
- * the form has the right-hand side entirely to itself. The single centred box
- * this replaced is what every framework produces by default, and it says
- * nothing at all about the product behind it.
- *
- * Below 900px the poster is dropped rather than stacked. On a phone the form is
- * the only thing anybody came for, and a marketing panel above it just means
- * scrolling past a headline to reach the password field.
- */
+/** The shell for signing in and registering. */
 export function AuthLayout({ title, subtitle, children, footer }: AuthLayoutProps) {
   return (
     <div className="auth-page">
       <aside className="auth-poster">
-        <div className="auth-poster__bloom" />
-
         <div className="auth-poster__brand">
           <Logo size={40} />
           <span className="auth-poster__name">MBank</span>
         </div>
 
         <div>
-          <h1 className="auth-poster__statement">
-            Money that <em>moves</em> when you say so.
-          </h1>
+          <h1 className="auth-poster__statement">A bank, simulated.</h1>
           <p className="auth-poster__sub">
-            Accounts in three currencies, transfers that settle in a second, and a ledger that
-            balances to the cent.
+            Accounts, cards, payments and savings on a double-entry ledger. A portfolio project: no real money
+            moves.
           </p>
         </div>
 
-        <div className="auth-poster__points">
-          <span className="auth-poster__point">
-            <ShieldCheck aria-hidden="true" />
-            Every movement double-entered and auditable
-          </span>
-          <span className="auth-poster__point">
-            <Lock aria-hidden="true" />
-            Sessions expire, tokens rotate, failures are counted
-          </span>
-          <span className="auth-poster__point">
-            <Landmark aria-hidden="true" />
-            EUR, USD and GBP, held separately
-          </span>
-        </div>
+        <ul className="auth-poster__points">
+          <li>Every payment is two ledger entries that sum to zero.</li>
+          <li>Retrying a payment is safe: each one carries an idempotency key.</li>
+          <li>EUR, USD and GBP are held separately and never mixed.</li>
+        </ul>
       </aside>
 
       <div className="auth-form-side">
@@ -65,7 +40,7 @@ export function AuthLayout({ title, subtitle, children, footer }: AuthLayoutProp
           <div className="auth-brand">
             <Logo size={40} />
             <span className="auth-poster__name">MBank</span>
-            <span style={{ marginLeft: 'auto' }}>
+            <span className="ml-auto">
               <ThemeToggle />
             </span>
           </div>

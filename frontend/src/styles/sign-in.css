@@ -1,0 +1,53 @@
+/* Sign in and register */
+
+.auth-page { display: grid; grid-template-columns: 1fr 1fr; min-height: 100dvh; }
+
+/* Ink in both themes. No decoration: the type is the poster. */
+.auth-poster {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--space-7);
+  padding: var(--space-8) var(--space-7);
+  background: #171612;
+  color: #f4f2ec;
+}
+
+.auth-poster__brand { display: flex; align-items: center; gap: var(--space-3); }
+
+.auth-poster__name { font-size: var(--text-4); font-weight: var(--weight-semibold); }
+.auth-poster .auth-poster__name { color: #f4f2ec; }
+
+.auth-poster__statement {
+  font-size: clamp(2rem, 3.6vw, 2.75rem);
+  font-weight: var(--weight-semibold);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  max-width: 14ch;
+  color: #f4f2ec;
+}
+
+.auth-poster__sub { max-width: 42ch; margin-top: var(--space-4); font-size: var(--text-3); color: #b9b6ad; }
+
+.auth-poster__points {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-top: var(--space-4);
+  border-top: 1px solid #3d3c38;
+  list-style: none;
+  font-size: var(--text-2);
+  color: #b9b6ad;
+}
+
+.auth-form-side {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-7) var(--space-5);
+}
+
+.auth-card { width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: var(--space-4); }
+.auth-brand { display: none; align-items: center; gap: var(--space-3); margin-bottom: var(--space-4); }
+.auth-title { font-size: clamp(1.75rem, 4vw, 2.25rem); letter-spacing: -0.036em; }
+.auth-sub { color: var(--ink-2); font-size: var(--text-small); }

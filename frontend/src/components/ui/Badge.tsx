@@ -22,13 +22,7 @@ export function Badge({ tone = 'neutral', children, dot = false }: BadgeProps) {
   );
 }
 
-/**
- * Maps a domain status onto a tone and a human label.
- *
- * Centralised so that PENDING is the same colour and the same word everywhere it
- * appears. The alternative — each screen deciding for itself — is how a transfer
- * ends up "Pending" in one place and "Awaiting review" in another.
- */
+/** Maps a domain status onto a tone and a human label. */
 const STATUS: Record<string, { tone: Tone; label: string }> = {
   // Transfers
   COMPLETED: { tone: 'positive', label: 'Completed' },

@@ -33,7 +33,7 @@ jobs:
       # lock graphs directly, needs no NVD API key, and does not spend ten
       # minutes downloading a vulnerability database on every run.
       - name: Scan the repository
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           scan-type: fs
           scan-ref: .
@@ -56,7 +56,7 @@ jobs:
       # open the security tab.
       - name: Summarise findings
         if: always()
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           scan-type: fs
           scan-ref: .
@@ -99,7 +99,7 @@ jobs:
       # Catches vulnerabilities in the base image and OS packages, which the
       # dependency scan above cannot see.
       - name: Scan ${{ matrix.name }} image
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           scan-type: image
           image-ref: mini-bank-${{ matrix.name }}:scan

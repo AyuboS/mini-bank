@@ -5,18 +5,7 @@ import { useAuth } from '../auth/AuthContext';
 /** How often the badge is refreshed. */
 const POLL_INTERVAL_MS = 60_000;
 
-/**
- * The unread notification count, for the badge in the chrome.
- *
- * Polled rather than pushed: this application has no websocket, and opening one
- * for a number that changes a few times a day would be a lot of machinery for
- * very little. A minute is well inside the window in which somebody would
- * notice, and the endpoint is a single indexed count.
- *
- * Polling pauses while the tab is hidden. A background tab left open overnight
- * would otherwise make several hundred requests nobody will ever read the
- * result of.
- */
+/** The unread notification count, for the badge in the chrome. */
 export function useUnreadNotifications() {
   const { user } = useAuth();
   const [unread, setUnread] = useState(0);

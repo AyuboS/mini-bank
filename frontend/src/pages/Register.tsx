@@ -9,6 +9,7 @@ import { AuthLayout } from '../layouts/AuthLayout';
 import { OtpInput } from '../components/auth/OtpInput';
 import { PhoneField, toE164 } from '../components/auth/PhoneField';
 import { Button, Input } from '../components/ui';
+import { CAN_VERIFY_BY_MESSAGE } from '../utils/deployment';
 import { toFriendlyError } from '../utils/errors';
 import type { FriendlyError } from '../utils/errors';
 
@@ -17,30 +18,14 @@ const PASSWORD_HINT = 'At least 12 characters, with upper and lower case, a digi
 /** Where in the sign-up somebody is. Email-only registration skips straight to `details`. */
 type Step = 'method' | 'verify' | 'details';
 
-/**
- * Opening an account.
- *
- * ## Why the phone is verified before the account exists
- *
- * A verified number is a sign-in credential: anyone holding it can request a
- * code and get in. So it has to be proven, and the honest place to prove it is
- * before the account is created rather than after — otherwise there is a window
- * in which an account exists claiming a number nobody has demonstrated control
- * of, and cleaning that up later is far harder than not creating it.
- *
- * The proof travels as a short-lived ticket handed out when the code checks out
- * and redeemed exactly once at registration. Without it, knowing that a number
- * had just been verified would be enough to register against it.
- *
- * Email registration needs no such step: the address is verified afterwards, by
- * a link, because an unverified email is not a credential and blocks nothing.
- */
+/** Opening an account. */
 export function RegisterPage() {
   const { register } = useAuth();
   const navigate = useNavigate();
 
-  const [step, setStep] = useState<Step>('method');
-  const [withPhone, setWithPhone] = useState(true);
+  // A public demo cannot text a code, so it goes straight to the details.
+  const [step, setStep] = useState<Step>(CAN_VERIFY_BY_MESSAGE ? 'method' : 'details');
+  const [withPhone, setWithPhone] = useState(CAN_VERIFY_BY_MESSAGE);
 
   const [dialCode, setDialCode] = useState('+998');
   const [number, setNumber] = useState('');
@@ -213,18 +198,18 @@ export function RegisterPage() {
               block
               loading={busy}
               disabled={number.replace(/\D/g, '').length < 6}
-              style={{ marginTop: 'var(--space-6)' }}
+              className="mt-6"
             >
               {busy ? 'Sending…' : 'Send code'}
             </Button>
 
-            <p className="field-hint" style={{ marginTop: 'var(--space-3)', textAlign: 'center' }}>
+            <p className="field-hint mt-3 text-center">
               We verify your number first, so you can sign in with it later.
             </p>
           </form>
         ) : (
           <>
-            <p className="small muted" style={{ marginBottom: 'var(--space-4)' }}>
+            <p className="small muted mb-4">
               You can add and verify a phone number later, from your profile.
             </p>
             <Button variant="primary" size="lg" block onClick={() => setStep('details')}>
@@ -256,7 +241,7 @@ export function RegisterPage() {
           />
 
           {challenge?.developmentCode && (
-            <div className="auth-demo" style={{ marginTop: 0 }}>
+            <div className="auth-demo mt-0">
               <span className="label">Development only — no SMS was sent</span>
               <button
                 type="button"
@@ -278,7 +263,7 @@ export function RegisterPage() {
           loading={busy}
           disabled={code.length < 6}
           onClick={() => confirmRef.current(code)}
-          style={{ marginTop: 'var(--space-6)' }}
+          className="mt-6"
         >
           {busy ? 'Verifying…' : 'Verify number'}
         </Button>
@@ -364,7 +349,7 @@ export function RegisterPage() {
             onChange={update('email')}
             autoComplete="email"
             required
-            hint="We will send a link to confirm it."
+            hint={CAN_VERIFY_BY_MESSAGE ? 'We will send a link to confirm it.' : 'This demo sends no email; any address in a valid format will do.'}
             {...(error?.fields['email'] ? { error: error.fields['email'] } : {})}
           />
 
@@ -389,7 +374,7 @@ export function RegisterPage() {
           block
           loading={busy}
           icon={<UserPlus aria-hidden="true" />}
-          style={{ marginTop: 'var(--space-6)' }}
+          className="mt-6"
         >
           {busy ? 'Creating account…' : 'Create account'}
         </Button>

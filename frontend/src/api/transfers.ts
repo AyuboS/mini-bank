@@ -50,14 +50,7 @@ function buildQuery(query: TransactionQuery): string {
 }
 
 export const transfersApi = {
-  /**
-   * Creates a transfer.
-   *
-   * The idempotency key is supplied by the caller, not generated here, and that
-   * is the whole point: the caller holds one key for one payment attempt and
-   * reuses it if the request has to be retried, so the server can recognise the
-   * retry and decline to pay twice.
-   */
+  /** Creates a transfer. */
   create: (input: CreateTransferInput, idempotencyKey: string) =>
     api.post<TransferResponse>('/api/v1/transfers', input, { 'Idempotency-Key': idempotencyKey }),
 
@@ -72,12 +65,7 @@ export const transfersApi = {
   listTransactions: (query: TransactionQuery = {}) =>
     api.get<PageResponse<TransactionResponse>>(`/api/v1/transactions?${buildQuery(query)}`),
 
-  /**
-   * Changes what a transaction was for.
-   *
-   * Either party to the payment may set this, and both then see it: a category
-   * describes the payment, not one side's view of it.
-   */
+  /** Changes what a transaction was for. */
   recategorise: (id: string, category: TransactionCategory) =>
     api.patch<TransactionResponse>(`/api/v1/transfers/${id}/category`, { category }),
 };

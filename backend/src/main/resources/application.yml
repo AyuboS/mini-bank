@@ -138,6 +138,12 @@ minibank:
     daily-max: 10000.00
     max-transfers-per-hour: 20
 
+  # Simulated top-ups add play money. Both caps are in the account's currency; the daily one is
+  # per customer and per currency.
+  top-up:
+    per-top-up-max: 1000.00
+    daily-max: 2000.00
+
   risk:
     large-amount:
       threshold: 2500.00
@@ -209,6 +215,11 @@ minibank:
         refill-period: 15m
       # Confirmation of payee is an account-existence oracle by design. The
       # limit is what keeps it from being enumerable at scale.
+      - name: top-up
+        path-pattern: /api/v1/accounts/*/top-up
+        methods: [POST]
+        capacity: 10
+        refill-period: 10m
       - name: payee-lookup
         path-pattern: /api/v1/accounts/lookup
         methods: [GET]

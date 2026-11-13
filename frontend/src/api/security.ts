@@ -1,22 +1,9 @@
 import { api, tokenStore } from './client';
 import type { LoginHistoryEntry, SessionResponse, VerificationChallenge, VerificationTicket } from './types';
 
-/**
- * The security centre.
- *
- * Session revocation is a server-side write: the token family is revoked, so the
- * next refresh from that device fails at the store. Nothing here is a
- * client-side illusion of having signed a device out.
- */
+/** The security centre. */
 export const securityApi = {
-  /**
-   * The caller's signed-in devices.
-   *
-   * The current refresh token is passed so the server can mark which row is this
-   * device. It is a value the client already holds and is sent over the same
-   * authenticated channel as everything else; the list is correct without it,
-   * it simply cannot say "this device".
-   */
+  /** The caller's signed-in devices. */
   sessions: () => {
     const current = tokenStore.refreshToken();
     const query = current ? `?currentRefreshToken=${encodeURIComponent(current)}` : '';

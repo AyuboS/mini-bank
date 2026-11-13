@@ -9,16 +9,7 @@ interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
   children: ReactNode;
 }
 
-/**
- * A native `<select>` in a glass well.
- *
- * Native on purpose. A custom listbox would look more consistent with the rest
- * of the product and would be worse in every way that matters: on a phone the
- * platform picker is a full-height wheel that is far easier to hit than any
- * bespoke dropdown, and the native control gets keyboard behaviour, type-ahead
- * and screen-reader support that a reimplementation has to earn back one bug at
- * a time.
- */
+/** A native `<select>` in a glass well. */
 export function Select({
   label,
   error,

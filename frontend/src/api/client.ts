@@ -1,27 +1,13 @@
 import type { ApiError, AuthenticationResponse } from './types';
 
-/**
- * Where the API lives.
- *
- * In development this is empty, so every request is same-origin and Vite's dev
- * proxy forwards it (see vite.config.ts). That removes CORS and port drift as
- * possible causes of "cannot reach MBank". A production bundle has no
- * server in front of it, so the origin is baked in at build time.
- */
+/** Where the API lives. */
 export const API_BASE_URL: string = (
   import.meta.env.VITE_API_BASE_URL ?? (import.meta.env.DEV ? '' : 'http://localhost:8080')
 ).replace(/\/+$/, '');
 
 const BASE_URL = API_BASE_URL;
 
-/**
- * Is the API answering at all?
- *
- * Used to tell a genuinely unreachable server apart from a single failed
- * request, so the interface can say "the API is not running" instead of
- * shrugging. Readiness rather than liveness: it reports false while the
- * application is still starting or has lost the database.
- */
+/** Is the API answering at all? */
 export async function pingApi(signal?: AbortSignal): Promise<boolean> {
   const url = `${BASE_URL}/actuator/health/readiness`;
   const options: RequestInit = { cache: 'no-store', ...(signal ? { signal } : {}) };
@@ -30,21 +16,7 @@ export async function pingApi(signal?: AbortSignal): Promise<boolean> {
     const response = await fetch(url, options);
     return response.ok;
   } catch {
-    /*
-      A rejection here is not proof that nothing is there.
-
-      The server's CORS configuration covers /api, not /actuator, so a probe
-      sent cross-origin — which is exactly what the Docker frontend does, from
-      :3000 to :8080 — is blocked by the browser even when the API is perfectly
-      healthy. Reporting that as "the API is not responding" would put a false
-      alarm on a working application, which is worse than saying nothing.
-
-      A no-cors request cannot be read, but it still resolves or rejects on
-      whether anything answered at all, and that is the only question being
-      asked. It cannot see the status code, so a server that is up but not yet
-      ready reads as up; the banner is about reachability, and a request that
-      fails for any other reason still surfaces its own error.
-    */
+    /* A rejection here is not proof that nothing is there. */
     try {
       await fetch(url, { ...options, mode: 'no-cors' });
       return true;
@@ -83,15 +55,7 @@ export class ApiRequestError extends Error {
   }
 }
 
-/**
- * Token storage.
- *
- * Tokens live in localStorage, which is the pragmatic choice for a demo but is
- * readable by any script that manages to run on the page. A production
- * deployment should keep the refresh token in an httpOnly, SameSite cookie so
- * that cross-site scripting cannot exfiltrate it, and pair that with CSRF
- * protection on the refresh endpoint. See docs/security.md.
- */
+/** Token storage. */
 export const tokenStore = {
   accessToken: (): string | null => localStorage.getItem(ACCESS_TOKEN_KEY),
   refreshToken: (): string | null => localStorage.getItem(REFRESH_TOKEN_KEY),
@@ -113,16 +77,23 @@ interface RequestOptions {
   skipRefresh?: boolean;
 }
 
-/**
- * A single in-flight refresh, shared by every request that hits a 401 at once.
- *
- * Without this, a dashboard that fires four requests on load would send four
- * refreshes; refresh tokens rotate, so three of them would present an
- * already-used token and trip the server's reuse detection, logging the user
- * out for doing nothing wrong.
- */
+/** A single in-flight refresh, shared by every request that hits a 401 at once. */
 let refreshInFlight: Promise<boolean> | null = null;
 
+// fetch() rejects when the host cannot be reached. The event starts the connection banner.
+async function fetchOrAnnounce(url: string, init: RequestInit): Promise<Response> {
+  try {
+    return await fetch(url, init);
+  } catch (cause) {
+    window.dispatchEvent(new CustomEvent('minibank:unreachable'));
+    throw cause;
+  }
+}
+
+/**
+ * Resolves false only when the server rejected the refresh token (401), and
+ * clears the session then. An outage throws instead, so the session survives it.
+ */
 async function refreshAccessToken(): Promise<boolean> {
   const refreshToken = tokenStore.refreshToken();
   if (!refreshToken) {
@@ -130,19 +101,20 @@ async function refreshAccessToken(): Promise<boolean> {
   }
   refreshInFlight ??= (async () => {
     try {
-      const response = await fetch(`${BASE_URL}/api/v1/auth/refresh`, {
+      const response = await fetchOrAnnounce(`${BASE_URL}/api/v1/auth/refresh`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ refreshToken }),
       });
-      if (!response.ok) {
+      if (response.status === 401) {
         tokenStore.clear();
         return false;
       }
+      if (!response.ok) {
+        throw new ApiRequestError(response.status, {});
+      }
       tokenStore.save((await response.json()) as AuthenticationResponse);
       return true;
-    } catch {
-      return false;
     } finally {
       refreshInFlight = null;
     }
@@ -155,7 +127,7 @@ async function send<T>(path: string, options: RequestOptions = {}): Promise<T> {
 
   const doFetch = async (): Promise<Response> => {
     const accessToken = tokenStore.accessToken();
-    return fetch(`${BASE_URL}${path}`, {
+    return fetchOrAnnounce(`${BASE_URL}${path}`, {
       method,
       headers: {
         'Content-Type': 'application/json',
@@ -166,16 +138,7 @@ async function send<T>(path: string, options: RequestOptions = {}): Promise<T> {
     });
   };
 
-  let response: Response;
-  try {
-    response = await doFetch();
-  } catch (cause) {
-    // fetch() rejects rather than resolving when the host cannot be reached at
-    // all. Announcing it lets the connection banner start probing immediately,
-    // instead of every screen independently rendering its own dead end.
-    window.dispatchEvent(new CustomEvent('minibank:unreachable'));
-    throw cause;
-  }
+  let response = await doFetch();
 
   // One retry, and only for an expired session. Retrying anything else would
   // risk repeating a request the server already acted on.
@@ -208,17 +171,7 @@ export const api = {
     send<T>(path, { method: 'POST', body, skipRefresh: true }),
 };
 
-/**
- * Downloads a file from an authenticated endpoint.
- *
- * A plain `<a href>` cannot be used: the API takes a bearer token, and a browser
- * navigation carries no Authorization header, so the download would arrive as a
- * 401 page. The bytes are therefore fetched with the token attached and handed
- * to the browser as an object URL.
- *
- * The URL is revoked on the next tick. Without that, every export in a session
- * pins its own copy of the file in memory until the tab is closed.
- */
+/** Downloads a file from an authenticated endpoint. */
 export async function downloadFile(path: string, filename: string): Promise<void> {
   const response = await fetch(`${BASE_URL}${path}`, {
     headers: tokenStore.accessToken() ? { Authorization: `Bearer ${tokenStore.accessToken()}` } : {},
@@ -245,13 +198,7 @@ export async function downloadFile(path: string, filename: string): Promise<void
   setTimeout(() => URL.revokeObjectURL(url), 0);
 }
 
-/**
- * A key that identifies one logical payment attempt.
- *
- * Generated once when the form is submitted and reused if the request is
- * retried, which is exactly what makes the retry safe: the server recognises
- * the key and returns the original outcome instead of paying twice.
- */
+/** A key that identifies one logical payment attempt. */
 export function newIdempotencyKey(): string {
   if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
     return crypto.randomUUID();

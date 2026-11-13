@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeftRight, FileText, PiggyBank, Plus, Wallet } from 'lucide-react';
 import { accountsApi } from '../api/accounts';
 import { savingsApi } from '../api/savings';
@@ -16,19 +16,13 @@ import {
 } from '../components/ui';
 import { PageHeader } from '../components/PageHeader';
 import { EmptyState, ErrorState } from '../components/States';
-import { formatDay, splitMoney, toNumber } from '../utils/format';
+import { formatDay, splitMoney } from '../utils/format';
 import { toFriendlyError } from '../utils/errors';
+import { fromMinorUnits, toMinorUnits } from '../utils/money';
 
 const CURRENCIES: CurrencyCode[] = ['EUR', 'USD', 'GBP'];
 
-/**
- * The customer's accounts.
- *
- * Spending and savings are shown apart, and the totals are per currency rather
- * than summed. There is no FX in this product, so adding a USD balance to a EUR
- * one would require a rate that does not exist — and a single "total" made from
- * two currencies is a number that means nothing.
- */
+/** The customer's accounts. */
 export function AccountsPage() {
   const navigate = useNavigate();
   const toast = useToast();
@@ -50,7 +44,7 @@ export function AccountsPage() {
   const totals = useMemo(() => {
     const byCurrency = new Map<CurrencyCode, number>();
     for (const account of spending) {
-      byCurrency.set(account.currency, (byCurrency.get(account.currency) ?? 0) + toNumber(account.balance));
+      byCurrency.set(account.currency, (byCurrency.get(account.currency) ?? 0) + toMinorUnits(account.balance));
     }
     return [...byCurrency.entries()];
   }, [spending]);
@@ -82,7 +76,7 @@ export function AccountsPage() {
       {totals.length > 0 && (
         <div className="stat-grid">
           {totals.map(([currency, total]) => {
-            const [major, minor] = splitMoney(total, currency);
+            const [major, minor] = splitMoney(fromMinorUnits(total), currency);
             return (
               <Surface tone="hero" className="hero hero--compact" key={currency}>
                 <span className="label">{currency} available</span>
@@ -121,7 +115,7 @@ export function AccountsPage() {
         ) : (
           <div className="account-grid">
             {spending.map((account) => (
-              <AccountCard key={account.id} account={account} onSend={() => navigate('/transfer')} onStatement={() => navigate('/statements')} />
+              <AccountCard key={account.id} account={account} onSend={() => navigate('/payments/send')} onStatement={() => navigate('/statements')} />
             ))}
           </div>
         )}
@@ -175,11 +169,11 @@ function AccountCard({
   return (
     <Surface className="account-card">
       <div className="row-between">
-        <span className="row" style={{ gap: 'var(--space-2)' }}>
+        <span className="row gap-2">
           <span className="account-card__icon" aria-hidden="true">
             {savings ? <PiggyBank /> : <Wallet />}
           </span>
-          <span className="stack" style={{ gap: 0 }}>
+          <span className="stack gap-0">
             <span className="account-card__name">{goalName ?? `${account.currency} account`}</span>
             <span className="dim account-card__number mono">{account.accountNumber}</span>
           </span>
@@ -194,7 +188,7 @@ function AccountCard({
 
       <div className="row-between account-card__foot">
         <span className="dim">Opened {formatDay(account.createdAt)}</span>
-        <span className="row" style={{ gap: 'var(--space-1)' }}>
+        <span className="row gap-1">
           <Button
             size="sm"
             variant="ghost"
@@ -203,6 +197,11 @@ function AccountCard({
           >
             {savings ? 'Goal' : 'Send'}
           </Button>
+          {!savings && account.status === 'ACTIVE' && (
+            <Link className="btn btn-ghost btn-sm" to={`/top-up?account=${account.id}`}>
+              Top up
+            </Link>
+          )}
           <Button size="sm" variant="ghost" icon={<FileText />} onClick={onStatement}>
             Statement
           </Button>
@@ -253,7 +252,7 @@ function OpenAccountForm({
         ))}
       </Select>
 
-      <p className="dim" style={{ fontSize: 'var(--text-small)' }}>
+      <p className="dim text-small">
         Accounts are held separately per currency. Money cannot be moved between two different
         currencies inside MBank.
       </p>

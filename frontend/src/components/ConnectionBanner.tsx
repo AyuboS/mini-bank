@@ -1,17 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { CloudOff, Loader2, RefreshCw } from 'lucide-react';
 import { API_BASE_URL, pingApi } from '../api/client';
+import { PUBLIC_DEMO } from '../utils/deployment';
 
-/**
- * Tells the reader the API is down, rather than letting every screen fail on
- * its own.
- *
- * "Cannot reach MBank" is a dead end: it names no cause and offers no next
- * step, and the most common cause by far is that the backend simply is not
- * running yet. This probes once on mount, listens for the unreachable event the
- * API client raises, then retries on a backoff until the server answers —
- * clearing itself without the reader having to reload anything.
- */
+/** Tells the reader the API is down, rather than letting every screen fail on its own. */
 export function ConnectionBanner() {
   const [offline, setOffline] = useState(false);
   const [checking, setChecking] = useState(false);
@@ -29,19 +21,12 @@ export function ConnectionBanner() {
   useEffect(() => {
     let cancelled = false;
 
-    // The scheduled retry. Backs off from 2s to 30s so a long-running
-    // `docker compose up` is not hammered, and a quick restart is caught fast.
+    // The scheduled retry backs off from 2s to 30s.
     const schedule = () => {
       const delay = Math.min(2000 * 2 ** attempts.current, 30_000);
       attempts.current += 1;
       timer.current = window.setTimeout(async () => {
-        /*
-          Cleared the moment it fires, not when the banner next re-renders.
-          `timer.current` is what tells the unreachable listener that a retry
-          loop is already running; leaving a dead id in it for the length of a
-          render would let a failure arriving in that window be swallowed, and
-          the banner would then never appear again.
-        */
+        /* Cleared the moment it fires, not when the banner next re-renders. */
         timer.current = undefined;
         if (cancelled) return;
         const up = await probe();
@@ -83,16 +68,7 @@ export function ConnectionBanner() {
     }
   }, [offline]);
 
-  /*
-    Tell the document the banner is up, so the page can reserve room for it.
-
-    The banner is fixed and top-centred, which put it straight over the first
-    heading of whatever screen was open. Reserving space in CSS rather than
-    moving the banner keeps it where an outage notice belongs — the first thing
-    on the page — without hiding the thing it is sitting on. The flag is on the
-    root element rather than in React state because the padding belongs to
-    layouts this component does not render.
-  */
+  /* Tell the document the banner is up, so the page can reserve room for it. */
   useEffect(() => {
     const root = document.documentElement;
     if (offline) root.dataset.apiDown = 'true';
@@ -119,10 +95,17 @@ export function ConnectionBanner() {
         <CloudOff aria-hidden="true" />
       </span>
       <span className="conn__body">
-        <strong className="conn__title">The API is not responding</strong>
+        <strong className="conn__title">{PUBLIC_DEMO ? 'The demo server is starting' : 'MBank is not responding'}</strong>
         <span className="conn__detail">
-          Nothing answered at <code>{where}</code>. Run <code>docker compose up</code> from the
-          project root — this banner clears itself once it does.
+          {PUBLIC_DEMO
+            ? 'It sleeps when nobody is using it and takes two or three minutes to wake. This message goes away when it is ready.'
+            : 'We are checking again automatically. This message goes away when the connection is back.'}
+          {import.meta.env.DEV && (
+            <>
+              {' '}
+              Developer note: nothing answered at <code>{where}</code>.
+            </>
+          )}
         </span>
       </span>
       <button

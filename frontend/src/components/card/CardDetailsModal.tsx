@@ -20,23 +20,7 @@ function groupDigits(number: string): string {
   return number.replace(/(.{4})/g, '$1 ').trim();
 }
 
-/**
- * The card's sensitive details, behind an explicit reveal.
- *
- * ## Why the details are not fetched when the modal opens
- *
- * Opening a card to rename it should not put its number on a screen in an open
- * office. The reveal is a separate, deliberate action, it is rate limited and
- * audited server-side, and the request is a POST so it cannot be cached or
- * replayed from history.
- *
- * ## Why they are dropped again
- *
- * The values live in this component's state and nowhere else — no store, no
- * cache, no parent. They are cleared when the modal closes and, failing that,
- * after a minute, because the realistic failure is somebody revealing a number
- * and walking away from the desk rather than an attacker reading React state.
- */
+/** The card's sensitive details, behind an explicit reveal. */
 export function CardDetailsModal({ open, card, onClose }: CardDetailsModalProps) {
   const [details, setDetails] = useState<CardDetailsResponse | null>(null);
   const [busy, setBusy] = useState(false);
@@ -93,7 +77,7 @@ export function CardDetailsModal({ open, card, onClose }: CardDetailsModalProps)
   return (
     <Sheet open={open} onClose={onClose} title="Card details" subtitle={card.label}>
       {error && (
-        <div className="auth-error" role="alert" style={{ marginBottom: 'var(--space-4)' }}>
+        <div className="auth-error mb-4" role="alert">
           <AlertTriangle aria-hidden="true" />
           <span>{error}</span>
         </div>
@@ -156,11 +140,11 @@ export function CardDetailsModal({ open, card, onClose }: CardDetailsModalProps)
             loading={busy}
             icon={<Eye aria-hidden="true" />}
             onClick={reveal}
-            style={{ marginTop: 'var(--space-5)' }}
+            className="mt-5"
           >
             {busy ? 'Revealing…' : 'Reveal details'}
           </Button>
-          <p className="field-hint" style={{ marginTop: 'var(--space-3)' }}>
+          <p className="field-hint mt-3">
             Revealing is recorded against your account, and limited to a few times an hour.
           </p>
         </>
@@ -183,11 +167,11 @@ export function CardDetailsModal({ open, card, onClose }: CardDetailsModalProps)
             variant="secondary"
             block
             onClick={clearDetails}
-            style={{ marginTop: 'var(--space-4)' }}
+            className="mt-4"
           >
             Hide details
           </Button>
-          <p className="field-hint" style={{ marginTop: 'var(--space-2)' }}>
+          <p className="field-hint mt-2">
             Hidden automatically after a minute.
           </p>
         </>

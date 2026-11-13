@@ -156,7 +156,7 @@ public class TransferController {
                 PageResponse.from(page, transfer -> TransactionResponse.from(transfer, visibleAccounts)));
     }
 
-    @PatchMapping("/{id}/category")
+    @PatchMapping("/transfers/{id}/category")
     @Operation(
             summary = "Change what a transaction was for",
             description =

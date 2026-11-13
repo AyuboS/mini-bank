@@ -1,0 +1,198 @@
+/* =============================================================================
+   Phone field and one-time codes
+   ========================================================================== */
+
+.phone-field { display: flex; gap: var(--space-2); }
+.phone-field__code { width: 108px; flex-shrink: 0; }
+.phone-field__number { flex: 1; min-width: 0; }
+
+/* The six-digit code. */
+.otp { display: flex; flex-direction: column; gap: var(--space-2); }
+.otp__row { position: relative; display: flex; gap: var(--space-2); }
+
+.otp__input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  z-index: 1;
+  font-size: 16px;
+  letter-spacing: 2em;
+  cursor: text;
+}
+
+.otp__cell {
+  flex: 1;
+  min-width: 0;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-md);
+  background: var(--surface-sunken);
+  border: 1px solid transparent;
+  font-size: 1.375rem;
+  font-weight: var(--weight-semibold);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-3);
+  transition: border-color var(--dur-micro) var(--ease), background-color var(--dur-micro) var(--ease);
+}
+
+.otp__cell--active {
+  border-color: var(--brand);
+  background: var(--surface);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand) 16%, transparent);
+}
+
+.otp__cell--filled { color: var(--ink); }
+
+/* =============================================================================
+   Verification panel
+   ========================================================================== */
+
+.verify-result {
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  font-size: var(--text-small);
+  font-weight: var(--weight-medium);
+}
+
+.verify-result--ok { color: var(--positive); background: var(--positive-soft); }
+.verify-result--bad { color: var(--danger); background: var(--danger-soft); }
+
+/* =============================================================================
+   Balance block, older markup
+   ========================================================================== */
+
+/* Quick actions */
+
+/* Four across on a desktop, two-by-two on a phone. */
+
+.action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 84px;
+  padding: var(--space-4) var(--space-3);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink-2);
+  font-size: var(--text-small);
+  font-weight: var(--weight-semibold);
+  cursor: pointer;
+  transition: border-color var(--dur-micro) var(--ease), color var(--dur-micro) var(--ease), transform var(--dur-micro) var(--ease);
+}
+
+.action:hover { color: var(--ink); border-color: var(--line-strong); }
+.action:active { transform: scale(0.97); }
+.action:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+/* On the ink block the surface and hairline both disappear, so the action
+   borrows the surround. */
+
+/* The one action a screen most wants taken. */
+
+/* =============================================================================
+   Connection banner
+   ========================================================================== */
+
+.conn {
+  position: fixed;
+  z-index: 320;
+  top: calc(var(--safe-top) + var(--space-4));
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  max-width: min(520px, calc(100vw - var(--space-6)));
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
+  background: var(--surface-chrome);
+  backdrop-filter: blur(16px) saturate(150%);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-lg);
+}
+
+.conn__icon { display: flex; color: var(--danger); flex-shrink: 0; }
+.conn__icon svg { width: 18px; height: 18px; }
+.conn__body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.conn__title { font-size: var(--text-small); font-weight: 600; }
+.conn__detail { font-size: var(--text-label); color: var(--ink-2); }
+.conn__retry { flex-shrink: 0; }
+.conn__spin { animation: spin 900ms linear infinite; }
+
+/* Room for the banner while it is up. */
+[data-api-down='true'] .page,
+[data-api-down='true'] .auth-form-side,
+[data-api-down='true'] .auth-poster { padding-top: 128px; }
+
+@media (min-width: 768px) {
+  [data-api-down='true'] .page { padding-top: 96px; }
+}
+
+/* Tables (administration) */
+
+.table { width: 100%; border-collapse: collapse; font-size: var(--text-small); }
+
+.table th {
+  padding: var(--space-3) var(--space-4);
+  text-align: left;
+  font-size: var(--text-label);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+
+.table td { padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--line); vertical-align: middle; }
+.table tr:last-child td { border-bottom: none; }
+.table tbody tr { transition: background-color var(--dur-micro) var(--ease); }
+.table tbody tr:hover { background-color: var(--surface-sunken); }
+
+/* =============================================================================
+   Small screens
+   ========================================================================== */
+
+@media (max-width: 767px) {
+  .otp__cell { height: 52px; font-size: 1.25rem; }
+  .auth-secondary { flex-direction: column; gap: var(--space-2); text-align: center; }
+}
+
+@media (max-width: 359px) {
+  .otp__row { gap: 5px; }
+  .otp__cell { height: 46px; font-size: 1.125rem; }
+  .phone-field__code { width: 88px; }
+}
+
+/* =============================================================================
+   Split a bill
+   ========================================================================== */
+
+.split-people { display: flex; flex-direction: column; gap: var(--space-2); max-height: 240px; overflow-y: auto; }
+
+.split-person {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  font-size: var(--text-small);
+  font-weight: var(--weight-medium);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color var(--dur-micro) var(--ease), background-color var(--dur-micro) var(--ease);
+}
+
+.split-person:hover { border-color: var(--line-strong); }
+.split-person--on { border-color: var(--brand); background: var(--brand-soft); }
+.split-person:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.split-person__check { width: 17px; height: 17px; color: var(--brand); flex-shrink: 0; }

@@ -274,6 +274,12 @@ the next step, and only `TokenBucketRateLimiter` would change.
   published in this repository. Documenting "change the secret before deploying" achieves nothing on
   the day somebody forgets; a startup failure is impossible to ship past.
 - Swagger UI and the OpenAPI document are disabled under the `prod` profile.
+- The `demo` profile, for the public demo on Render (`render.yaml`), gets the same startup checks as
+  `prod` (no published secret, no wildcard CORS origin, no codes in API responses) with one
+  exception: SMS and email may be simulated, because a demo has nothing to send them with. Its web
+  build (`VITE_DEMO_MODE=true`) therefore hides every step that waits for a texted code or an
+  emailed link. Behind Render's proxy, Tomcat takes the client's address from `X-Forwarded-For`,
+  and only when the connection comes from an internal proxy address, so rate limits stay per client.
 
 ---
 

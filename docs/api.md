@@ -80,6 +80,9 @@ no payment processor; the response says so in a `simulated` field that is always
 | `GET` | `/accounts/{id}` | One account |
 | `GET` | `/accounts/{id}/balance` | Balance with a timestamp |
 | `GET` | `/accounts/{id}/transactions` | That account's history, paged |
+| `POST` | `/accounts/{id}/top-up` | Simulated top-up of your own spending account (see below) |
+
+A top-up adds play money: the bank's system account is debited and yours credited, recorded as a `DEPOSIT` described "Simulated top-up". It needs an `Idempotency-Key`, works only on your own active spending account, and is capped at 1,000.00 per top-up and 2,000.00 per day per currency (`minibank.top-up.*`). Ten requests per ten minutes. Top-ups do not count towards your sending limits. Two top-ups sent at the same instant are each checked against the daily cap before either settles, so the cap can be overshot by one in-flight request.
 
 ### Transfers — authenticated
 
@@ -418,6 +421,8 @@ Branch on `code`, never on `message` — messages may be reworded.
 | `IDEMPOTENCY_REQUEST_IN_PROGRESS` | 409 | A request with this key is still running |
 | `CONFLICT` | 409 | Concurrent modification, or a constraint violation |
 | `AUTH_ACCOUNT_LOCKED` | 423 | Locked after repeated failed logins |
+| `TOP_UP_LIMIT_EXCEEDED` | 422 | Over the per-top-up or daily top-up cap |
+| `TOP_UP_NOT_ALLOWED` | 422 | Top-ups go to your own spending account only |
 | `INSUFFICIENT_FUNDS` | 422 | Source account cannot cover the amount |
 | `TRANSFER_LIMIT_EXCEEDED` | 422 | Per-transfer, daily or hourly limit reached |
 | `CURRENCY_MISMATCH` | 422 | Currencies differ; there is no FX |

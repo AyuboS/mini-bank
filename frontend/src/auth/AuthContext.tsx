@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
-import { tokenStore } from '../api/client';
+import { ApiRequestError, tokenStore } from '../api/client';
 import { authApi } from '../api/auth';
 import type { RegisterInput } from '../api/auth';
 import { usersApi } from '../api/users';
@@ -20,36 +20,47 @@ interface AuthState {
 
 const AuthContext = createContext<AuthState | undefined>(undefined);
 
+const RESTORE_RETRY_MS = 5000;
+
 export type { RegisterInput };
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<UserResponse | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Tokens outlive the page, so on reload the session is restored by asking the
-  // API who the caller is rather than by trusting anything cached in the
-  // browser. If the token has expired the transport refreshes it transparently;
-  // if that fails too, the stale tokens are cleared.
+  // On reload the session is restored by asking the API who the caller is.
+  // Only a 401 ends it: an outage keeps the tokens and tries again.
   useEffect(() => {
     let cancelled = false;
+    let retryTimer: number | undefined;
 
-    void (async () => {
+    const restore = async () => {
       if (!tokenStore.accessToken()) {
         setLoading(false);
         return;
       }
       try {
         const me = await usersApi.me();
-        if (!cancelled) setUser(me);
-      } catch {
-        tokenStore.clear();
-      } finally {
-        if (!cancelled) setLoading(false);
+        if (cancelled) return;
+        setUser(me);
+        setLoading(false);
+      } catch (error) {
+        if (cancelled) return;
+        const status = error instanceof ApiRequestError ? error.status : null;
+        if (status === 401) tokenStore.clear();
+        if (status !== null && status < 500) {
+          setLoading(false);
+          return;
+        }
+        retryTimer = window.setTimeout(() => void restore(), RESTORE_RETRY_MS);
       }
-    })();
+    };
+
+    void restore();
 
     return () => {
       cancelled = true;
+      window.clearTimeout(retryTimer);
     };
   }, []);
 

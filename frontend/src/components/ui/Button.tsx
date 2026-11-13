@@ -1,11 +1,6 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
 
-/**
- * `primary` fills with the brand gradient and is the one action a screen is
- * about. `secondary` is a pane of glass. `ghost` has no body at all. `danger`
- * is for anything that destroys or removes. `quiet` is a text button that still
- * has a target big enough to hit.
- */
+/** `primary` fills with the brand gradient and is the one action a screen is about. */
 type Variant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'quiet';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {

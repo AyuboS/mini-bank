@@ -3,8 +3,9 @@ import { AtSign, BadgeCheck, Phone, ShieldAlert } from 'lucide-react';
 import { usersApi } from '../../api/users';
 import type { UserResponse, VerificationChallenge } from '../../api/types';
 import { useToast } from '../ToastProvider';
-import { Button, Surface, Sheet } from '../ui';
+import { Button, Sheet } from '../ui';
 import { OtpInput } from './OtpInput';
+import { CAN_VERIFY_BY_MESSAGE } from '../../utils/deployment';
 import { toFriendlyError } from '../../utils/errors';
 
 interface VerificationPanelProps {
@@ -12,17 +13,7 @@ interface VerificationPanelProps {
   onVerified: () => Promise<void> | void;
 }
 
-/**
- * Where a customer proves their phone number and email address.
- *
- * A verified phone is a sign-in credential, so this panel is the only way one
- * comes into existence outside registration: the profile form can change the
- * number, but changing it clears the verified flag server-side, and only a code
- * sent to the handset can set it again.
- *
- * The email side is informational rather than gating — an unverified address
- * blocks nothing — which is why it gets a quieter treatment than the phone.
- */
+/** Where a customer proves their phone number and email address. */
 export function VerificationPanel({ user, onVerified }: VerificationPanelProps) {
   const toast = useToast();
 
@@ -89,19 +80,29 @@ export function VerificationPanel({ user, onVerified }: VerificationPanelProps) 
   // Nothing to prompt about once both are proven.
   if (phoneDone && emailDone) {
     return (
-      <Surface className="verify-panel verify-panel--done">
+      <div className="verify-panel verify-panel--done">
         <BadgeCheck aria-hidden="true" />
         <div>
           <p className="verify-panel__title">Your contact details are verified</p>
           <p className="small muted">Both your phone number and your email address are confirmed.</p>
         </div>
-      </Surface>
+      </div>
+    );
+  }
+
+  if (!CAN_VERIFY_BY_MESSAGE) {
+    return (
+      <div className="verify-panel verify-panel--info">
+        <p className="verify-panel__note">
+          This demo sends no texts or emails, so contact details cannot be verified here.
+        </p>
+      </div>
     );
   }
 
   return (
     <>
-      <Surface className="verify-panel">
+      <div className="verify-panel" role="region" aria-label="Verification">
         <ShieldAlert aria-hidden="true" />
         <div className="grow">
           <p className="verify-panel__title">Finish verifying your account</p>
@@ -140,11 +141,11 @@ export function VerificationPanel({ user, onVerified }: VerificationPanelProps) 
             )}
           </div>
 
-          <p className="small muted" style={{ marginTop: 'var(--space-3)' }}>
+          <p className="verify-panel__note">
             A verified phone number lets you sign in without a password.
           </p>
         </div>
-      </Surface>
+      </div>
 
       <Sheet
         open={challenge !== null}

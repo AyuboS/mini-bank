@@ -1,0 +1,208 @@
+/* Command palette */
+
+.palette-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 260;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 12vh var(--space-5) var(--space-5);
+  background: rgba(11, 13, 18, 0.42);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  animation: fade-in var(--dur-control) var(--ease);
+}
+
+[data-theme='dark'] .palette-scrim { background: rgba(0, 0, 0, 0.60); }
+
+.palette {
+  width: 100%;
+  max-width: 560px;
+  max-height: 60dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: var(--radius-xl);
+  background: var(--surface-chrome);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-xl);
+  animation: sheet-in var(--dur-panel) var(--ease-spring);
+}
+
+.palette__search {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--line);
+  color: var(--ink-3);
+}
+
+.palette__search svg { width: 18px; height: 18px; flex-shrink: 0; }
+.palette__search input { flex: 1; min-width: 0; font-size: 1rem; color: var(--ink); }
+.palette__search input::placeholder { color: var(--ink-4); }
+
+.palette__esc,
+.palette__foot kbd {
+  padding: 2px 6px;
+  border-radius: 5px;
+  background: var(--surface-sunken);
+  border: 1px solid var(--line);
+  font-size: 0.6875rem;
+  color: var(--ink-3);
+  line-height: 1.4;
+}
+
+.palette__results { overflow-y: auto; overscroll-behavior: contain; padding: var(--space-2); }
+.palette__empty { padding: var(--space-6); text-align: center; color: var(--ink-3); font-size: var(--text-small); }
+.palette__group { padding-bottom: var(--space-2); }
+
+.palette__group-name {
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-label);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.palette__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-3);
+  border-radius: var(--radius-sm);
+  text-align: left;
+  font-size: var(--text-small);
+  color: var(--ink-2);
+  cursor: pointer;
+}
+
+.palette__item--active { background-color: var(--brand-soft); color: var(--brand); font-weight: var(--weight-semibold); }
+.palette__icon { display: flex; color: var(--ink-3); flex-shrink: 0; }
+.palette__icon svg { width: 16px; height: 16px; }
+.palette__item--active .palette__icon { color: var(--brand); }
+.palette__hint { font-size: var(--text-label); color: var(--ink-3); flex-shrink: 0; max-width: 46%; margin-left: auto; }
+
+.palette__foot {
+  display: flex;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-5);
+  border-top: 1px solid var(--line);
+  font-size: var(--text-label);
+  color: var(--ink-4);
+}
+
+.palette__foot span { display: inline-flex; align-items: center; gap: 4px; }
+
+/* =============================================================================
+   Not found
+   ========================================================================== */
+
+.notfound { display: flex; align-items: center; justify-content: center; min-height: 62dvh; }
+.notfound__panel { padding: var(--space-8) var(--space-6); text-align: center; max-width: 460px; }
+
+.notfound__glyph {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  margin: 0 auto;
+  border-radius: var(--radius-lg);
+  color: var(--ink-3);
+  background: var(--surface-sunken);
+}
+
+.notfound__glyph svg { width: 26px; height: 26px; }
+
+.notfound__code {
+  font-size: var(--text-label);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.1em;
+  color: var(--ink-3);
+  margin-top: var(--space-4);
+}
+
+.notfound__title { font-size: var(--text-title); margin: var(--space-2) 0 var(--space-2); }
+.notfound__body { color: var(--ink-2); font-size: var(--text-small); margin-bottom: var(--space-5); }
+
+/* =============================================================================
+   Card controls
+   ========================================================================== */
+
+.control-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+}
+
+.control-row__icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: var(--radius-sm);
+  color: var(--ink-2);
+  background: var(--surface-sunken);
+}
+
+.control-row__icon svg { width: 16px; height: 16px; }
+.control-row__label { font-size: var(--text-small); font-weight: var(--weight-semibold); }
+.control-row__body { font-size: var(--text-label); color: var(--ink-3); }
+
+/* =============================================================================
+   Confirmation of payee
+   ========================================================================== */
+
+/* =============================================================================
+   Accounts
+   ========================================================================== */
+
+.account-card { padding: var(--space-5); display: flex; flex-direction: column; gap: var(--space-3); }
+.account-card__head { display: flex; align-items: center; gap: var(--space-3); }
+
+.account-card__icon,
+.account-card__disc {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-small);
+  font-weight: var(--weight-semibold);
+  color: var(--c-blue);
+  background: color-mix(in srgb, var(--c-blue) 12%, var(--surface));
+}
+
+.account-card__icon svg { width: 16px; height: 16px; }
+.account-card__disc--usd { color: var(--c-green); background: color-mix(in srgb, var(--c-green) 12%, var(--surface)); }
+.account-card__disc--gbp { color: var(--c-violet); background: color-mix(in srgb, var(--c-violet) 12%, var(--surface)); }
+
+.account-card__name { font-size: var(--text-small); font-weight: 600; }
+.account-card__number { font-size: var(--text-label); color: var(--ink-3); font-family: var(--font-mono); }
+.account-card__type { font-size: var(--text-label); color: var(--ink-3); }
+.account-card__currency { font-size: var(--text-small); font-weight: 600; }
+
+.account-card__balance {
+  font-size: 1.625rem;
+  font-weight: var(--weight-semibold);
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+.account-card__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--line);
+}

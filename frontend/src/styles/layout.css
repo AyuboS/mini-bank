@@ -1,24 +1,12 @@
-/* =============================================================================
-   Layout
-   -----------------------------------------------------------------------------
-   The shell: a docked sidebar on a desktop, a bottom bar on a phone.
-
-   The navigation is *docked* rather than floating. The previous version inset
-   both bars from the edges and let the page slide underneath, which looked
-   considered and cost real usability — the sidebar took a channel of dead space
-   down the left of every screen, and the floating phone bar had rounded corners
-   the thumb kept missing. A bar that meets the edge of the display is both
-   larger to hit and easier to ignore.
-   ========================================================================== */
+/* The shell: a sidebar on a desktop, a bottom bar on a phone, the same five
+   destinations in both. See docs/design-system.md. */
 
 .shell {
   display: flex;
   min-height: 100dvh;
 }
 
-/* =============================================================================
-   Sidebar
-   ========================================================================== */
+/* --- Sidebar --------------------------------------------------------------- */
 
 .sidebar {
   position: fixed;
@@ -29,127 +17,138 @@
   width: var(--sidebar-width);
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
   padding: var(--space-5) var(--space-3) var(--space-4);
-  overflow-y: auto;
-  /* Docked, so only the right edge is a border and no corner is rounded. */
-  border-radius: 0;
-  border-width: 0 1px 0 0;
+  background: var(--bg);
+  border-right: 1px solid var(--line);
 }
 
 .sidebar__brand {
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  padding: var(--space-2) var(--space-3) var(--space-6);
+  padding: 0 var(--space-3) var(--space-6);
 }
 
-.sidebar__wordmark { display: flex; flex-direction: column; line-height: 1.15; }
-
 .sidebar__name {
-  font-size: 1.0625rem;
-  font-weight: 700;
-  letter-spacing: -0.03em;
+  font-size: var(--text-4);
+  font-weight: var(--weight-semibold);
+  letter-spacing: -0.01em;
   color: var(--ink);
 }
 
-.sidebar__tagline {
-  font-size: var(--text-label);
-  font-weight: 520;
-  color: var(--ink-3);
-}
-
-.sidebar__section { display: flex; flex-direction: column; gap: 1px; }
-
-.sidebar__heading {
-  padding: var(--space-5) var(--space-3) var(--space-2);
-  font-size: var(--text-label);
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--ink-3);
-}
-
+.sidebar__section { display: flex; flex-direction: column; gap: 2px; }
 .sidebar__spacer { flex: 1; min-height: var(--space-5); }
 
-/* -----------------------------------------------------------------------------
-   Navigation items.
-
-   The active state is a soft fill of the brand plus the brand-coloured icon.
-   No sliding indicator bar: the fill already says which one is selected, and a
-   second signal for the same fact is decoration.
-   -------------------------------------------------------------------------- */
 .nav-item {
-  position: relative;
   display: flex;
   align-items: center;
   gap: var(--space-3);
   height: 40px;
   padding: 0 var(--space-3);
-  border-radius: var(--radius-sm);
-  font-size: var(--text-body);
-  font-weight: 520;
+  border-radius: var(--radius-1);
+  font-size: var(--text-3);
+  font-weight: var(--weight-medium);
   color: var(--ink-2);
-  transition:
-    color var(--dur-micro) var(--ease),
-    background-color var(--dur-micro) var(--ease);
 }
 
-.nav-item:hover { color: var(--ink); background-color: var(--surface-sunken); }
-
-.nav-item--active {
-  color: var(--brand);
-  font-weight: 600;
-  background-color: var(--brand-soft);
-}
+.nav-item:hover { color: var(--ink); background: var(--surface-sunken); }
+.nav-item:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.nav-item--active { color: var(--ink); background: var(--surface-sunken); }
 
 .nav-item__icon { display: flex; flex-shrink: 0; color: var(--ink-3); }
 .nav-item__icon svg { width: 18px; height: 18px; }
-.nav-item:hover .nav-item__icon { color: var(--ink-2); }
-.nav-item--active .nav-item__icon { color: var(--brand); }
+.nav-item--active .nav-item__icon { color: var(--ink); }
 
-.nav-item__count {
-  margin-left: auto;
-  min-width: 20px;
-  padding: 0 6px;
-  border-radius: var(--radius-pill);
-  background: var(--count-fill);
-  color: #fff;
-  font-size: 0.625rem;
-  font-weight: 680;
-  font-variant-numeric: tabular-nums;
-  text-align: center;
-  line-height: 18px;
+/* The simulation label: always on screen, never loud. */
+.demo-label {
+  font-size: var(--text-1);
+  font-weight: var(--weight-medium);
+  color: var(--ink-3);
 }
 
-.user-pill {
+.sidebar .demo-label { padding: 0 var(--space-3) var(--space-3); }
+
+/* --- Profile menu ---------------------------------------------------------- */
+
+.profile-menu { position: relative; }
+
+.profile-menu__button {
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  padding: var(--space-2);
-  border-radius: var(--radius-md);
-  border: 1px solid transparent;
+  width: 100%;
+  min-height: 44px;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-1);
+  font-size: var(--text-2);
+  font-weight: var(--weight-medium);
+  color: var(--ink);
   text-align: left;
-  transition: background-color var(--dur-micro) var(--ease), border-color var(--dur-micro) var(--ease);
 }
 
-.user-pill:hover { background-color: var(--surface-sunken); border-color: var(--line); }
-.user-pill:focus-visible { outline: none; box-shadow: var(--focus-ring); }
-.user-pill__name { font-size: var(--text-small); font-weight: 600; color: var(--ink); }
-.user-pill__role { font-size: var(--text-label); color: var(--ink-3); }
-.user-pill__chevron { margin-left: auto; color: var(--ink-4); display: flex; }
-.user-pill__chevron svg { width: 16px; height: 16px; }
+.profile-menu__button:hover,
+.profile-menu__button[aria-expanded='true'] { background: var(--surface-sunken); }
+.profile-menu__button:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.profile-menu__name { min-width: 0; }
 
-/* =============================================================================
-   Main column
-   ========================================================================== */
+.profile-menu--topbar .profile-menu__button { width: 44px; padding: 0; justify-content: center; }
+
+.profile-menu__panel {
+  position: absolute;
+  z-index: 60;
+  width: 232px;
+  padding: var(--space-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-2);
+  background: var(--surface);
+  box-shadow: var(--shadow-overlay);
+}
+
+.profile-menu--sidebar .profile-menu__panel { left: 0; bottom: calc(100% + var(--space-2)); }
+.profile-menu--topbar .profile-menu__panel { right: 0; top: calc(100% + var(--space-2)); }
+
+.profile-menu__panel ul { list-style: none; }
+
+.profile-menu__who {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-2) var(--space-3) var(--space-3);
+  margin-bottom: var(--space-2);
+  border-bottom: 1px solid var(--line);
+  font-size: var(--text-2);
+  font-weight: var(--weight-medium);
+}
+
+.profile-menu__username { font-weight: var(--weight-regular); color: var(--ink-3); }
+
+.profile-menu__item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 40px;
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-1);
+  font-size: var(--text-3);
+  color: var(--ink);
+  text-align: left;
+}
+
+.profile-menu__item:hover { background: var(--surface-sunken); }
+.profile-menu__item:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+.profile-menu__last {
+  margin-top: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--line);
+}
+
+/* --- Main column ----------------------------------------------------------- */
 
 .main {
   flex: 1;
   min-width: 0;
-  /* Clears the fixed sidebar. */
   margin-left: var(--sidebar-width);
-  padding: 0 var(--space-6);
+  padding: 0 var(--space-7);
   display: flex;
   flex-direction: column;
 }
@@ -161,15 +160,10 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: var(--space-3);
-  height: 68px;
-  /* A sticky bar over scrolling content needs its own ground, or the content
-     runs through it. A short fade rather than a hard edge, so the transition
-     into the page is not a line across the screen. */
-  background: linear-gradient(180deg, var(--bg) 62%, transparent);
+  gap: var(--space-2);
+  height: 64px;
+  background: var(--bg);
 }
-
-.topbar__actions { display: flex; align-items: center; gap: var(--space-2); }
 
 .mobile-topbar { display: none; }
 
@@ -178,116 +172,72 @@
   width: 100%;
   max-width: var(--content-max);
   padding-bottom: var(--space-9);
-  animation: page-in var(--dur-page) var(--ease);
 }
 
-/* Pages arrive with a short rise. Small enough not to delay the content, big
-   enough that a navigation feels like a change of place. */
-@keyframes page-in {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .page { animation: none; }
-}
-
-/* =============================================================================
-   Search
-   ========================================================================== */
+/* --- Search ---------------------------------------------------------------- */
 
 .search {
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  width: min(300px, 32vw);
+  width: min(280px, 32vw);
   height: 40px;
-  padding: 0 var(--space-4);
-  border-radius: var(--radius-md);
-  background-color: var(--surface);
+  margin-right: var(--space-2);
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-1);
+  background: var(--surface);
   border: 1px solid var(--line);
   color: var(--ink-3);
-  font-size: var(--text-small);
+  font-size: var(--text-2);
   cursor: text;
-  transition: border-color var(--dur-micro) var(--ease);
 }
 
 .search:hover { border-color: var(--line-strong); }
+.search:focus-visible { outline: none; box-shadow: var(--focus-ring); }
 .search svg { width: 16px; height: 16px; flex-shrink: 0; }
-.search input { flex: 1; min-width: 0; font-size: var(--text-small); color: var(--ink); }
-.search input::placeholder { color: var(--ink-4); }
+.search__label { flex: 1; text-align: left; }
 
-/* The ⌘K hint. A key cap, so it reads as something to press. */
-.search__key {
-  display: flex;
-  gap: 2px;
-  font-size: 0.6875rem;
-  color: var(--ink-3);
-}
+.search__key { display: flex; gap: 2px; font-size: var(--text-1); color: var(--ink-3); }
 
 .search__key kbd {
   padding: 1px 5px;
-  border-radius: 5px;
+  border-radius: 4px;
   background: var(--surface-sunken);
   border: 1px solid var(--line);
   font-family: var(--font-sans);
   line-height: 1.4;
 }
 
-/* =============================================================================
-   Mobile navigation
-   ========================================================================== */
-
 .mobile-nav { display: none; }
 
-/* =============================================================================
-   Breakpoints
-   ========================================================================== */
+/* --- Tablet: the sidebar narrows to icons ---------------------------------- */
 
-/* Tablet: the sidebar narrows to icons before it disappears entirely. */
 @media (max-width: 1100px) and (min-width: 768px) {
   :root { --sidebar-width: 72px; }
 
   .sidebar { padding: var(--space-5) var(--space-2) var(--space-3); align-items: center; }
-  .sidebar__wordmark,
-  .sidebar__heading,
-  .user-pill__name,
-  .user-pill__role,
-  .user-pill__chevron { display: none; }
+  .sidebar__name,
+  .profile-menu__name { display: none; }
   .sidebar__brand { padding: 0 0 var(--space-5); }
   .sidebar__section { width: 100%; }
 
-  .nav-item {
-    justify-content: center;
-    padding: 0;
-    /* The label is hidden but stays in the DOM, so the accessible name is
-       intact and a screen reader still announces the destination. */
-    font-size: 0;
-    gap: 0;
-  }
+  /* The label stays in the DOM, so a screen reader still announces it. */
+  .nav-item { justify-content: center; padding: 0; font-size: 0; gap: 0; }
 
-  .nav-item__count {
-    position: absolute;
-    top: 2px;
-    right: 6px;
-    margin: 0;
-  }
+  .sidebar .demo-label { width: 56px; padding: 0 0 var(--space-3); text-align: center; }
+  .profile-menu--sidebar .profile-menu__button { width: 44px; padding: 0; justify-content: center; }
 
-  .user-pill { justify-content: center; padding: var(--space-2); }
   .main { padding: 0 var(--space-5); }
   .search { width: 200px; }
 }
 
-/* Phone: the sidebar is replaced by a bar docked to the bottom edge. */
+/* --- Phone: a bar docked to the bottom edge -------------------------------- */
+
 @media (max-width: 767px) {
   .sidebar { display: none; }
-
-  .main {
-    margin-left: 0;
-    padding: 0 var(--space-4);
-  }
-
   .topbar { display: none; }
+
+  .main { margin-left: 0; padding: 0 var(--space-4); }
 
   .mobile-topbar {
     position: sticky;
@@ -295,25 +245,26 @@
     z-index: 30;
     display: flex;
     align-items: center;
-    gap: var(--space-3);
-    height: 56px;
+    gap: var(--space-2);
+    height: calc(56px + var(--safe-top));
     margin: 0 calc(var(--space-4) * -1);
-    padding: 0 var(--space-4);
-    padding-top: var(--safe-top);
-    background: linear-gradient(180deg, var(--bg) 64%, transparent);
+    padding: var(--safe-top) var(--space-2) 0 var(--space-4);
+    background: var(--bg);
   }
 
-  .mobile-topbar__title {
-    font-weight: 640;
-    font-size: 1.0625rem;
-    letter-spacing: -0.028em;
+  .mobile-topbar__heading {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    margin-left: var(--space-1);
+    line-height: 1.2;
   }
 
-  .page {
-    /* Clears the bar plus the home indicator, so the last row of a list is
-       never trapped underneath it. */
-    padding-bottom: calc(var(--mobile-nav-height) + var(--safe-bottom) + var(--space-7));
-  }
+  .mobile-topbar__title { font-size: var(--text-3); font-weight: var(--weight-semibold); }
+
+  /* Clears the bar and the home indicator, so the last row is never trapped under it. */
+  .page { padding-bottom: calc(var(--mobile-nav-height) + var(--safe-bottom) + var(--space-7)); }
 
   .mobile-nav {
     position: fixed;
@@ -325,36 +276,57 @@
     display: flex;
     align-items: stretch;
     padding-bottom: var(--safe-bottom);
-    /* Docked to the edge: no radius, and a border only where content meets it. */
-    border-radius: 0;
-    border-width: 1px 0 0 0;
+    background: var(--bg);
+    border-top: 1px solid var(--line);
   }
 
   .mobile-nav__item {
     flex: 1;
+    min-width: 44px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 4px;
-    font-size: 0.625rem;
-    font-weight: 560;
-    letter-spacing: 0.005em;
+    font-size: 0.6875rem;
+    font-weight: var(--weight-medium);
     color: var(--ink-3);
-    /* Every destination is at least 44px wide at 320px: 320 split five ways
-       is 64. */
-    min-width: 44px;
-    transition: color var(--dur-micro) var(--ease);
   }
 
   .mobile-nav__item svg { width: 22px; height: 22px; }
-  .mobile-nav__item--active { color: var(--brand); font-weight: 620; }
-  .mobile-nav__item:active { opacity: 0.6; }
+  .mobile-nav__item--active { color: var(--ink); font-weight: var(--weight-semibold); }
+  .mobile-nav__item:focus-visible { outline: none; box-shadow: inset var(--focus-ring); }
 }
 
-/* At 320px the labels no longer fit under the icons at a legible size, so they
-   are dropped and the accessible name carries the meaning instead. */
+/* At 320px five labels no longer fit, so the accessible name carries the meaning. */
 @media (max-width: 359px) {
   .mobile-nav__item { font-size: 0; gap: 0; }
   .mobile-nav__item svg { width: 24px; height: 24px; }
 }
+
+/* --- Section navigation: the four parts of Payments ------------------------ */
+
+.subnav {
+  display: flex;
+  gap: var(--space-5);
+  margin-bottom: var(--space-6);
+  border-bottom: 1px solid var(--line);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.subnav__item {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  margin-bottom: -1px;
+  border-bottom: 2px solid transparent;
+  font-size: var(--text-3);
+  font-weight: var(--weight-medium);
+  color: var(--ink-3);
+}
+
+.subnav__item:hover { color: var(--ink); }
+.subnav__item:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.subnav__item--active { color: var(--ink); border-bottom-color: var(--ink); }

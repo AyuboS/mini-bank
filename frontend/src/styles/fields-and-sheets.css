@@ -1,0 +1,170 @@
+/* Fields */
+
+.field { display: flex; flex-direction: column; gap: var(--space-2); }
+
+.field__label {
+  font-size: var(--text-small);
+  font-weight: var(--weight-semibold);
+  color: var(--ink-2);
+}
+
+.field__well {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  height: 50px;
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--surface-sunken);
+  border: 1px solid transparent;
+  transition:
+    border-color var(--dur-micro) var(--ease),
+    background-color var(--dur-micro) var(--ease),
+    box-shadow var(--dur-micro) var(--ease);
+}
+
+.field__well:focus-within {
+  background: var(--surface);
+  border-color: var(--ink);
+  box-shadow: var(--focus-ring);
+}
+
+.field--error .field__well {
+  border-color: var(--danger);
+  background: var(--danger-soft);
+}
+
+.field--error .field__well:focus-within {
+  box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--red);
+}
+
+.field__input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  font-size: var(--text-body);
+  color: var(--ink);
+  background: transparent;
+}
+
+/* The surrounding well shows focus, so the input does not draw a second ring. */
+.field__input:focus-visible { outline: none; box-shadow: none; }
+.field__input::placeholder { color: var(--ink-4); }
+
+.field__select {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  font-size: var(--text-body);
+  color: var(--ink);
+  background: transparent;
+  cursor: pointer;
+  appearance: none;
+}
+
+/* A native option list is painted by the OS and inherits nothing, so it has to
+   be told the colours explicitly or it renders dark-on-dark. */
+.field__select option {
+  background: var(--surface);
+  color: var(--ink);
+}
+
+.field__icon,
+.field__suffix {
+  display: flex;
+  align-items: center;
+  color: var(--ink-3);
+  flex-shrink: 0;
+}
+
+.field__icon svg,
+.field__suffix svg { width: 18px; height: 18px; }
+
+.field__hint { font-size: var(--text-small); color: var(--ink-3); }
+.field__error { font-size: var(--text-small); color: var(--danger); font-weight: var(--weight-medium); }
+
+.field__well--area { height: auto; padding: var(--space-3) var(--space-4); align-items: flex-start; }
+.field__well--area .field__input { min-height: 96px; padding: var(--space-1) 0; }
+
+.field__reveal {
+  display: flex;
+  align-items: center;
+  color: var(--ink-3);
+  background: none;
+  cursor: pointer;
+}
+
+.field__reveal:hover { color: var(--ink); }
+
+/* Sheets and dialogs */
+
+.sheet-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 250;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-5);
+  background: rgba(11, 13, 18, 0.44);
+  /* A small blur on the scrim only. It separates the dialog from the page
+     without the dialog itself having to be translucent. */
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  animation: fade-in var(--dur-control) var(--ease);
+}
+
+[data-theme='dark'] .sheet-scrim { background: rgba(0, 0, 0, 0.62); }
+
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+
+.sheet {
+  width: 100%;
+  max-width: 460px;
+  max-height: min(86dvh, 760px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: sheet-in var(--dur-panel) var(--ease-spring);
+}
+
+.sheet--wide { max-width: 720px; }
+.sheet:focus { outline: none; }
+
+@keyframes sheet-in {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.sheet__head {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-5) var(--space-5) var(--space-4);
+  border-bottom: 1px solid var(--line);
+}
+
+.sheet__title {
+  font-size: var(--text-title);
+  font-weight: var(--weight-semibold);
+  letter-spacing: -0.022em;
+}
+
+.sheet__subtitle { font-size: var(--text-small); color: var(--ink-3); }
+
+.sheet__body {
+  padding: var(--space-5);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.sheet__grip { display: none; }
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}

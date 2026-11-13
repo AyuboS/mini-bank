@@ -1,5 +1,4 @@
 import type { CardDesign, CardNetwork, CardResponse, CardStatus, CardType } from '../../api/types';
-import { CardChip, ContactlessMark, NetworkMark } from './CardMarks';
 import { materialLabel, materialOf } from './range';
 
 interface BankCardProps {
@@ -13,14 +12,7 @@ interface BankCardProps {
   showStatus?: boolean;
 }
 
-/**
- * Everything the face needs.
- *
- * Deliberately not `CardResponse`: the picker in the order flow renders cards
- * that do not exist yet and have no id, account or created date. Taking the
- * smaller shape lets one component serve both without inventing a fake card to
- * preview one.
- */
+/** Everything the face needs. */
 export interface CardPresentation {
   design: CardDesign;
   network: CardNetwork;
@@ -58,19 +50,9 @@ export function formatExpiry(month: number, year: number): string {
   return `${String(month).padStart(2, '0')}/${String(year % 100).padStart(2, '0')}`;
 }
 
-/**
- * One MBank card, rendered as an object.
- *
- * The component holds no state and runs no effects. An earlier version tracked
- * the pointer at up to 120Hz to tilt the card three degrees towards the cursor
- * and sweep a highlight across it; it was carefully built and it was the exact
- * kind of thing that makes a banking app feel like a demo. What replaced it is
- * a hover lift declared in CSS.
- *
- * Two classes drive the face: the design decides the colour, the material
- * decides the finish. They vary independently — the Standard and the Metal are
- * both dark, and only one of them is brushed.
- */
+const NETWORK_LABEL: Record<CardNetwork, string> = { VISA: 'Visa', MASTERCARD: 'Mastercard' };
+
+/** One card face: a flat colour per design. Stateless; hover and focus are CSS. */
 export function BankCard({
   card,
   size = 'md',
@@ -84,9 +66,6 @@ export function BankCard({
   const classes = [
     'bank-card',
     `bank-card--${card.design.toLowerCase()}`,
-    // A virtual card has no physical finish, so it borrows the plastic sheen
-    // rather than being left flat.
-    `bank-card--${material === 'virtual' ? 'plastic' : material}`,
     `bank-card--${size}`,
     interactive ? 'bank-card--interactive' : '',
     card.status !== 'ACTIVE' ? `bank-card--${card.status.toLowerCase()}` : '',
@@ -111,55 +90,26 @@ export function BankCard({
 
   return (
     <div className={classes} {...interactiveProps}>
-      <div className="bank-card__sheen" aria-hidden="true" />
-      <div className="bank-card__noise" aria-hidden="true" />
+      <div className="bank-card__top">
+        <span className="bank-card__brand">MBank</span>
+        <span className="bank-card__type">
+          {showStatus && card.status !== 'ACTIVE' ? (
+            <span className="bank-card__status">{STATUS_LABEL[card.status]}</span>
+          ) : (
+            materialLabel(material)
+          )}
+        </span>
+      </div>
 
-      <div className="bank-card__body">
-        <div className="bank-card__top">
-          <span className="bank-card__brand">MBank</span>
-          <div className="bank-card__top-right">
-            {showStatus && card.status !== 'ACTIVE' && (
-              <span className={`bank-card__status bank-card__status--${card.status.toLowerCase()}`}>
-                <span className="bank-card__status-dot" />
-                {STATUS_LABEL[card.status]}
-              </span>
-            )}
-            <span className="bank-card__type">{materialLabel(material)}</span>
-          </div>
-        </div>
+      {/* Hidden from screen readers: the list around the card names it by label and last four. */}
+      <div className="bank-card__number" aria-hidden="true">
+        •••• {card.maskedNumber.slice(-4)}
+      </div>
 
-        <div className="bank-card__hardware">
-          <CardChip className="bank-card__chip" />
-          <ContactlessMark className="bank-card__contactless" />
-        </div>
-
-        {/*
-          The number is presentational: it is already masked by the server and
-          carries no information a reader needs announced. The accessible name of
-          the card comes from the label and last four digits in the surrounding
-          list, where it is meaningful.
-        */}
-        <div className="bank-card__number" aria-hidden="true">
-          {card.maskedNumber}
-        </div>
-
-        {/*
-          No "CARDHOLDER" and "EXPIRES" captions.
-
-          They were 0.66em — around 8px on a medium card — set in white at 58%,
-          which measured between 2.0:1 and 3.5:1 depending on the face and was
-          the least legible text in the product. They also said nothing: a name
-          is recognisably a name and MM/YY is recognisably an expiry, which is
-          why no issuer prints those words either. Removing them fixed the
-          contrast and made the face quieter at the same time.
-        */}
-        <div className="bank-card__bottom">
-          <span className="bank-card__name">{card.cardholderName}</span>
-          <span className="bank-card__expiry">
-            {formatExpiry(card.expirationMonth, card.expirationYear)}
-          </span>
-          <NetworkMark network={card.network} className="bank-card__network" />
-        </div>
+      <div className="bank-card__bottom">
+        <span className="bank-card__name">{card.cardholderName}</span>
+        <span className="bank-card__expiry">{formatExpiry(card.expirationMonth, card.expirationYear)}</span>
+        <span className="bank-card__network">{NETWORK_LABEL[card.network] ?? card.network}</span>
       </div>
     </div>
   );

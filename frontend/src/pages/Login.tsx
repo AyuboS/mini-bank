@@ -8,10 +8,11 @@ import { AuthLayout } from '../layouts/AuthLayout';
 import { OtpInput } from '../components/auth/OtpInput';
 import { PhoneField, toE164 } from '../components/auth/PhoneField';
 import { Button, Input } from '../components/ui';
+import { CAN_VERIFY_BY_MESSAGE, SHOW_DEMO_ACCOUNTS } from '../utils/deployment';
 import { toFriendlyError } from '../utils/errors';
 import type { FriendlyError } from '../utils/errors';
 
-/** Non-production, and labelled as such on screen so nobody mistakes them. */
+
 const DEMO_ACCOUNTS = [
   { label: 'Customer', username: 'customer.a', password: 'Customer#2026!A' },
   { label: 'Administrator', username: 'admin', password: 'Admin#2026!Demo' },
@@ -19,24 +20,13 @@ const DEMO_ACCOUNTS = [
 
 type Method = 'phone' | 'password';
 
-/**
- * Signing in, by phone or by password.
- *
- * Two methods, one segmented control, and never more than one form on screen at
- * a time — the brief's "do not put six giant buttons on the page" is the whole
- * layout rule here. Phone leads because it is the faster path for somebody on a
- * handset, and the password form is one tap away rather than hidden.
- *
- * The password field accepts a username, an email address or a verified phone
- * number, because people do not reliably remember which they signed up with and
- * the server resolves all three.
- */
+/** Signing in, by phone or by password. */
 export function LoginPage() {
   const { login, loginWithPhone } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [method, setMethod] = useState<Method>('phone');
+  const [method, setMethod] = useState<Method>(CAN_VERIFY_BY_MESSAGE ? 'phone' : 'password');
   const [error, setError] = useState<FriendlyError | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -111,7 +101,7 @@ export function LoginPage() {
     }
   };
 
-  const useDemo = (demo: (typeof DEMO_ACCOUNTS)[number]) => {
+  const fillDemoAccount = (demo: (typeof DEMO_ACCOUNTS)[number]) => {
     setMethod('password');
     setIdentifier(demo.username);
     setPassword(demo.password);
@@ -153,7 +143,7 @@ export function LoginPage() {
             refuses to start with the flag enabled at all.
           */}
           {challenge.developmentCode && (
-            <div className="auth-demo" style={{ marginTop: 0 }}>
+            <div className="auth-demo mt-0">
               <span className="label">Development only — no SMS was sent</span>
               <button
                 type="button"
@@ -175,7 +165,7 @@ export function LoginPage() {
           loading={busy}
           disabled={code.length < 6}
           onClick={() => submitCodeRef.current(code)}
-          style={{ marginTop: 'var(--space-6)' }}
+          className="mt-6"
         >
           {busy ? 'Verifying…' : 'Verify'}
         </Button>
@@ -216,34 +206,36 @@ export function LoginPage() {
         </p>
       }
     >
-      <div className="method-switch" role="tablist" aria-label="Sign-in method">
-        <button
-          type="button"
-          role="tab"
-          aria-selected={method === 'phone'}
-          className={`method-switch__tab ${method === 'phone' ? 'method-switch__tab--active' : ''}`}
-          onClick={() => {
-            setMethod('phone');
-            setError(null);
-          }}
-        >
-          <Phone aria-hidden="true" />
-          Phone
-        </button>
-        <button
-          type="button"
-          role="tab"
-          aria-selected={method === 'password'}
-          className={`method-switch__tab ${method === 'password' ? 'method-switch__tab--active' : ''}`}
-          onClick={() => {
-            setMethod('password');
-            setError(null);
-          }}
-        >
-          <KeyRound aria-hidden="true" />
-          Password
-        </button>
-      </div>
+      {CAN_VERIFY_BY_MESSAGE && (
+        <div className="method-switch" role="tablist" aria-label="Sign-in method">
+          <button
+            type="button"
+            role="tab"
+            aria-selected={method === 'phone'}
+            className={`method-switch__tab ${method === 'phone' ? 'method-switch__tab--active' : ''}`}
+            onClick={() => {
+              setMethod('phone');
+              setError(null);
+            }}
+          >
+            <Phone aria-hidden="true" />
+            Phone
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={method === 'password'}
+            className={`method-switch__tab ${method === 'password' ? 'method-switch__tab--active' : ''}`}
+            onClick={() => {
+              setMethod('password');
+              setError(null);
+            }}
+          >
+            <KeyRound aria-hidden="true" />
+            Password
+          </button>
+        </div>
+      )}
 
       {banner}
 
@@ -273,12 +265,12 @@ export function LoginPage() {
             block
             loading={busy}
             disabled={number.replace(/\D/g, '').length < 6}
-            style={{ marginTop: 'var(--space-6)' }}
+            className="mt-6"
           >
             {busy ? 'Sending…' : 'Send code'}
           </Button>
 
-          <p className="field-hint" style={{ marginTop: 'var(--space-3)', textAlign: 'center' }}>
+          <p className="field-hint mt-3 text-center">
             We will text you a 6-digit code. Standard rates apply.
           </p>
         </form>
@@ -314,50 +306,57 @@ export function LoginPage() {
             block
             loading={busy}
             icon={<LogIn aria-hidden="true" />}
-            style={{ marginTop: 'var(--space-6)' }}
+            className="mt-6"
           >
             {busy ? 'Signing in…' : 'Sign in'}
           </Button>
         </form>
       )}
 
-      <div className="auth-alt">
-        <span>or</span>
-      </div>
+      {CAN_VERIFY_BY_MESSAGE && (
+        <>
+        <div className="auth-alt">
+          <span>or</span>
+        </div>
 
-      <button
-        type="button"
-        className="btn btn-secondary btn-block"
-        onClick={() => {
-          setMethod(method === 'phone' ? 'password' : 'phone');
-          setError(null);
-        }}
-      >
-        {method === 'phone' ? (
-          <>
-            <Mail aria-hidden="true" />
-            Sign in with a password
-          </>
-        ) : (
-          <>
-            <Phone aria-hidden="true" />
-            Sign in with your phone
-          </>
-        )}
-      </button>
+        <button
+          type="button"
+          className="btn btn-secondary btn-block"
+          onClick={() => {
+            setMethod(method === 'phone' ? 'password' : 'phone');
+            setError(null);
+          }}
+        >
+          {method === 'phone' ? (
+            <>
+              <Mail aria-hidden="true" />
+              Sign in with a password
+            </>
+          ) : (
+            <>
+              <Phone aria-hidden="true" />
+              Sign in with your phone
+            </>
+          )}
+        </button>
+        </>
+      )}
 
-      <div className="auth-demo">
-        <span className="label">Demo credentials</span>
-        {DEMO_ACCOUNTS.map((demo) => (
-          <button key={demo.username} type="button" className="auth-demo__row" onClick={() => useDemo(demo)}>
-            <span>{demo.username}</span>
-            <span className="dim">{demo.label}</span>
-          </button>
-        ))}
-        <p className="field-hint" style={{ marginTop: 10 }}>
-          Tap to fill. These accounts exist only in the demo database.
-        </p>
-      </div>
+      {SHOW_DEMO_ACCOUNTS && (
+        <div className="auth-demo">
+          <span className="label">Demo accounts</span>
+          {DEMO_ACCOUNTS.map((demo) => (
+            <button key={demo.username} type="button" className="auth-demo__row" onClick={() => fillDemoAccount(demo)}>
+              <span>{demo.username}</span>
+              <span className="dim">{demo.label}</span>
+            </button>
+          ))}
+          <p className="field-hint">
+            Tap to fill. These accounts exist only in the demo database.
+            {!CAN_VERIFY_BY_MESSAGE && ' This demo sends no text messages, so signing in by phone is switched off.'}
+          </p>
+        </div>
+      )}
     </AuthLayout>
   );
 }

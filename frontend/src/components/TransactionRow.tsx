@@ -15,7 +15,7 @@ interface TransactionRowProps {
 }
 
 /** Falls back to something meaningful when there is no description to show. */
-function titleFor(transaction: TransactionResponse): string {
+export function titleFor(transaction: TransactionResponse): string {
   if (transaction.description) return transaction.description;
   if (transaction.type === 'DEPOSIT') return 'Deposit';
   if (transaction.type === 'REVERSAL') return 'Reversal';
@@ -23,18 +23,7 @@ function titleFor(transaction: TransactionResponse): string {
   return transaction.direction === 'CREDIT' ? 'Money in' : 'Money out';
 }
 
-/**
- * One line of a statement.
- *
- * The glyph is coloured by category rather than by counterparty. That was a
- * deliberate change: a colour per payee makes a list pretty, a colour per
- * category makes it answerable — "where did the money go this week" is legible
- * from the colours alone, before a single row is read.
- *
- * Deposits and reversals keep a directional icon: they are events rather than
- * spending, and giving them a category colour would put them in the chart's
- * visual language without being in the chart.
- */
+/** One line of a statement. */
 export function TransactionRow({ transaction, onSelect, hideDate = false }: TransactionRowProps) {
   const incoming = transaction.direction === 'CREDIT';
   const settled = transaction.status === 'COMPLETED';
@@ -47,8 +36,8 @@ export function TransactionRow({ transaction, onSelect, hideDate = false }: Tran
   */
   const isEvent = transaction.type === 'DEPOSIT' || transaction.type === 'REVERSAL';
 
-  return (
-    <button type="button" className="txn" onClick={() => onSelect?.(transaction)}>
+  const content = (
+    <>
       {isEvent || !transaction.category ? (
         <span className={`txn__glyph ${incoming && settled ? 'txn__glyph--in' : ''}`} aria-hidden="true">
           {transaction.type === 'REVERSAL' ? (
@@ -84,6 +73,17 @@ export function TransactionRow({ transaction, onSelect, hideDate = false }: Tran
         />
         {!settled && <StatusBadge status={transaction.status} />}
       </span>
+    </>
+  );
+
+  // Without onSelect there is nothing to open, so the row must not be a button.
+  if (!onSelect) {
+    return <div className="txn txn--static">{content}</div>;
+  }
+
+  return (
+    <button type="button" className="txn" onClick={() => onSelect(transaction)}>
+      {content}
     </button>
   );
 }

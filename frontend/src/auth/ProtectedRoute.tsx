@@ -7,7 +7,7 @@ import { Logo } from '../components/Logo';
 function SessionLoading() {
   return (
     <div className="auth-page">
-      <div className="stack center gap-4" style={{ opacity: 0.6 }}>
+      <div className="stack center gap-4 is-faint">
         <Logo size={44} />
         <span className="small dim">Restoring your session…</span>
       </div>
@@ -15,13 +15,7 @@ function SessionLoading() {
   );
 }
 
-/**
- * Keeps signed-out visitors away from application screens.
- *
- * This is navigation, not authorization. Every endpoint behind these routes
- * enforces its own rules server-side, because hiding a route inside a bundle
- * the visitor has already downloaded protects nothing at all.
- */
+/** Keeps signed-out visitors away from application screens. */
 export function ProtectedRoute({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth();
   const location = useLocation();
@@ -31,13 +25,7 @@ export function ProtectedRoute({ children }: { children: ReactNode }) {
   return <>{children}</>;
 }
 
-/**
- * Hides the back-office section from customers.
- *
- * Cosmetic only, and deliberately so: the admin endpoints are guarded by both a
- * URL rule and a method-level check on the server. A customer who edits their
- * way to /admin sees the screen and every request on it returns 403.
- */
+/** Hides the back-office section from customers. */
 export function AdminRoute({ children }: { children: ReactNode }) {
   const { user, loading, isAdmin } = useAuth();
 

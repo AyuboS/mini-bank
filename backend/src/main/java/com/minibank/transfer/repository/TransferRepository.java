@@ -45,8 +45,20 @@ public interface TransferRepository extends JpaRepository<Transfer, UUID>, JpaSp
 
     boolean existsByReversalOfId(UUID originalTransferId);
 
-    /** Risk input: how many transfers this user has started inside a recent window. */
-    long countByInitiatedByIdAndCreatedAtAfter(UUID userId, Instant after);
+    /**
+     * Risk and limit input: how many payments this user has started inside a recent window.
+     *
+     * <p>Deposits are excluded here and in the two queries below: a simulated top-up is initiated by
+     * the customer, but it is money coming in and must not use up their sending limits.
+     */
+    @Query(
+            """
+            SELECT COUNT(t) FROM Transfer t
+            WHERE t.initiatedBy.id = :userId
+              AND t.createdAt > :after
+              AND t.transferType <> com.minibank.transfer.domain.TransferType.DEPOSIT
+            """)
+    long countByInitiatedByIdAndCreatedAtAfter(@Param("userId") UUID userId, @Param("after") Instant after);
 
     /**
      * Limit input: how much a user has already committed today.
@@ -61,6 +73,7 @@ public interface TransferRepository extends JpaRepository<Transfer, UUID>, JpaSp
             WHERE t.initiatedBy.id = :userId
               AND t.createdAt >= :since
               AND t.status IN :statuses
+              AND t.transferType <> com.minibank.transfer.domain.TransferType.DEPOSIT
             """)
     BigDecimal sumAmountByInitiatorSince(
             @Param("userId") UUID userId,
@@ -112,6 +125,7 @@ public interface TransferRepository extends JpaRepository<Transfer, UUID>, JpaSp
             WHERE t.initiatedBy.id = :userId
               AND t.createdAt >= :since
               AND t.status = com.minibank.transfer.domain.TransferStatus.COMPLETED
+              AND t.transferType <> com.minibank.transfer.domain.TransferType.DEPOSIT
             """)
     BigDecimal averageCompletedAmountSince(@Param("userId") UUID userId, @Param("since") Instant since);
 
@@ -142,6 +156,22 @@ public interface TransferRepository extends JpaRepository<Transfer, UUID>, JpaSp
             @Param("currency") com.minibank.common.money.CurrencyCode currency,
             @Param("from") Instant from,
             @Param("to") Instant to);
+
+    /** Top-up cap input: how much this user has topped up today in one currency. */
+    @Query(
+            """
+            SELECT COALESCE(SUM(t.amount), 0) FROM Transfer t
+            WHERE t.initiatedBy.id = :userId
+              AND t.destinationAccount.owner.id = :userId
+              AND t.transferType = com.minibank.transfer.domain.TransferType.DEPOSIT
+              AND t.status = com.minibank.transfer.domain.TransferStatus.COMPLETED
+              AND t.currency = :currency
+              AND t.createdAt >= :since
+            """)
+    BigDecimal sumTopUpsSince(
+            @Param("userId") UUID userId,
+            @Param("currency") com.minibank.common.money.CurrencyCode currency,
+            @Param("since") Instant since);
 
     long countByStatus(TransferStatus status);
 

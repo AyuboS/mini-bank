@@ -1,24 +1,21 @@
 import type { CurrencyCode } from '../api/types';
 
+/** The interface is written in English, so numbers and dates follow British English wherever the browser is. */
+export const LOCALE = 'en-GB';
+
 const SYMBOLS: Record<CurrencyCode, string> = { EUR: '€', USD: '$', GBP: '£' };
 
 export function currencySymbol(currency: CurrencyCode): string {
   return SYMBOLS[currency] ?? '';
 }
 
-/**
- * Formats an amount for display.
- *
- * The API sends four decimal places because that is the storage scale; people
- * read money in minor units, so display trims to two. This is presentation
- * only — no arithmetic is ever done on these values in the browser.
- */
+/** Formats an amount for display. */
 export function formatMoney(amount: string | number, currency: CurrencyCode): string {
   const value = typeof amount === 'number' ? amount : Number.parseFloat(amount);
   if (Number.isNaN(value)) {
     return `${currencySymbol(currency)}0.00`;
   }
-  return `${currencySymbol(currency)}${value.toLocaleString(undefined, {
+  return `${currencySymbol(currency)}${value.toLocaleString(LOCALE, {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   })}`;
@@ -46,14 +43,14 @@ export function formatDate(iso: string): string {
   const startOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
   const days = Math.round((startOfDay(now) - startOfDay(date)) / 86_400_000);
 
-  if (days === 0) return `Today, ${date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}`;
-  if (days === 1) return `Yesterday, ${date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}`;
-  if (days < 7) return date.toLocaleDateString(undefined, { weekday: 'long' });
-  return date.toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' });
+  if (days === 0) return `Today, ${date.toLocaleTimeString(LOCALE, { hour: '2-digit', minute: '2-digit' })}`;
+  if (days === 1) return `Yesterday, ${date.toLocaleTimeString(LOCALE, { hour: '2-digit', minute: '2-digit' })}`;
+  if (days < 7) return date.toLocaleDateString(LOCALE, { weekday: 'long' });
+  return date.toLocaleDateString(LOCALE, { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
 export function formatDateTime(iso: string): string {
-  return new Date(iso).toLocaleString(undefined, {
+  return new Date(iso).toLocaleString(LOCALE, {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
@@ -74,13 +71,7 @@ export function relativeTime(iso: string): string {
   return formatDate(iso);
 }
 
-/**
- * MB-482910375512 becomes •••• 5512 — enough to recognise, not enough to reuse.
- *
- * The bank's own funding accounts are named rather than masked: MB-SYSTEM-EUR
- * would otherwise render as the meaningless "•••• -EUR", and there is nothing
- * to conceal about an account every customer's opening balance comes from.
- */
+/** MB-482910375512 becomes •••• 5512 — enough to recognise, not enough to reuse. */
 export function maskAccountNumber(accountNumber: string): string {
   if (!accountNumber) return accountNumber;
   if (accountNumber.startsWith('MB-SYSTEM')) return 'MBank';
@@ -100,14 +91,7 @@ export function humanise(value: string): string {
   return lower.charAt(0).toUpperCase() + lower.slice(1);
 }
 
-/**
- * A stable colour slot for a name, 0–5.
- *
- * Transaction and payee avatars are coloured by who they belong to rather than
- * at random, so the same counterparty is the same colour on every screen and a
- * list becomes scannable by colour before it is read. A trivial hash is right
- * here: it only has to be deterministic, not uniform or unguessable.
- */
+/** A stable colour slot for a name, 0–5. */
 export function toneFor(seed: string): number {
   let hash = 0;
   for (let index = 0; index < seed.length; index += 1) {
@@ -116,12 +100,7 @@ export function toneFor(seed: string): number {
   return Math.abs(hash) % 6;
 }
 
-/**
- * The initials to put on an avatar for a description or counterparty.
- *
- * Falls back to a single glyph rather than to an empty circle, because an empty
- * circle in a list of transfers reads as a rendering failure.
- */
+/** The initials to put on an avatar for a description or counterparty. */
 export function avatarInitials(label: string): string {
   const words = label.trim().split(/\s+/).filter(Boolean);
   if (words.length === 0) return '?';
@@ -129,15 +108,7 @@ export function avatarInitials(label: string): string {
   return (words[0]![0]! + words[1]![0]!).toUpperCase();
 }
 
-/**
- * The browser's timezone, for endpoints whose answer depends on where a month
- * begins.
- *
- * A statement month and a budget month are calendar concepts on the customer's
- * own calendar. Computing them in UTC would put a late-evening payment on the
- * 31st into the following month for anyone east of Greenwich, and into the
- * previous one for anyone far enough west.
- */
+/** The browser's timezone, for endpoints whose answer depends on where a month begins. */
 export function browserTimezone(): string {
   try {
     return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
@@ -156,7 +127,7 @@ export function toMonthKey(date: Date = new Date()): string {
 export function formatMonth(monthKey: string): string {
   const [year, month] = monthKey.split('-').map(Number);
   if (!year || !month) return monthKey;
-  return new Date(year, month - 1, 1).toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
+  return new Date(year, month - 1, 1).toLocaleDateString(LOCALE, { month: 'long', year: 'numeric' });
 }
 
 /** `2026-09-01`, the form the scheduling endpoints expect. */
@@ -166,16 +137,10 @@ export function toDateKey(date: Date = new Date()): string {
 
 /** A bare date, without a time. Used where an hour would be noise. */
 export function formatDay(iso: string): string {
-  return new Date(iso).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' });
+  return new Date(iso).toLocaleDateString(LOCALE, { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
-/**
- * A signed amount, for a figure whose direction matters.
- *
- * The sign goes before the currency symbol — "−€48.20", not "€−48.20" — which
- * is how money is written and what stops the minus reading as part of the
- * number rather than as its direction.
- */
+/** A signed amount, for a figure whose direction matters. */
 export function formatSignedMoney(
   amount: string | number,
   currency: CurrencyCode,
@@ -184,12 +149,7 @@ export function formatSignedMoney(
   return `${direction === 'in' ? '+' : '−'}${formatMoney(amount, currency)}`;
 }
 
-/**
- * A time-aware greeting.
- *
- * Read from the device clock, so it matches what the customer sees out of their
- * window rather than what a server on another continent thinks time it is.
- */
+/** A time-aware greeting. */
 export function greeting(now: Date = new Date()): string {
   const hour = now.getHours();
   if (hour < 5) return 'Good evening';

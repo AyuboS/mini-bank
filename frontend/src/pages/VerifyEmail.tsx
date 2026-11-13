@@ -10,16 +10,7 @@ import type { FriendlyError } from '../utils/errors';
 
 type State = { status: 'working' } | { status: 'done' } | { status: 'failed'; error: FriendlyError };
 
-/**
- * The landing page for a verification link.
- *
- * Deliberately reachable signed out: the link is opened in whatever browser the
- * mail client hands it to, which is very often not the one holding the session.
- * Redeeming the token needs no session — the token is the credential.
- *
- * If somebody *is* signed in, their profile is refreshed afterwards so the
- * "unverified" prompt disappears without a reload.
- */
+/** The landing page for a verification link. */
 export function VerifyEmailPage() {
   const [params] = useSearchParams();
   const { user, refreshUser } = useAuth();
@@ -80,7 +71,7 @@ export function VerifyEmailPage() {
           size="lg"
           block
           onClick={() => window.location.assign(user ? '/' : '/login')}
-          style={{ marginTop: 'var(--space-6)' }}
+          className="mt-6"
         >
           {user ? 'Back to MBank' : 'Sign in'}
         </Button>
@@ -101,7 +92,7 @@ export function VerifyEmailPage() {
       <div className="verify-result verify-result--bad">
         <XCircle aria-hidden="true" />
       </div>
-      <p className="small muted" style={{ textAlign: 'center', marginTop: 'var(--space-5)' }}>
+      <p className="small muted text-center mt-5">
         Verification links last 24 hours and work once. You can request a new one from your profile
         after signing in.
       </p>

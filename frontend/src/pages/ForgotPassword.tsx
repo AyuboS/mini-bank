@@ -6,23 +6,12 @@ import { AuthLayout } from '../layouts/AuthLayout';
 import { Button, Input, Surface } from '../components/ui';
 import { OtpInput } from '../components/auth/OtpInput';
 import { PhoneField, toE164 } from '../components/auth/PhoneField';
+import { CAN_VERIFY_BY_MESSAGE } from '../utils/deployment';
 import { toFriendlyError } from '../utils/errors';
 
 type Step = 'phone' | 'code' | 'password' | 'done';
 
-/**
- * Recovering a forgotten password.
- *
- * Three steps, and the middle one exists for a reason worth stating: the code is
- * exchanged for a short-lived, single-use ticket the moment it is proven, rather
- * than being held by the browser while somebody types a new password. A code
- * that stays valid across that gap is a code that can be attacked across it.
- *
- * The first step answers identically whether or not the number is registered.
- * That is deliberate, and it is why the screen says "if there is an account"
- * rather than "we sent you a code" — a reset form that confirms which numbers
- * exist is a customer list an attacker can enumerate one guess at a time.
- */
+/** Recovering a forgotten password. */
 export function ForgotPasswordPage() {
   const navigate = useNavigate();
 
@@ -91,6 +80,26 @@ export function ForgotPasswordPage() {
     }
   };
 
+  const backToSignIn = (
+    <p className="auth-footer">
+      <Link to="/login" className="row gap-2 justify-center">
+        <ArrowLeft size={16} aria-hidden="true" /> Back to sign in
+      </Link>
+    </p>
+  );
+
+  if (!CAN_VERIFY_BY_MESSAGE) {
+    return (
+      <AuthLayout
+        title="Reset your password"
+        subtitle="A reset needs a code sent by text message, and this demo sends none."
+        footer={backToSignIn}
+      >
+        <p className="field-hint">Sign in with one of the demo accounts instead. Their passwords are on the sign-in page.</p>
+      </AuthLayout>
+    );
+  }
+
   return (
     <AuthLayout
       title={step === 'done' ? 'Password changed' : 'Reset your password'}
@@ -103,15 +112,7 @@ export function ForgotPasswordPage() {
               ? 'Choose a new password. Every device will be signed out.'
               : 'You can sign in with your new password now.'
       }
-      footer={
-        step !== 'done' ? (
-          <p className="auth-footer">
-            <Link to="/login" className="row" style={{ gap: 'var(--space-2)', justifyContent: 'center' }}>
-              <ArrowLeft size={16} aria-hidden="true" /> Back to sign in
-            </Link>
-          </p>
-        ) : undefined
-      }
+      footer={step !== 'done' ? backToSignIn : undefined}
     >
       {error && (
         <p className="auth-error" role="alert">

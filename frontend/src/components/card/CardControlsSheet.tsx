@@ -22,14 +22,7 @@ interface Control {
   icon: ReactNode;
 }
 
-/**
- * The five channels a card can be used through.
- *
- * Each one is a way money can leave the account, and each can be closed
- * independently. Turning off cash withdrawals on a card that only pays for a
- * subscription costs the cardholder nothing and removes a whole class of misuse
- * — which is the entire argument for the feature.
- */
+/** The five channels a card can be used through. */
 const CONTROLS: Control[] = [
   {
     key: 'onlinePayments',
@@ -63,14 +56,7 @@ const CONTROLS: Control[] = [
   },
 ];
 
-/**
- * Card controls.
- *
- * Every switch here is enforced by the server on the card itself. Nothing on
- * this screen merely hides a button: a channel turned off is turned off in the
- * database, and the card's own record is what any future authorisation would be
- * checked against.
- */
+/** Card controls. */
 export function CardControlsSheet({ open, card, onClose, onUpdated }: CardControlsSheetProps) {
   const toast = useToast();
   const [pending, setPending] = useState<keyof CardControlsBody | null>(null);
@@ -109,7 +95,7 @@ export function CardControlsSheet({ open, card, onClose, onUpdated }: CardContro
                 {control.icon}
               </span>
 
-              <span className="grow stack" style={{ gap: 2 }}>
+              <span className="grow stack gap-tight">
                 <span className="control-row__label">{control.label}</span>
                 <span className="dim control-row__body">{control.body}</span>
               </span>
@@ -137,7 +123,7 @@ export function CardControlsSheet({ open, card, onClose, onUpdated }: CardContro
       </div>
 
       {card.status !== 'ACTIVE' && (
-        <p className="dim" style={{ marginTop: 'var(--space-4)', fontSize: 'var(--text-small)' }}>
+        <p className="dim mt-4 text-small">
           Controls cannot be changed while the card is {card.status.toLowerCase()}.
         </p>
       )}

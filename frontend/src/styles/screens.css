@@ -1,18 +1,12 @@
-/* =============================================================================
-   Screens
-   -----------------------------------------------------------------------------
-   The pieces belonging to individual screens that are not general enough for
-   components.css and not layout enough for pages.css. Loaded last, so anything
-   here can refine what came before without fighting it on specificity.
-   ========================================================================== */
+/* Screens */
 
 /* =============================================================================
    Small shared pieces
    ========================================================================== */
 
-.field-label { font-size: var(--text-small); font-weight: 560; color: var(--ink-2); display: block; }
+.field-label { font-size: var(--text-small); font-weight: var(--weight-semibold); color: var(--ink-2); display: block; }
 .field-hint { font-size: var(--text-small); color: var(--ink-3); }
-.field-error { font-size: var(--text-small); color: var(--danger); font-weight: 540; }
+.field-error { font-size: var(--text-small); color: var(--danger); font-weight: var(--weight-medium); }
 
 /* An icon-only button. Square, so it does not carry the horizontal padding a
    labelled one needs; the accessible name comes from aria-label. */
@@ -24,25 +18,6 @@
 
 .input-shell__icon { display: flex; color: var(--ink-3); flex-shrink: 0; }
 .input-shell__icon svg { width: 18px; height: 18px; }
-
-.status-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  height: 24px;
-  padding: 0 var(--space-3);
-  border-radius: var(--radius-pill);
-  font-size: var(--text-label);
-  font-weight: 600;
-  color: var(--ink-2);
-  background: var(--neutral-soft);
-  white-space: nowrap;
-}
-
-.status-chip--active { color: var(--positive); background: var(--positive-soft); }
-.status-chip--frozen { color: var(--warning); background: var(--warning-soft); }
-.status-chip--expired,
-.status-chip--cancelled { color: var(--ink-3); background: var(--neutral-soft); }
 
 .verified-chip {
   display: inline-flex;
@@ -60,8 +35,7 @@
    ========================================================================== */
 
 .detail-rows,
-.detail-list,
-.summary-list { display: flex; flex-direction: column; }
+.detail-list { display: flex; flex-direction: column; }
 
 .detail-row {
   display: flex;
@@ -77,7 +51,7 @@
 .detail-row__value { font-size: var(--text-body); text-align: right; word-break: break-word; }
 
 .detail-row--total { border-bottom: none; border-top: 1px solid var(--line-strong); padding-top: var(--space-4); }
-.detail-row--total .detail-row__value { font-size: 1.125rem; font-weight: 640; }
+.detail-row--total .detail-row__value { font-size: 1.125rem; font-weight: var(--weight-semibold); }
 
 /* A revealed card number or CVV. Monospaced and widely tracked, because these
    are read out loud and typed into another form. */
@@ -95,7 +69,7 @@
   border-radius: var(--radius-xs);
   border: 1px solid var(--line);
   font-size: var(--text-label);
-  font-weight: 560;
+  font-weight: var(--weight-semibold);
   color: var(--ink-3);
   cursor: pointer;
   transition: color var(--dur-micro) var(--ease), border-color var(--dur-micro) var(--ease);
@@ -104,14 +78,7 @@
 .copy-btn:hover { color: var(--ink); border-color: var(--line-strong); }
 .copy-btn svg { width: 13px; height: 13px; }
 
-/*
-   Said plainly, wherever demo credentials are shown.
-
-   MBank has no card processor behind it. A card number that looks real and is
-   not is the one thing in this product that could genuinely mislead somebody,
-   so every screen that reveals one says so on the screen itself rather than in
-   a tooltip or a README.
-*/
+/* Said plainly, wherever demo credentials are shown. */
 .simulated-note {
   display: flex;
   align-items: flex-start;
@@ -121,111 +88,7 @@
   background: var(--warning-soft);
   color: var(--warning);
   font-size: var(--text-label);
-  font-weight: 540;
-}
-
-/* =============================================================================
-   Send money
-   -----------------------------------------------------------------------------
-   The fastest flow in the product, and the one held to the tightest column. A
-   transfer form spread across 1180px makes somebody's eye travel the width of a
-   monitor between the amount and the button that sends it.
-   ========================================================================== */
-
-.transfer-shell { display: flex; justify-content: center; padding-bottom: var(--space-6); }
-.transfer-panel { width: 100%; max-width: 480px; padding: var(--space-6); display: flex; flex-direction: column; gap: var(--space-5); }
-
-.transfer-head { text-align: center; }
-.transfer-head__title { font-size: var(--text-title); letter-spacing: -0.03em; }
-.transfer-head__sub { color: var(--ink-3); font-size: var(--text-small); margin-top: var(--space-2); }
-
-.transfer-arrow {
-  display: grid;
-  place-items: center;
-  width: 32px;
-  height: 32px;
-  margin: calc(var(--space-2) * -1) auto;
-  border-radius: 50%;
-  color: var(--ink-3);
-  background: var(--surface-sunken);
-}
-
-.transfer-arrow svg { width: 15px; height: 15px; }
-.payee-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-3); }
-
-/* -----------------------------------------------------------------------------
-   The amount field.
-
-   The largest input in the product, because it holds the only number that
-   matters on the screen. The currency symbol is a separate element rather than
-   a prefix on the value, so the caret never lands to the left of it.
-   -------------------------------------------------------------------------- */
-.amount-field {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-5);
-  border-radius: var(--radius-lg);
-  background: var(--surface-sunken);
-  border: 1px solid transparent;
-  transition: border-color var(--dur-micro) var(--ease), box-shadow var(--dur-micro) var(--ease);
-}
-
-.amount-field:focus-within {
-  border-color: var(--brand);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand) 16%, transparent);
-}
-
-.amount-field__symbol { font-size: 1.75rem; font-weight: 580; color: var(--ink-3); }
-
-.amount-field input {
-  flex: 1;
-  min-width: 0;
-  font-size: 2rem;
-  font-weight: 660;
-  letter-spacing: -0.034em;
-  color: var(--ink);
-  font-variant-numeric: tabular-nums;
-}
-
-.amount-field input::placeholder { color: var(--ink-4); font-weight: 560; }
-.amount-available { font-size: var(--text-small); color: var(--ink-3); margin-top: var(--space-2); }
-
-.review-amount { text-align: center; }
-.review-amount__value { font-size: 2.25rem; font-weight: 680; letter-spacing: -0.038em; font-variant-numeric: tabular-nums; }
-.review-amount__to { color: var(--ink-3); font-size: var(--text-small); margin-top: var(--space-2); }
-
-.transfer-submit { margin-top: var(--space-4); }
-
-/* =============================================================================
-   Transfer success
-   ========================================================================== */
-
-.success { text-align: center; padding: var(--space-5) 0; display: flex; flex-direction: column; align-items: center; gap: var(--space-3); }
-
-.success__mark {
-  display: grid;
-  place-items: center;
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  color: var(--brand-ink);
-  background: var(--green-fill);
-  animation: mark-in var(--dur-panel) var(--ease-spring);
-}
-
-.success__mark svg { width: 28px; height: 28px; }
-.success__title { font-size: var(--text-title); font-weight: 640; letter-spacing: -0.026em; }
-.success__amount { font-size: 2rem; font-weight: 680; letter-spacing: -0.036em; font-variant-numeric: tabular-nums; }
-.success__ref { font-family: var(--font-mono); font-size: var(--text-small); color: var(--ink-3); }
-
-@keyframes mark-in {
-  from { opacity: 0; transform: scale(0.6); }
-  to { opacity: 1; transform: scale(1); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .success__mark { animation: none; }
+  font-weight: var(--weight-medium);
 }
 
 /* =============================================================================
@@ -235,64 +98,15 @@
 .risk { display: flex; align-items: center; gap: var(--space-5); flex-wrap: wrap; }
 .risk__gauge { flex-shrink: 0; }
 .risk__readout { display: flex; flex-direction: column; align-items: center; }
-.risk__score { font-size: 1.5rem; font-weight: 680; font-variant-numeric: tabular-nums; }
+.risk__score { font-size: 1.5rem; font-weight: var(--weight-semibold); font-variant-numeric: tabular-nums; }
 .risk__of { font-size: var(--text-label); color: var(--ink-3); }
-.risk__reasons { display: flex; flex-direction: column; gap: var(--space-2); min-width: 0; }
+.risk__reasons { display: flex; flex-direction: column; gap: var(--space-2); min-width: 0; list-style: none; }
 .risk__reason { font-size: var(--text-small); color: var(--ink-2); }
-.risk__reason::before { content: '· '; color: var(--warning); }
+.risk__reason::before { content: '· '; color: var(--ink-3); }
 
 /* =============================================================================
    Cards screen
    ========================================================================== */
-
-.card-detail { padding: var(--space-5); display: flex; flex-direction: column; gap: var(--space-4); }
-.card-detail__head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-3); }
-.card-detail__title { font-size: var(--text-heading); font-weight: 640; }
-
-.card-detail__note {
-  font-size: var(--text-label);
-  color: var(--ink-3);
-  padding: var(--space-3) var(--space-4);
-  border-radius: var(--radius-sm);
-  background: var(--surface-sunken);
-}
-
-/*
-   The four card actions.
-
-   Big, labelled and always visible. Freezing a card is the thing somebody does
-   at speed with one hand while looking for a receipt, and burying it two taps
-   deep in an overflow menu is how a product loses that moment.
-*/
-.card-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(88px, 100%), 1fr)); gap: var(--space-2); }
-
-.card-action {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-2);
-  min-height: 76px;
-  padding: var(--space-3);
-  border-radius: var(--radius-md);
-  border: 1px solid transparent;
-  background: var(--surface-sunken);
-  color: var(--ink-2);
-  font-size: var(--text-label);
-  font-weight: 580;
-  cursor: pointer;
-  transition: background-color var(--dur-micro) var(--ease), color var(--dur-micro) var(--ease), transform var(--dur-micro) var(--ease);
-}
-
-.card-action:hover:not(:disabled) { color: var(--ink); background: color-mix(in srgb, var(--surface-sunken) 86%, var(--ink)); }
-.card-action:active:not(:disabled) { transform: scale(0.96); }
-.card-action:disabled { opacity: 0.4; cursor: not-allowed; }
-.card-action:focus-visible { outline: none; box-shadow: var(--focus-ring); }
-.card-action--danger { color: var(--danger); }
-.card-action--danger:hover:not(:disabled) { color: var(--danger); background: var(--danger-soft); }
-
-.card-action__icon { display: flex; }
-.card-action__icon svg { width: 20px; height: 20px; }
 
 .card-confirm { display: flex; flex-direction: column; gap: var(--space-4); }
 
@@ -307,8 +121,9 @@
    -------------------------------------------------------------------------- */
 .design-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(150px, 100%), 1fr)); gap: var(--space-4); }
 .design-swatch { display: flex; flex-direction: column; gap: var(--space-2); background: none; cursor: pointer; text-align: center; }
-.design-swatch__name { font-size: var(--text-small); font-weight: 600; color: var(--ink-2); }
-.design-swatch--selected .design-swatch__name { color: var(--brand); }
+.design-swatch__name { font-size: var(--text-2); font-weight: var(--weight-medium); color: var(--ink-2); }
+.design-swatch--selected .design-swatch__name { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+.design-swatch--selected .bank-card { box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--ink); }
 .design-swatch:focus-visible { outline: none; box-shadow: var(--focus-ring); border-radius: var(--radius-md); }
 
 /* A radio option drawn as a row you can hit. */
@@ -358,7 +173,7 @@
 
 .timeline__line { flex: 1; width: 1px; background: var(--line); margin: 4px 0; }
 .timeline__body { padding-bottom: var(--space-4); min-width: 0; }
-.timeline__title { font-size: var(--text-small); font-weight: 540; }
+.timeline__title { font-size: var(--text-small); font-weight: var(--weight-medium); }
 .timeline__time { font-size: var(--text-label); color: var(--ink-3); }
 
 /* =============================================================================
@@ -377,7 +192,7 @@
 }
 
 .payee-card__who { display: flex; align-items: center; gap: var(--space-3); min-width: 0; }
-.payee-card__name { font-size: var(--text-small); font-weight: 580; }
+.payee-card__name { font-size: var(--text-small); font-weight: var(--weight-semibold); }
 .payee-card__number { font-size: var(--text-label); color: var(--ink-3); font-family: var(--font-mono); }
 .payee-card__actions { display: flex; gap: var(--space-2); }
 .payee-card__actions > .btn { flex: 1 1 auto; }
@@ -387,8 +202,6 @@
    Profile
    ========================================================================== */
 
-.profile-head { display: flex; align-items: center; gap: var(--space-4); padding: var(--space-5); }
-.profile-head__name { font-size: var(--text-title); font-weight: 640; letter-spacing: -0.026em; }
 
 /* =============================================================================
    Authentication
@@ -423,7 +236,7 @@
   color: var(--danger);
 }
 
-.auth-error__title { font-weight: 580; font-size: var(--text-small); }
+.auth-error__title { font-weight: var(--weight-semibold); font-size: var(--text-small); }
 .auth-error__body { font-size: var(--text-small); opacity: 0.85; margin-top: 2px; }
 
 .auth-demo {
@@ -465,7 +278,7 @@
   height: 36px;
   border-radius: var(--radius-sm);
   font-size: var(--text-small);
-  font-weight: 560;
+  font-weight: var(--weight-semibold);
   color: var(--ink-3);
   cursor: pointer;
   transition: color var(--dur-micro) var(--ease), background-color var(--dur-micro) var(--ease);
@@ -475,294 +288,3 @@
 .method-switch__tab--active { color: var(--ink); background: var(--surface); box-shadow: var(--shadow-xs); }
 [data-theme='dark'] .method-switch__tab--active { background: var(--surface-2); }
 .method-switch__tab:focus-visible { outline: none; box-shadow: var(--focus-ring); }
-
-/* =============================================================================
-   Phone field and one-time codes
-   ========================================================================== */
-
-.phone-field { display: flex; gap: var(--space-2); }
-.phone-field__code { width: 108px; flex-shrink: 0; }
-.phone-field__number { flex: 1; min-width: 0; }
-
-/*
-   The six-digit code.
-
-   One real input stretched invisibly across six drawn cells. That is what makes
-   paste, autofill and the iOS "from Messages" suggestion work — all three target
-   a single field, and six separate inputs break every one of them.
-*/
-.otp { display: flex; flex-direction: column; gap: var(--space-2); }
-.otp__row { position: relative; display: flex; gap: var(--space-2); }
-
-.otp__input {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  z-index: 1;
-  font-size: 16px;
-  letter-spacing: 2em;
-  cursor: text;
-}
-
-.otp__cell {
-  flex: 1;
-  min-width: 0;
-  height: 56px;
-  display: grid;
-  place-items: center;
-  border-radius: var(--radius-md);
-  background: var(--surface-sunken);
-  border: 1px solid transparent;
-  font-size: 1.375rem;
-  font-weight: 620;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink-3);
-  transition: border-color var(--dur-micro) var(--ease), background-color var(--dur-micro) var(--ease);
-}
-
-.otp__cell--active {
-  border-color: var(--brand);
-  background: var(--surface);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand) 16%, transparent);
-}
-
-.otp__cell--filled { color: var(--ink); }
-.otp--error .otp__cell { border-color: var(--danger); }
-
-/* =============================================================================
-   Verification panel
-   ========================================================================== */
-
-.verify-panel { padding: var(--space-5); display: flex; flex-direction: column; gap: var(--space-4); }
-.verify-panel--done { border-color: color-mix(in srgb, var(--positive) 40%, var(--line)); }
-.verify-panel__title { font-size: var(--text-heading); font-weight: 640; }
-.verify-panel__rows { display: flex; flex-direction: column; gap: var(--space-3); }
-.verify-panel__row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
-.verify-panel__label { font-size: var(--text-small); color: var(--ink-2); }
-
-.verify-result {
-  padding: var(--space-4);
-  border-radius: var(--radius-md);
-  font-size: var(--text-small);
-  font-weight: 540;
-}
-
-.verify-result--ok { color: var(--positive); background: var(--positive-soft); }
-.verify-result--bad { color: var(--danger); background: var(--danger-soft); }
-
-/* =============================================================================
-   Balance block, older markup
-   ========================================================================== */
-
-.balance__content { position: relative; z-index: 1; display: flex; flex-direction: column; gap: var(--space-4); }
-.balance__label { font-size: var(--text-label); font-weight: 580; color: var(--ink-on-inverse-2); }
-.balance__amount { font-size: var(--text-hero); font-weight: 680; letter-spacing: -0.045em; line-height: 1; font-variant-numeric: tabular-nums; }
-.balance__delta { font-size: var(--text-small); color: var(--ink-on-inverse-2); }
-.balance__accounts { display: flex; gap: var(--space-6); flex-wrap: wrap; padding-top: var(--space-4); border-top: 1px solid var(--line-inverse); }
-.balance__actions { display: flex; gap: var(--space-3); flex-wrap: wrap; }
-.balance__chart { margin: calc(var(--space-2) * -1) 0; }
-
-/* =============================================================================
-   Quick actions
-   -----------------------------------------------------------------------------
-   Large, labelled, and always in the same order. These are the four things a
-   customer opens the app to do, so they are buttons with words on them rather
-   than a row of icons somebody has to learn.
-   ========================================================================== */
-
-/*
-   Four across on a desktop, two-by-two on a phone.
-
-   Fixed counts rather than `auto-fit`, because auto-fit fits as many as it can
-   and then orphans the remainder: at 390px the four actions came out as a row of
-   three with Exchange alone underneath, which reads as a mistake. Two-by-two
-   also gives the largest targets on the screen where they are hit with a thumb.
-*/
-.quick-actions {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: var(--space-3);
-}
-
-@media (max-width: 620px) {
-  .quick-actions { grid-template-columns: repeat(2, 1fr); gap: var(--space-2); }
-}
-
-.action {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-2);
-  min-height: 84px;
-  padding: var(--space-4) var(--space-3);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--line);
-  background: var(--surface);
-  color: var(--ink-2);
-  font-size: var(--text-small);
-  font-weight: 560;
-  cursor: pointer;
-  transition: border-color var(--dur-micro) var(--ease), color var(--dur-micro) var(--ease), transform var(--dur-micro) var(--ease);
-}
-
-.action:hover { color: var(--ink); border-color: var(--line-strong); }
-.action:active { transform: scale(0.97); }
-.action:focus-visible { outline: none; box-shadow: var(--focus-ring); }
-
-/* On the ink block the surface and hairline both disappear, so the action
-   borrows the surround. */
-.action--on-hero {
-  background: rgba(255, 255, 255, 0.10);
-  border-color: transparent;
-  color: var(--ink-on-inverse);
-}
-
-.action--on-hero:hover { background: rgba(255, 255, 255, 0.16); color: var(--ink-on-inverse); }
-[data-theme='dark'] .action--on-hero { background: rgba(11, 13, 18, 0.08); }
-[data-theme='dark'] .action--on-hero:hover { background: rgba(11, 13, 18, 0.14); }
-
-/* The one action a screen most wants taken. */
-.action--key { color: var(--brand-ink); background: var(--brand-fill); border-color: transparent; }
-.action--key:hover { color: var(--brand-ink); background: color-mix(in srgb, var(--brand-fill) 88%, #000); }
-
-.action__disc {
-  display: grid;
-  place-items: center;
-  width: 36px;
-  height: 36px;
-  border-radius: var(--radius-sm);
-  color: var(--brand);
-  background: var(--brand-soft);
-}
-
-.action--key .action__disc { color: var(--brand-ink); background: rgba(255, 255, 255, 0.22); }
-.action--on-hero .action__disc { color: var(--ink-on-inverse); background: rgba(255, 255, 255, 0.16); }
-[data-theme='dark'] .action--on-hero .action__disc { background: rgba(11, 13, 18, 0.12); }
-.action__disc svg { width: 18px; height: 18px; }
-
-/* =============================================================================
-   Connection banner
-   ========================================================================== */
-
-.conn {
-  position: fixed;
-  z-index: 320;
-  top: calc(var(--safe-top) + var(--space-4));
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  max-width: min(520px, calc(100vw - var(--space-6)));
-  padding: var(--space-3) var(--space-4);
-  border-radius: var(--radius-lg);
-  background: var(--surface-chrome);
-  backdrop-filter: blur(16px) saturate(150%);
-  -webkit-backdrop-filter: blur(16px) saturate(150%);
-  border: 1px solid var(--line);
-  box-shadow: var(--shadow-lg);
-}
-
-.conn__icon { display: flex; color: var(--danger); flex-shrink: 0; }
-.conn__icon svg { width: 18px; height: 18px; }
-.conn__body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.conn__title { font-size: var(--text-small); font-weight: 600; }
-.conn__detail { font-size: var(--text-label); color: var(--ink-2); }
-.conn__retry { flex-shrink: 0; }
-.conn__spin { animation: spin 900ms linear infinite; }
-
-/*
-   Room for the banner while it is up.
-
-   A fixed overlay at the top of the viewport otherwise lands on the first
-   heading of every screen. The reserve is generous — the detail line wraps to
-   three lines at 320px — and it only applies during an outage, so
-   over-reserving costs nothing anybody sees in normal use.
-*/
-[data-api-down='true'] .page,
-[data-api-down='true'] .auth-form-side,
-[data-api-down='true'] .auth-poster { padding-top: 128px; }
-
-@media (min-width: 768px) {
-  [data-api-down='true'] .page { padding-top: 96px; }
-}
-
-/* =============================================================================
-   Tables (administration)
-   -----------------------------------------------------------------------------
-   The back office is the one part of MBank that is genuinely a table, and it is
-   styled as one: dense rows, a sticky-feeling header, and a horizontal scroll
-   container so a wide table never widens the page.
-   ========================================================================== */
-
-.table-wrap,
-.table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-
-.table { width: 100%; border-collapse: collapse; font-size: var(--text-small); }
-
-.table th {
-  padding: var(--space-3) var(--space-4);
-  text-align: left;
-  font-size: var(--text-label);
-  font-weight: 620;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--ink-3);
-  border-bottom: 1px solid var(--line);
-  white-space: nowrap;
-}
-
-.table td { padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--line); vertical-align: middle; }
-.table tr:last-child td { border-bottom: none; }
-.table tbody tr { transition: background-color var(--dur-micro) var(--ease); }
-.table tbody tr:hover { background-color: var(--surface-sunken); }
-
-/* =============================================================================
-   Small screens
-   ========================================================================== */
-
-@media (max-width: 767px) {
-  .transfer-panel { padding: var(--space-5) var(--space-4); }
-  .amount-field { padding: var(--space-4); }
-  .amount-field input { font-size: 1.75rem; }
-  .otp__cell { height: 52px; font-size: 1.25rem; }
-  .card-detail,
-  .verify-panel,
-  .profile-head { padding: var(--space-4); }
-  .auth-secondary { flex-direction: column; gap: var(--space-2); text-align: center; }
-}
-
-@media (max-width: 359px) {
-  .otp__row { gap: 5px; }
-  .otp__cell { height: 46px; font-size: 1.125rem; }
-  .phone-field__code { width: 88px; }
-}
-
-/* =============================================================================
-   Split a bill
-   ========================================================================== */
-
-.split-people { display: flex; flex-direction: column; gap: var(--space-2); max-height: 240px; overflow-y: auto; }
-
-.split-person {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-2) var(--space-3);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--line);
-  background: var(--surface);
-  font-size: var(--text-small);
-  font-weight: 540;
-  text-align: left;
-  cursor: pointer;
-  transition: border-color var(--dur-micro) var(--ease), background-color var(--dur-micro) var(--ease);
-}
-
-.split-person:hover { border-color: var(--line-strong); }
-.split-person--on { border-color: var(--brand); background: var(--brand-soft); }
-.split-person:focus-visible { outline: none; box-shadow: var(--focus-ring); }
-.split-person__check { width: 17px; height: 17px; color: var(--brand); flex-shrink: 0; }

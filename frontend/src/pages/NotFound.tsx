@@ -2,14 +2,7 @@ import { Link } from 'react-router-dom';
 import { Compass, Home } from 'lucide-react';
 import { Button, Surface } from '../components/ui';
 
-/**
- * 404.
- *
- * Rendered inside the shell rather than as a redirect. Silently sending
- * somebody to the dashboard hides the one thing they need to know — that the
- * link they followed was wrong — and leaves them wondering why they did not
- * arrive where they expected.
- */
+/** 404. */
 export function NotFoundPage() {
   return (
     <div className="notfound">
@@ -24,7 +17,7 @@ export function NotFoundPage() {
           The link may be out of date, or the address mistyped. Nothing has happened to your money.
         </p>
 
-        <div className="row" style={{ justifyContent: 'center', gap: 'var(--space-3)' }}>
+        <div className="row justify-center gap-3">
           <Link to="/">
             <Button variant="primary" icon={<Home />}>
               Back to overview

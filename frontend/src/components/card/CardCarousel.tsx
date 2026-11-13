@@ -11,19 +11,7 @@ interface CardCarouselProps {
   className?: string;
 }
 
-/**
- * A horizontally swipeable row of cards.
- *
- * The browser does the scrolling — see the note in cards.css for why a
- * transform-based slider is the wrong tool. This component's whole job is the
- * other direction: watching which slide came to rest in view so the dots and the
- * page's selection can follow, and moving the scroll position when somebody uses
- * a dot or an arrow instead of their finger.
- *
- * `IntersectionObserver` rather than a scroll listener: it fires only when a
- * slide actually crosses the threshold, off the main thread, instead of on every
- * one of the hundreds of scroll events a single flick produces.
- */
+/** A horizontally swipeable row of cards. */
 export function CardCarousel({ items, onActiveChange, ariaLabel = 'Cards', className = '' }: CardCarouselProps) {
   const trackRef = useRef<HTMLDivElement | null>(null);
   const [active, setActive] = useState(0);
@@ -119,14 +107,7 @@ export function CardCarousel({ items, onActiveChange, ariaLabel = 'Cards', class
       </div>
 
       {showChrome && (
-        /*
-          A three-column grid, not a flex row with an invisible copy of the
-          arrows on the right to balance it. The duplicate reserved real width,
-          so at 320px with four cards the row measured 414px and pushed the
-          whole page sideways. The grid centres the dots against the container
-          rather than against its own contents, and the third column costs
-          nothing.
-        */
+        /* A three-column grid, not a flex row with an invisible copy of the arrows on the right to balance it. */
         <div className="card-carousel__chrome">
           <div className="card-carousel__arrows">
             <button

@@ -1,34 +1,28 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, Receipt } from 'lucide-react';
 import { transfersApi } from '../api/transfers';
-import type { PageResponse, TransactionResponse, TransferStatus } from '../api/types';
-import { useAsync } from '../hooks/useAsync';
+import type { PageResponse, TransactionResponse } from '../api/types';
+import { ErrorState } from '../components/States';
 import { TransactionDetail } from '../components/TransactionDetail';
-import { TransactionRow } from '../components/TransactionRow';
-import { EmptyState, ErrorState } from '../components/States';
-import { Button, Surface, Skeleton, Tabs } from '../components/ui';
-import { toDateKey } from '../utils/format';
+import { TransactionFilters } from '../components/TransactionFilters';
+import { TransactionList } from '../components/TransactionList';
+import { TransactionTable } from '../components/TransactionTable';
+import { Button, Skeleton } from '../components/ui';
+import { useAsync } from '../hooks/useAsync';
+import { useDebounced } from '../hooks/useDebounced';
+import { useIsPhone } from '../hooks/useMediaQuery';
+import { LOCALE, toDateKey } from '../utils/format';
+import {
+  NO_FILTERS,
+  countActive,
+  filterProblem,
+  toTransactionQuery,
+  type TransactionFilters as Filters,
+} from '../utils/transactionFilters';
 
-const FILTERS = [
-  { id: '', label: 'All' },
-  { id: 'COMPLETED', label: 'Completed' },
-  { id: 'PENDING', label: 'In review' },
-  { id: 'FAILED', label: 'Failed' },
-  { id: 'REVERSED', label: 'Reversed' },
-] as const;
+const PAGE_SIZE = 25;
 
-type Filter = (typeof FILTERS)[number]['id'];
-
-const PAGE_SIZE = 12;
-
-/**
- * Splits a page of transactions into days, keeping the order the API sent them.
- *
- * A `Map` rather than an object: it preserves insertion order for string keys
- * that look like dates, which a plain object does not guarantee, and getting
- * that wrong reorders somebody's statement.
- */
+// A Map keeps the days in the order the API sent them.
 function byDay(transactions: TransactionResponse[]): [string, TransactionResponse[]][] {
   const groups = new Map<string, TransactionResponse[]>();
   for (const transaction of transactions) {
@@ -40,7 +34,6 @@ function byDay(transactions: TransactionResponse[]): [string, TransactionRespons
   return [...groups.entries()];
 }
 
-/** "Today", "Yesterday", then a weekday, then a date — the way a statement reads. */
 function dayHeading(key: string): string {
   const date = new Date(`${key}T00:00:00`);
   const today = new Date();
@@ -49,129 +42,115 @@ function dayHeading(key: string): string {
 
   if (distance === 0) return 'Today';
   if (distance === 1) return 'Yesterday';
-  if (distance < 7) return date.toLocaleDateString(undefined, { weekday: 'long' });
-  return date.toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' });
+  return date.toLocaleDateString(LOCALE, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 }
 
 export function TransactionsPage() {
   const [searchParams] = useSearchParams();
-  const query = searchParams.get('q')?.toLowerCase() ?? '';
+  const linkedSearch = searchParams.get('q') ?? '';
 
-  const [filter, setFilter] = useState<Filter>('');
+  const [filters, setFilters] = useState<Filters>({ ...NO_FILTERS, q: linkedSearch });
   const [page, setPage] = useState(0);
   const [selected, setSelected] = useState<TransactionResponse | null>(null);
+  const isPhone = useIsPhone();
 
-  const { data, loading, error, reload } = useAsync<PageResponse<TransactionResponse>>(
-    () => transfersApi.transactions({ page, size: PAGE_SIZE, status: filter as TransferStatus | '' }),
-    [page, filter],
+  // The command palette links here with ?q=..., also while this screen is already open.
+  useEffect(() => {
+    setFilters((current) => (current.q === linkedSearch ? current : { ...current, q: linkedSearch }));
+    setPage(0);
+  }, [linkedSearch]);
+
+  const changeFilters = (next: Filters) => {
+    setFilters(next);
+    setPage(0);
+  };
+
+  // Filtering happens in the database. Waiting 300ms keeps typing from sending a request per key.
+  const settled = useDebounced(filters, 300);
+  const problem = filterProblem(settled);
+  const query = useMemo(() => (problem ? null : toTransactionQuery(settled)), [settled, problem]);
+
+  const { data, loading, error, reload, setData } = useAsync<PageResponse<TransactionResponse> | null>(
+    async () => (query ? transfersApi.transactions({ ...query, page, size: PAGE_SIZE }) : null),
+    [query, page],
   );
 
-  /*
-    Paging and status filtering happen in the database. The text search is a
-    client-side narrowing of the page in hand, because the API has no free-text
-    parameter — so it is presented as filtering what is shown, not as a search
-    across the whole history.
-  */
-  const visible = query
-    ? (data?.content ?? []).filter(
-        (txn) =>
-          txn.reference.toLowerCase().includes(query) ||
-          (txn.description ?? '').toLowerCase().includes(query) ||
-          txn.counterpartyAccountNumber.toLowerCase().includes(query),
-      )
-    : (data?.content ?? []);
+  const rows = data?.content ?? [];
+  const filtered = countActive(filters) > 0;
 
   return (
     <>
-      <div className="page__head">
+      <div className="page__head page__head--wide-only">
         <h1 className="page__title">Transactions</h1>
-        <p className="page__subtitle">Everything moving in and out of your accounts.</p>
       </div>
 
-      <Surface tone="chrome" className="filter-bar">
-        <Tabs
-          tabs={FILTERS}
-          active={filter}
-          label="Filter transactions by status"
-          onChange={(value) => {
-            setFilter(value as Filter);
-            setPage(0);
-          }}
-        />
-        {query && (
-          <span className="small dim">
-            Filtering this page by &ldquo;{query}&rdquo;
-          </span>
-        )}
-      </Surface>
+      <TransactionFilters filters={filters} onChange={changeFilters} problem={problem} />
 
       {loading && (
-        <div className="stack">
-          {Array.from({ length: 6 }, (_, index) => (
-            <Skeleton key={index} height={72} />
+        <div className="home-loading" role="status" aria-busy="true">
+          <span className="sr-only">Loading transactions</span>
+          {Array.from({ length: 8 }, (_, index) => (
+            <Skeleton key={index} height="1.25rem" />
           ))}
         </div>
       )}
 
-      {!loading && (error || !data) && (
-        <ErrorState body={error?.body ?? 'We could not load your transactions.'} onRetry={reload} />
+      {!loading && error && <ErrorState title={error.title} body={error.body} onRetry={reload} />}
+
+      {!loading && !error && data && rows.length === 0 && (
+        <p className="home-empty">
+          {filtered
+            ? 'No transactions match these filters.'
+            : 'No transactions yet. They appear here as soon as money moves.'}
+        </p>
       )}
 
-      {!loading && data && visible.length === 0 && (
-        <Surface>
-          <EmptyState
-            title={query || filter ? 'Nothing matches' : 'No transactions yet'}
-            body={
-              query || filter
-                ? 'Try a different filter.'
-                : 'Your activity will appear here as soon as money moves.'
-            }
-            icon={<Receipt aria-hidden="true" />}
-          />
-        </Surface>
+      {!loading && data && rows.length > 0 && (
+        <>
+          <p className="txn-count" aria-live="polite">
+            {data.totalElements} {data.totalElements === 1 ? 'transaction' : 'transactions'}
+          </p>
+
+          {isPhone ? (
+            byDay(rows).map(([day, group]) => (
+              <section className="day-group" key={day} aria-label={dayHeading(day)}>
+                <h2 className="day-group__title">{dayHeading(day)}</h2>
+                <TransactionList transactions={group} onSelect={setSelected} groupedByDay />
+              </section>
+            ))
+          ) : (
+            <TransactionTable transactions={rows} onSelect={setSelected} />
+          )}
+
+          {data.totalPages > 1 && (
+            <nav className="pager pager--plain" aria-label="Pages">
+              <Button variant="secondary" size="sm" disabled={data.first} onClick={() => setPage(page - 1)}>
+                Previous
+              </Button>
+              <span>
+                Page {data.page + 1} of {data.totalPages}
+              </span>
+              <Button variant="secondary" size="sm" disabled={data.last} onClick={() => setPage(page + 1)}>
+                Next
+              </Button>
+            </nav>
+          )}
+        </>
       )}
 
-      {!loading && data && visible.length > 0 && (
-        <Surface className="list-panel">
-          {/*
-            Grouped by day, with the date on the heading rather than on every
-            row. Twelve rows each repeating "Today, 12:12" is a table; twelve
-            rows under one heading is a statement.
-          */}
-          {byDay(visible).map(([day, group]) => (
-            <div className="txn-group" key={day}>
-              <h2 className="txn-day">{dayHeading(day)}</h2>
-              {group.map((txn) => (
-                <TransactionRow key={txn.transferId} transaction={txn} onSelect={setSelected} hideDate />
-              ))}
-            </div>
-          ))}
-
-          <div className="pager">
-            <Button
-              variant="ghost"
-              disabled={data.first}
-              onClick={() => setPage((current) => Math.max(0, current - 1))}
-              icon={<ChevronLeft aria-hidden="true" />}
-            >
-              Previous
-            </Button>
-            <span className="small dim">
-              Page {data.page + 1} of {Math.max(1, data.totalPages)} · {data.totalElements} total
-            </span>
-            <Button
-              variant="ghost"
-              disabled={data.last}
-              onClick={() => setPage((current) => current + 1)}
-            >
-              Next
-              <ChevronRight aria-hidden="true" />
-            </Button>
-          </div>
-        </Surface>
-      )}
-
-      <TransactionDetail transaction={selected} onClose={() => setSelected(null)} />
+      <TransactionDetail
+        transaction={selected}
+        onClose={() => setSelected(null)}
+        onRecategorised={(updated) => {
+          setSelected(updated);
+          setData((current) =>
+            current && {
+              ...current,
+              content: current.content.map((row) => (row.transferId === updated.transferId ? updated : row)),
+            },
+          );
+        }}
+      />
     </>
   );
 }

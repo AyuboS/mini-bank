@@ -1,24 +1,14 @@
 import { useState } from 'react';
-import { Ban, CheckCircle2, Snowflake } from 'lucide-react';
 import { adminApi } from '../../api/admin';
 import type { AdminUserResponse, PageResponse, UserStatus } from '../../api/types';
-import { useAsync } from '../../hooks/useAsync';
 import { useAuth } from '../../auth/AuthContext';
-import { useToast } from '../../components/ToastProvider';
 import { ErrorState } from '../../components/States';
-import {
-  Avatar,
-  Badge,
-  Button,
-  Surface,
-  Input,
-  Sheet,
-  Select,
-  Skeleton,
-  Tabs,
-} from '../../components/ui';
-import { formatDate, humanise, initials, relativeTime, toneFor } from '../../utils/format';
+import { useToast } from '../../components/ToastProvider';
+import { Button, Input, Select, Sheet, Skeleton } from '../../components/ui';
+import { useAsync } from '../../hooks/useAsync';
 import { toFriendlyError } from '../../utils/errors';
+import { formatDay, humanise, relativeTime } from '../../utils/format';
+import { AdminPager, FilterRow } from './AdminParts';
 
 const FILTERS = [
   { id: '', label: 'All' },
@@ -29,13 +19,7 @@ const FILTERS = [
 
 type Filter = (typeof FILTERS)[number]['id'];
 
-const STATUS_TONE: Record<UserStatus, 'success' | 'warning' | 'danger' | 'neutral'> = {
-  ACTIVE: 'success',
-  LOCKED: 'warning',
-  SUSPENDED: 'danger',
-  DELETED: 'neutral',
-};
-
+/** Users, with suspend and restore. */
 export function AdminUsers() {
   const toast = useToast();
   const { user: currentUser } = useAuth();
@@ -51,14 +35,19 @@ export function AdminUsers() {
     [page, filter],
   );
 
+  const openChange = (user: AdminUserResponse, status: UserStatus) => {
+    setTarget(user);
+    setNextStatus(status);
+    setReason('');
+  };
+
   const applyStatus = async () => {
     if (!target) return;
     setBusy(true);
     try {
       await adminApi.changeUserStatus(target.id, nextStatus, reason.trim());
-      toast.success('Status updated', `${target.username} is now ${nextStatus.toLowerCase()}.`);
+      toast.success('Status changed', `${target.username} is now ${nextStatus.toLowerCase()}.`);
       setTarget(null);
-      setReason('');
       await reload();
     } catch (err) {
       const friendly = toFriendlyError(err);
@@ -70,154 +59,109 @@ export function AdminUsers() {
 
   return (
     <>
-      <Surface tone="chrome" className="filter-bar">
-        <Tabs
-          tabs={FILTERS}
-          active={filter}
-          label="Filter users by status"
-          onChange={(value) => {
-            setFilter(value as Filter);
-            setPage(0);
-          }}
-        />
-      </Surface>
+      <FilterRow
+        label="Filter users by status"
+        options={FILTERS}
+        value={filter}
+        onChange={(value) => {
+          setFilter(value);
+          setPage(0);
+        }}
+      />
 
-      {loading && <Skeleton height={320} />}
-
-      {!loading && (error || !data) && (
-        <ErrorState body={error?.body ?? 'We could not load the customer list.'} onRetry={reload} />
-      )}
-
-      {!loading && data && (
+      {loading && !data ? (
+        <Skeleton height={320} />
+      ) : error || !data ? (
+        <ErrorState body={error?.body ?? 'We could not load the users.'} onRetry={reload} />
+      ) : data.content.length === 0 ? (
+        <p className="quiet-empty">No users match this filter.</p>
+      ) : (
         <>
-          <Surface className="table-wrap">
-            <div className="table-scroll">
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th>Customer</th>
-                    <th>Contact</th>
-                    <th>Status</th>
-                    <th>Last seen</th>
-                    <th aria-label="Actions" />
-                  </tr>
-                </thead>
-                <tbody>
-                  {data.content.map((user) => (
-                    <tr key={user.id}>
-                      <td>
-                        <div className="row gap-3">
-                          <Avatar
-                            initials={initials(user.fullName.split(' ')[0], user.fullName.split(' ')[1])}
-                            tone={toneFor(user.username)}
-                            size="sm"
-                          />
-                          <div>
-                            <div style={{ fontWeight: 540 }}>{user.fullName}</div>
-                            <div className="dim" style={{ fontSize: 11 }}>
-                              @{user.username}
-                              {user.role === 'ADMIN' && ' · admin'}
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <div>{user.email}</div>
-                        {/* Masked by the server, not by this component. */}
-                        <div className="dim mono" style={{ fontSize: 11 }}>
-                          {user.maskedPhoneNumber ?? '—'}
-                        </div>
-                      </td>
-                      <td>
-                        <Badge tone={STATUS_TONE[user.status]}>{humanise(user.status)}</Badge>
-                        {user.failedLoginAttempts > 0 && (
-                          <div className="dim" style={{ fontSize: 11, marginTop: 4 }}>
-                            {user.failedLoginAttempts} failed{' '}
-                            {user.failedLoginAttempts === 1 ? 'attempt' : 'attempts'}
-                          </div>
-                        )}
-                      </td>
-                      <td className="dim" style={{ whiteSpace: 'nowrap' }}>
-                        {user.lastLoginAt ? relativeTime(user.lastLoginAt) : 'never'}
-                      </td>
-                      <td>
-                        <div className="row gap-2" style={{ justifyContent: 'flex-end' }}>
-                          {/*
-                            Suspending yourself would revoke your own sessions and
-                            lock you out of the console mid-task. The server would
-                            happily do it, so the guard belongs here.
-                          */}
-                          {user.id === currentUser?.id ? (
-                            <span className="small dim">You</span>
-                          ) : user.status === 'ACTIVE' ? (
-                            <Button
-                              variant="secondary"
-                              onClick={() => {
-                                setTarget(user);
-                                setNextStatus('SUSPENDED');
-                              }}
-                              icon={<Ban aria-hidden="true" />}
-                            >
-                              Suspend
-                            </Button>
-                          ) : (
-                            <Button
-                              variant="secondary"
-                              onClick={() => {
-                                setTarget(user);
-                                setNextStatus('ACTIVE');
-                              }}
-                              icon={<CheckCircle2 aria-hidden="true" />}
-                            >
-                              Restore
-                            </Button>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </Surface>
-
-          <div className="pager">
-            <Button variant="ghost" disabled={data.first} onClick={() => setPage((p) => Math.max(0, p - 1))}>
-              Previous
-            </Button>
-            <span className="small dim">
-              Page {data.page + 1} of {Math.max(1, data.totalPages)} · {data.totalElements} customers
-            </span>
-            <Button variant="ghost" disabled={data.last} onClick={() => setPage((p) => p + 1)}>
-              Next
-            </Button>
-          </div>
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Contact</th>
+                <th>Status</th>
+                <th>Last sign-in</th>
+                <th>
+                  <span className="sr-only">Actions</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.content.map((user) => (
+                <tr key={user.id}>
+                  <td>
+                    {user.fullName}
+                    <span className="admin-table__sub">
+                      @{user.username}
+                      {user.role === 'ADMIN' && ' · administrator'}
+                    </span>
+                  </td>
+                  <td data-wide-only>
+                    {user.email}
+                    {/* Masked by the server. */}
+                    <span className="admin-table__sub admin-table__mono">{user.maskedPhoneNumber ?? 'No phone'}</span>
+                  </td>
+                  <td className={user.status === 'ACTIVE' ? undefined : 'admin-table__flagged'}>
+                    {humanise(user.status)}
+                    {user.failedLoginAttempts > 0 && (
+                      <span className="admin-table__sub">
+                        {user.failedLoginAttempts} failed {user.failedLoginAttempts === 1 ? 'attempt' : 'attempts'}
+                      </span>
+                    )}
+                  </td>
+                  <td data-wide-only className="dim">
+                    {user.lastLoginAt ? relativeTime(user.lastLoginAt) : 'Never'}
+                  </td>
+                  <td>
+                    <div className="admin-table__actions">
+                      {/* Suspending yourself would end your own session mid-task. */}
+                      {user.id === currentUser?.id ? (
+                        <span className="dim">You</span>
+                      ) : user.status === 'ACTIVE' ? (
+                        <Button size="sm" variant="ghost" onClick={() => openChange(user, 'SUSPENDED')} aria-label={`Suspend ${user.username}`}>
+                          Suspend
+                        </Button>
+                      ) : (
+                        <Button size="sm" variant="secondary" onClick={() => openChange(user, 'ACTIVE')} aria-label={`Restore ${user.username}`}>
+                          Restore
+                        </Button>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <AdminPager page={data} noun="users" onPage={setPage} />
         </>
       )}
 
       <Sheet
         open={target !== null}
         onClose={() => setTarget(null)}
-        title={nextStatus === 'ACTIVE' ? 'Restore access?' : 'Change customer status'}
-        subtitle={target ? `${target.fullName} · @${target.username}` : ''}
+        title={nextStatus === 'ACTIVE' ? 'Restore access?' : 'Change status'}
+        subtitle={target ? `${target.fullName} · @${target.username} · since ${formatDay(target.createdAt)}` : ''}
       >
-        <p className="small dim">
-          {nextStatus === 'ACTIVE'
-            ? 'The customer will be able to sign in again, and any lockout counter is cleared.'
-            : 'Suspending immediately revokes every active session. Their accounts and history are untouched.'}
-        </p>
-
-        <div className="stack gap-4" style={{ marginTop: 'var(--space-5)' }}>
-          <Select
-            label="New status"
-            value={nextStatus}
-            onChange={(event) => setNextStatus(event.target.value as UserStatus)}
-          >
+        <form
+          className="sheet-form"
+          onSubmit={(event) => {
+            event.preventDefault();
+            void applyStatus();
+          }}
+        >
+          <p className="admin-note">
+            {nextStatus === 'ACTIVE'
+              ? 'They can sign in again, and the failed-attempt counter is cleared.'
+              : 'Every active session ends at once. Their accounts and history are untouched.'}
+          </p>
+          <Select label="New status" value={nextStatus} onChange={(event) => setNextStatus(event.target.value as UserStatus)}>
             <option value="ACTIVE">Active</option>
             <option value="SUSPENDED">Suspended</option>
             <option value="LOCKED">Locked</option>
           </Select>
-
           <Input
             label="Reason"
             placeholder="Reported stolen device"
@@ -226,23 +170,15 @@ export function AdminUsers() {
             maxLength={255}
             hint="Recorded in the audit trail."
           />
-        </div>
-
-        {target && (
-          <p className="field-hint" style={{ marginTop: 'var(--space-4)' }}>
-            <Snowflake aria-hidden="true" style={{ width: 12, height: 12, display: 'inline', marginRight: 4 }} />
-            Customer since {formatDate(target.createdAt)}
-          </p>
-        )}
-
-        <div className="modal-actions">
-          <Button variant="secondary" onClick={() => setTarget(null)} disabled={busy}>
-            Cancel
-          </Button>
-          <Button variant="primary" loading={busy} onClick={applyStatus}>
-            Apply
-          </Button>
-        </div>
+          <div className="modal-actions">
+            <Button type="button" variant="secondary" onClick={() => setTarget(null)} disabled={busy}>
+              Cancel
+            </Button>
+            <Button type="submit" variant="primary" loading={busy}>
+              Apply
+            </Button>
+          </div>
+        </form>
       </Sheet>
     </>
   );

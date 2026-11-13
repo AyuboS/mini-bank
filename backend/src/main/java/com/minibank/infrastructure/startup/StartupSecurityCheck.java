@@ -15,6 +15,9 @@ import org.springframework.stereotype.Component;
 /**
  * Refuses to start a production instance that is configured like a development one.
  *
+ * <p>The {@code demo} profile, for a public demo of the simulation, gets the same checks except
+ * one: it may simulate SMS and email, because a demo has nothing to deliver them with.
+ *
  * <p>Documenting "change the secret before deploying" achieves nothing on the day somebody forgets.
  * These checks turn that class of mistake into a startup failure, which is impossible to miss and
  * impossible to ship past.
@@ -50,25 +53,27 @@ public class StartupSecurityCheck implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
-        boolean production = List.of(environment.getActiveProfiles()).contains("prod");
+        List<String> profiles = List.of(environment.getActiveProfiles());
+        boolean production = profiles.contains("prod");
+        boolean strict = production || profiles.contains("demo");
         String secret = securityProperties.jwt().secret();
 
         if (PUBLIC_SECRETS.contains(secret)) {
-            if (production) {
+            if (strict) {
                 throw new IllegalStateException(
                         "JWT_SECRET is set to a value published in the source repository. "
-                                + "Set a unique secret of at least 32 characters before starting in prod.");
+                                + "Set a unique secret of at least 32 characters before deploying.");
             }
             log.warn("Using a development JWT secret. This is fine locally and fatal in production.");
         }
 
-        if (production && securityProperties.cors().allowedOrigins().contains("*")) {
+        if (strict && securityProperties.cors().allowedOrigins().contains("*")) {
             throw new IllegalStateException(
                     "CORS allowed-origins contains '*', which cannot be combined with credentials. "
                             + "List the exact origins that are permitted.");
         }
 
-        checkMessageDelivery(production);
+        checkMessageDelivery(production, strict);
     }
 
     /**
@@ -80,9 +85,9 @@ public class StartupSecurityCheck implements ApplicationRunner {
      * exposed-code flag means the log is the least of the problem, because the code is in the HTTP
      * response and the OTP has stopped being a second factor at all.
      */
-    private void checkMessageDelivery(boolean production) {
+    private void checkMessageDelivery(boolean production, boolean strict) {
         if (notificationProperties.exposeCodes()) {
-            if (production) {
+            if (strict) {
                 throw new IllegalStateException(
                         "minibank.notifications.expose-codes is enabled. This returns one-time codes in "
                                 + "API responses and must never be set outside development.");

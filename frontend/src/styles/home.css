@@ -1,0 +1,232 @@
+/* Home, and the ledger list it introduces. See docs/design-system.md. */
+
+.home {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  column-gap: var(--space-8);
+  align-items: start;
+  padding-top: var(--space-4);
+}
+
+.home__rail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-7);
+  padding-left: var(--space-7);
+  border-left: 1px solid var(--line);
+}
+
+/* --- Balance ------------------------------------------------------------- */
+
+.home-balance__label {
+  font-size: var(--text-2);
+  font-weight: var(--weight-medium);
+  color: var(--ink-3);
+}
+
+.home-balance .balance { margin-top: var(--space-1); }
+
+.home-balance__sub {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-4);
+  min-height: 1.5em;
+  margin-top: var(--space-2);
+  font-size: var(--text-2);
+  color: var(--ink-3);
+}
+
+.home-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-5);
+}
+
+.home-month {
+  display: flex;
+  gap: var(--space-7);
+  margin-top: var(--space-6);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--line);
+}
+
+.home-month dt {
+  font-size: var(--text-1);
+  font-weight: var(--weight-medium);
+  color: var(--ink-3);
+}
+
+.home-month dd {
+  margin-top: 2px;
+  font-size: var(--text-3);
+  font-weight: var(--weight-medium);
+  font-variant-numeric: tabular-nums;
+}
+
+.home-month__in { color: var(--green); }
+
+/* --- Sections ------------------------------------------------------------ */
+
+.home-section { margin-top: var(--space-8); }
+
+.home-section__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--line-strong);
+}
+
+.home-section__head .link { font-size: var(--text-2); }
+.home__rail h2 { font-size: var(--text-3); letter-spacing: 0; }
+
+.home-empty {
+  padding: var(--space-4) 0;
+  font-size: var(--text-2);
+  color: var(--ink-3);
+}
+
+.home-loading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding: var(--space-4) 0;
+}
+
+/* --- Ledger list ---------------------------------------------------------
+   Rows sit on the page between hairlines; there is no surrounding panel. */
+
+.ledger { list-style: none; }
+
+.ledger__row {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr) 132px minmax(96px, auto);
+  column-gap: var(--space-4);
+  align-items: baseline;
+  width: 100%;
+  min-height: 48px;
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--line);
+  font-size: var(--text-3);
+  text-align: left;
+}
+
+.ledger__row:hover { background: var(--surface-sunken); }
+.ledger__row:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+.ledger__date,
+.ledger__category { font-size: var(--text-2); color: var(--ink-3); }
+.ledger__date { font-variant-numeric: tabular-nums; }
+
+.ledger__main { display: flex; flex-direction: column; min-width: 0; }
+.ledger__title { font-weight: var(--weight-medium); color: var(--ink); }
+.ledger__meta { display: none; font-size: var(--text-2); color: var(--ink-3); }
+
+.ledger__figure { display: flex; flex-direction: column; align-items: flex-end; }
+
+.ledger__amount {
+  font-weight: var(--weight-medium);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  color: var(--ink);
+}
+
+.ledger__amount--in { color: var(--green); }
+.ledger__amount--unsettled { color: var(--ink-3); }
+
+.ledger__status { font-size: var(--text-1); color: var(--ink-3); }
+.ledger__status--failed { color: var(--red); }
+
+/* --- Upcoming ------------------------------------------------------------ */
+
+.upcoming { list-style: none; }
+
+.upcoming__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--line);
+  font-size: var(--text-3);
+}
+
+.upcoming__main { display: flex; flex-direction: column; min-width: 0; font-weight: var(--weight-medium); }
+.upcoming__meta { font-size: var(--text-2); font-weight: var(--weight-regular); color: var(--ink-3); }
+
+/* --- Card ----------------------------------------------------------------
+   One flat colour. The proportions are a real card's (85.6 x 54 mm). */
+
+.card-face {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto 1fr auto auto;
+  row-gap: var(--space-1);
+  aspect-ratio: 85.6 / 54;
+  max-width: 320px;
+  margin-top: var(--space-4);
+  padding: var(--space-5);
+  border-radius: var(--radius-3);
+  background: var(--surface-inverse);
+  color: var(--ink-on-inverse);
+}
+
+.card-face__brand { font-size: var(--text-3); font-weight: var(--weight-semibold); }
+.card-face__type { font-size: var(--text-1); color: var(--ink-on-inverse-2); }
+
+.card-face__number {
+  grid-column: 1 / -1;
+  grid-row: 3;
+  font-size: var(--text-4);
+  font-weight: var(--weight-medium);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+}
+
+.card-face__holder,
+.card-face__expiry {
+  grid-row: 4;
+  font-size: var(--text-1);
+  color: var(--ink-on-inverse-2);
+}
+
+.card-face__holder { text-transform: uppercase; letter-spacing: 0.04em; }
+.card-face__expiry { font-variant-numeric: tabular-nums; }
+
+.home-card-meta {
+  margin-top: var(--space-3);
+  font-size: var(--text-2);
+  color: var(--ink-3);
+}
+
+/* --- One column: tablets and phones --------------------------------------- */
+
+@media (max-width: 1100px) {
+  .home { grid-template-columns: minmax(0, 1fr); }
+
+  .home__rail {
+    margin-top: var(--space-8);
+    padding-left: 0;
+    border-left: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .home { padding-top: var(--space-2); }
+
+  /* Send takes the full width; the two secondary actions share the next row. */
+  .home-actions { display: grid; grid-template-columns: 1fr 1fr; }
+  .home-actions .btn { padding: 0 var(--space-3); }
+  .home-actions .btn-primary { grid-column: 1 / -1; }
+
+  .home-section { margin-top: var(--space-7); }
+  .home__rail { margin-top: var(--space-7); }
+
+  /* Date and category move under the description. */
+  .ledger__row { grid-template-columns: minmax(0, 1fr) auto; }
+  .ledger__date,
+  .ledger__category { display: none; }
+  .ledger__meta { display: block; }
+}

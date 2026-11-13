@@ -72,6 +72,24 @@ class AccountIT extends AbstractIntegrationTest {
     }
 
     @Test
+    void aPayeeLookupReturnsTheHolderAsFirstNameAndLastInitial() {
+        var result = api.get("/api/v1/accounts/lookup?accountNumber=" + bobAccount.getAccountNumber(), aliceToken);
+
+        assertThat(result.getResponse().getStatus()).isEqualTo(200);
+        var body = api.parse(result);
+        assertThat(body.get("accountNumber").asText()).isEqualTo(bobAccount.getAccountNumber());
+        assertThat(body.get("holderName").asText()).matches("\\S+ \\S\\.");
+        assertThat(body.get("bank").asText()).isEqualTo("MBank");
+    }
+
+    @Test
+    void aPayeeLookupForAnUnknownAccountNumberIsNotFound() {
+        var result = api.get("/api/v1/accounts/lookup?accountNumber=MB-000000000000", aliceToken);
+
+        assertThat(result.getResponse().getStatus()).isEqualTo(404);
+    }
+
+    @Test
     void anUnknownAccountIdIsNotFound() {
         var result = api.get("/api/v1/accounts/" + UUID.randomUUID(), aliceToken);
 

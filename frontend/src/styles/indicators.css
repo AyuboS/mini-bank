@@ -1,0 +1,184 @@
+/* Badges */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 24px;
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-pill);
+  font-size: var(--text-label);
+  font-weight: 600;
+  letter-spacing: -0.002em;
+  white-space: nowrap;
+}
+
+.badge__dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+
+.badge--neutral { color: var(--ink-2); background: var(--neutral-soft); }
+.badge--positive,
+.badge--success { color: var(--positive); background: var(--positive-soft); }
+.badge--warning { color: var(--warning); background: var(--warning-soft); }
+.badge--danger { color: var(--danger); background: var(--danger-soft); }
+.badge--brand { color: var(--brand); background: var(--brand-soft); }
+
+/* =============================================================================
+   Avatars
+   ========================================================================== */
+
+.avatar {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  border-radius: var(--radius-sm);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.01em;
+  /* A tint of the accent with the accent as the ink, rather than a filled circle: a page of filled avatars is a page of coloured dots competing with the amounts beside them. */
+  color: color-mix(in srgb, var(--avatar-accent) 66%, #000);
+  background: color-mix(in srgb, var(--avatar-accent) 14%, var(--surface));
+}
+
+[data-theme='dark'] .avatar {
+  color: var(--avatar-accent);
+  background: color-mix(in srgb, var(--avatar-accent) 16%, var(--surface));
+}
+
+.avatar--sm { width: 32px; height: 32px; font-size: 0.6875rem; border-radius: var(--radius-xs); }
+.avatar--md { width: 40px; height: 40px; font-size: var(--text-small); }
+.avatar--lg { width: 56px; height: 56px; font-size: 1rem; border-radius: var(--radius-md); }
+
+/* Tabs */
+
+.tabs {
+  position: relative;
+  display: flex;
+  gap: 0;
+  padding: 4px;
+  border-radius: var(--radius-md);
+  background: var(--surface-sunken);
+  border: none;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.tabs::-webkit-scrollbar { display: none; }
+
+/* Positioned from the strip's padding box, so `left: 0` plus the measured
+   offset minus the 4px padding lands it exactly on the active tab. */
+.tabs__pill {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  bottom: 4px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  box-shadow: var(--shadow-xs);
+  transition: transform var(--dur-control) var(--ease);
+  pointer-events: none;
+}
+
+[data-theme='dark'] .tabs__pill { background: var(--surface-2); }
+
+.tabs__tab {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  height: 36px;
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-small);
+  font-weight: var(--weight-semibold);
+  color: var(--ink-3);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color var(--dur-micro) var(--ease);
+}
+
+.tabs__tab:hover { color: var(--ink-2); }
+.tabs__tab--active { color: var(--ink); font-weight: var(--weight-semibold); }
+.tabs__tab:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+/* A segmented control whose selection is not animated. */
+
+.tabs__count {
+  min-width: 18px;
+  padding: 0 5px;
+  border-radius: var(--radius-pill);
+  background: var(--brand-soft);
+  color: var(--brand);
+  font-size: 0.625rem;
+  font-weight: var(--weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+/* =============================================================================
+   Statistics
+   ========================================================================== */
+
+.stat { padding: var(--space-4) var(--space-5); display: flex; flex-direction: column; gap: var(--space-2); }
+.stat__head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); }
+.stat__icon { color: var(--ink-3); display: flex; }
+.stat__icon svg { width: 16px; height: 16px; }
+.stat__value { font-size: 1.5rem; font-weight: var(--weight-semibold); letter-spacing: -0.028em; }
+.stat__value--positive { color: var(--positive); }
+.stat__value--warning { color: var(--warning); }
+.stat__value--danger { color: var(--danger); }
+.stat__detail { font-size: var(--text-small); color: var(--ink-3); }
+
+/* Progress */
+
+.progress { position: relative; width: 100%; overflow: hidden; border-radius: var(--radius-pill); background: var(--track); }
+.progress--md { height: 8px; }
+.progress--sm { height: 6px; }
+
+.progress__fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  transition: width var(--dur-panel) var(--ease);
+}
+
+.progress__fill--brand { background: var(--brand-fill); }
+.progress__fill--positive { background: var(--green-fill); }
+.progress__fill--warning { background: var(--yellow-fill); }
+.progress__fill--over { background: var(--danger-fill); }
+
+/* Skeletons */
+
+.skeleton {
+  display: block;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(
+    90deg,
+    var(--surface-sunken) 0%,
+    color-mix(in srgb, var(--surface-sunken) 70%, var(--ink-4)) 40%,
+    var(--surface-sunken) 80%
+  );
+  /* The gradient is three times the element's width and slides across it, which
+     is what produces the sweep. */
+  background-size: 300% 100%;
+  animation: shimmer 1.4s var(--ease-in-out) infinite;
+}
+
+.skeleton--circle { border-radius: 50%; }
+
+.skeleton-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+}
+
+@keyframes shimmer {
+  from { background-position: 180% 0; }
+  to { background-position: -80% 0; }
+}
+
+/* A static block rather than an animation stopped mid-sweep. */
+@media (prefers-reduced-motion: reduce) {
+  .skeleton { animation: none; background: var(--surface-sunken); }
+}

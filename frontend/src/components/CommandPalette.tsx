@@ -29,14 +29,7 @@ import { categoryMeta } from '../utils/categories';
 /** How long to wait after the last keystroke before asking the server. */
 const SEARCH_DEBOUNCE_MS = 220;
 
-/**
- * Opens the palette from anywhere.
- *
- * A custom event rather than a context, because the two call sites — the search
- * button in the desktop bar and the icon on a phone — are in the layout, while
- * the palette itself sits at the application root. Threading a setter down
- * through both would be more plumbing than the feature is worth.
- */
+/** Opens the palette from anywhere. */
 export function openCommandPalette() {
   window.dispatchEvent(new CustomEvent('mbank:command-palette'));
 }
@@ -52,18 +45,7 @@ interface Command {
   keywords?: string;
 }
 
-/**
- * Search and quick actions, on ⌘K.
- *
- * Two things at once, deliberately. Somebody who types "netflix" wants their
- * transactions; somebody who types "freeze" wants an action. Splitting them
- * across two surfaces would mean guessing which one to open before knowing what
- * you were looking for.
- *
- * Navigation is filtered locally and instantly. Transactions, payees and cards
- * come from the server, debounced, and only once there is enough of a query to
- * be worth a request.
- */
+/** Search and quick actions, on ⌘K. */
 export function CommandPalette() {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
@@ -184,23 +166,23 @@ export function CommandPalette() {
   // --- the fixed commands ----------------------------------------------------
   const commands = useMemo<Command[]>(
     () => [
-      { id: 'send', label: 'Send money', icon: <ArrowLeftRight />, group: 'Actions', run: () => go('/transfer'), keywords: 'transfer pay' },
-      { id: 'request', label: 'Request money', icon: <HandCoins />, group: 'Actions', run: () => go('/requests'), keywords: 'ask invoice' },
+      { id: 'send', label: 'Send money', icon: <ArrowLeftRight />, group: 'Actions', run: () => go('/payments/send'), keywords: 'transfer pay' },
+      { id: 'request', label: 'Request money', icon: <HandCoins />, group: 'Actions', run: () => go('/payments/requests'), keywords: 'ask invoice' },
       { id: 'new-card', label: 'Create a card', icon: <CreditCard />, group: 'Actions', run: () => go('/cards'), keywords: 'issue virtual' },
       { id: 'freeze', label: 'Freeze a card', icon: <Snowflake />, group: 'Actions', run: () => go('/cards'), keywords: 'lock block stop' },
       { id: 'goal', label: 'Start a savings goal', icon: <PiggyBank />, group: 'Actions', run: () => go('/savings'), keywords: 'save target' },
       { id: 'statement', label: 'Download a statement', icon: <FileText />, group: 'Actions', run: () => go('/statements'), keywords: 'export csv pdf' },
 
-      { id: 'overview', label: 'Overview', icon: <LayoutGrid />, group: 'Go to', run: () => go('/'), keywords: 'home dashboard' },
+      { id: 'overview', label: 'Home', icon: <LayoutGrid />, group: 'Go to', run: () => go('/'), keywords: 'home dashboard' },
       { id: 'accounts', label: 'Accounts', icon: <Wallet />, group: 'Go to', run: () => go('/accounts'), keywords: 'balance iban' },
       { id: 'cards', label: 'Cards', icon: <CreditCard />, group: 'Go to', run: () => go('/cards') },
       { id: 'transactions', label: 'Transactions', icon: <ListOrdered />, group: 'Go to', run: () => go('/transactions'), keywords: 'history activity' },
       { id: 'analytics', label: 'Analytics', icon: <ChartPie />, group: 'Go to', run: () => go('/analytics'), keywords: 'spending insights budget' },
       { id: 'savings', label: 'Savings', icon: <PiggyBank />, group: 'Go to', run: () => go('/savings') },
-      { id: 'scheduled', label: 'Scheduled payments', icon: <CalendarClock />, group: 'Go to', run: () => go('/scheduled'), keywords: 'recurring standing order' },
-      { id: 'payees', label: 'Payees', icon: <Users />, group: 'Go to', run: () => go('/beneficiaries'), keywords: 'beneficiaries contacts' },
+      { id: 'scheduled', label: 'Scheduled payments', icon: <CalendarClock />, group: 'Go to', run: () => go('/payments/scheduled'), keywords: 'recurring standing order' },
+      { id: 'payees', label: 'Payees', icon: <Users />, group: 'Go to', run: () => go('/payments/payees'), keywords: 'beneficiaries contacts' },
       { id: 'security', label: 'Security', icon: <Shield />, group: 'Go to', run: () => go('/security'), keywords: 'sessions devices password' },
-      { id: 'settings', label: 'Settings', icon: <Settings />, group: 'Go to', run: () => go('/settings'), keywords: 'preferences' },
+      { id: 'settings', label: 'Settings', icon: <Settings />, group: 'Go to', run: () => go('/profile'), keywords: 'preferences theme' },
       { id: 'support', label: 'Support', icon: <LifeBuoy />, group: 'Go to', run: () => go('/support'), keywords: 'help contact problem' },
     ],
     [go],
@@ -233,7 +215,7 @@ export function CommandPalette() {
       hint: maskAccountNumber(payee.accountNumber),
       icon: <Users />,
       group: 'Payees',
-      run: () => go(`/transfer?to=${encodeURIComponent(payee.accountNumber)}`),
+      run: () => go(`/payments/send?to=${encodeURIComponent(payee.accountNumber)}`),
     }));
 
     const foundCards: Command[] = cards.map((card) => ({
@@ -334,7 +316,7 @@ export function CommandPalette() {
                   onMouseEnter={() => setCursor(index)}
                 >
                   <span className="palette__icon">{command.icon}</span>
-                  <span className="grow truncate" style={{ textAlign: 'left' }}>
+                  <span className="grow truncate text-left">
                     {command.label}
                   </span>
                   {command.hint && <span className="palette__hint truncate">{command.hint}</span>}

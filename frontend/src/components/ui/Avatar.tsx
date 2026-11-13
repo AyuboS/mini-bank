@@ -3,23 +3,12 @@ interface AvatarProps {
   size?: 'sm' | 'md' | 'lg';
   /** Overrides the derived colour, for a category or a savings goal with its own accent. */
   accent?: string;
-  /**
-   * A colour slot chosen by the caller, 0–7.
-   *
-   * Used where several rows must be told apart by something other than their
-   * initials — a table of users, for instance, where two people share them.
-   */
+  /** A colour slot chosen by the caller, 0–7. */
   tone?: number;
   className?: string;
 }
 
-/**
- * The eight accents an avatar can take, in a fixed order.
- *
- * A fixed list rather than a generated hue, because generated colours drift into
- * each other and into the status palette; these eight were chosen to stay
- * distinguishable from one another and to hold white text.
- */
+/** The eight accents an avatar can take, in a fixed order. */
 const ACCENTS = [
   'var(--c-teal)',
   'var(--c-blue)',
@@ -31,13 +20,7 @@ const ACCENTS = [
   'var(--c-lime)',
 ];
 
-/**
- * Picks a stable accent from a string.
- *
- * The same name must produce the same colour on every render and on every
- * device, so a customer learns to recognise a payee by their colour. A hash of
- * the text does that; anything involving randomness or array position does not.
- */
+/** Picks a stable accent from a string. */
 function accentFor(seed: string): string {
   let hash = 0;
   for (let i = 0; i < seed.length; i++) {

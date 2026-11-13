@@ -1,0 +1,96 @@
+/* =============================================================================
+   Small screens
+   -----------------------------------------------------------------------------
+   Two changes that are corrections rather than adaptations.
+   ========================================================================== */
+
+@media (max-width: 767px) {
+  /* iOS Safari zooms the viewport whenever a focused input is under 16px, and it does not zoom back out. */
+  .field__input,
+  .field__select { font-size: 16px; }
+
+  /* The dialog becomes a bottom sheet: it arrives from the bottom, spans the
+     width, and rounds only its top corners — the shape a sheet has on every
+     platform that has one. */
+  .sheet-scrim {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .sheet {
+    max-width: none;
+    max-height: 92dvh;
+    border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
+    border-bottom: none;
+    /* Clears the home indicator on a notched phone. */
+    padding-bottom: var(--safe-bottom);
+    animation: sheet-up var(--dur-panel) var(--ease);
+  }
+
+  .sheet__grip {
+    display: block;
+    width: 36px;
+    height: 4px;
+    margin: var(--space-3) auto var(--space-1);
+    border-radius: var(--radius-pill);
+    background: var(--line-strong);
+  }
+
+  .modal-actions {
+    flex-direction: column-reverse;
+  }
+
+  .modal-actions .btn {
+    width: 100%;
+  }
+}
+
+@keyframes sheet-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+/* Touch targets */
+
+@media (pointer: coarse) {
+  /* Two class names rather than one, deliberately. */
+  .icon-btn,
+  .icon-btn.icon-btn--sm {
+    width: 44px;
+    height: 44px;
+  }
+
+  /* The icon keeps its size; only the region around it grows. */
+  .icon-btn.icon-btn--sm svg { width: 16px; height: 16px; }
+
+  .btn-sm { height: 44px; padding: 0 var(--space-4); }
+
+  .card-carousel__dots .card-carousel__dot-hit {
+    width: 44px;
+    height: 44px;
+  }
+
+  /* A text link is 20px tall because that is its line box. */
+  .btn-quiet {
+    padding: 12px var(--space-2);
+    margin: -12px calc(var(--space-2) * -1);
+  }
+
+  /* The field is the target; the input inside it should fill that height so a
+     tap anywhere in the well lands on the caret. */
+
+  /* Rows in a list are already tall, but the chips beside them are not.
+     A min-height rather than tuned padding: the padding that reaches 44px
+     depends on the line box, so it silently falls 2px short the moment the
+     type scale moves. */
+
+  /* The segmented control. The track grows with the tabs inside it, and the
+     sliding pill is inset from the track by the same 4px at any height. */
+  .tabs__tab { height: 44px; }
+  .method-switch__tab { height: 44px; }
+
+  /* The accent swatches on a savings goal. */
+
+  /* The reveal toggle inside a password field. */
+  .field__reveal { padding: 12px; margin: -12px; }
+}

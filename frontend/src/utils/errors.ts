@@ -1,13 +1,6 @@
-import { API_BASE_URL, ApiRequestError } from '../api/client';
+import { ApiRequestError } from '../api/client';
 
-/**
- * Turns a backend error code into something a person can act on.
- *
- * The server's codes are stable and machine-readable, which is right for an
- * API and wrong for a human: "INSUFFICIENT_FUNDS" is not a sentence. Anything
- * without an entry here falls back to the server's own message, which is
- * already written in plain language.
- */
+/** Turns a backend error code into something a person can act on. */
 const MESSAGES: Record<string, { title: string; body?: string }> = {
   AUTH_INVALID_CREDENTIALS: {
     title: 'Incorrect username or password',
@@ -36,6 +29,11 @@ const MESSAGES: Record<string, { title: string; body?: string }> = {
     title: 'Transfer limit reached',
     body: 'This would exceed your per-transfer, daily or hourly limit.',
   },
+  TOP_UP_LIMIT_EXCEEDED: {
+    title: 'Top-up limit reached',
+    body: 'Simulated top-ups are capped per top-up and per day. Try a smaller amount.',
+  },
+  TOP_UP_NOT_ALLOWED: { title: 'Top-ups go to a spending account', body: 'Choose one of your spending accounts.' },
   CURRENCY_MISMATCH: {
     title: 'Currencies do not match',
     body: 'Both accounts must hold the same currency.',
@@ -181,6 +179,14 @@ const MESSAGES: Record<string, { title: string; body?: string }> = {
   INTERNAL_ERROR: { title: 'Something went wrong', body: 'Please try again in a moment.' },
 };
 
+/** Must a retry of this failed payment reuse its idempotency key? */
+export function mustKeepIdempotencyKey(error: unknown): boolean {
+  if (error instanceof ApiRequestError) {
+    return error.code === 'IDEMPOTENCY_REQUEST_IN_PROGRESS';
+  }
+  return true;
+}
+
 export interface FriendlyError {
   title: string;
   body?: string;
@@ -208,15 +214,10 @@ export function toFriendlyError(error: unknown): FriendlyError {
   }
 
   if (error instanceof TypeError) {
-    /*
-      fetch() rejects with a TypeError when it cannot reach the host at all —
-      the API is not running, or is running somewhere else. Naming the address
-      it tried turns a dead end into something the reader can act on.
-    */
-    const where = `${API_BASE_URL || window.location.origin}/api`;
+    // fetch() rejects with a TypeError when it cannot reach the server at all.
     return {
-      title: 'The MBank API is not responding',
-      body: `Nothing answered at ${where}. Start the stack with "docker compose up", then try again.`,
+      title: 'MBank is not responding',
+      body: 'Check your connection and try again in a moment.',
       fields: {},
     };
   }

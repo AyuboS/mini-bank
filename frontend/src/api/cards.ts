@@ -31,13 +31,7 @@ export interface CardLimitsBody {
   clearOnlineLimit?: boolean;
 }
 
-/**
- * Which channels the card may be used through.
- *
- * Every field is optional: an omitted switch is left alone. Sending all five
- * every time would mean a client that wanted to turn off one channel silently
- * restating its opinion about the other four.
- */
+/** Which channels the card may be used through. */
 export interface CardControlsBody {
   onlinePayments?: boolean;
   contactless?: boolean;
@@ -48,8 +42,6 @@ export interface CardControlsBody {
 
 export const cardsApi = {
   list: () => api.get<CardResponse[]>('/api/v1/cards'),
-
-  get: (id: string) => api.get<CardResponse>(`/api/v1/cards/${id}`),
 
   create: (body: CreateCardBody) => api.post<CardResponse>('/api/v1/cards', body),
 

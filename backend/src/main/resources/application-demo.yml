@@ -1,0 +1,30 @@
+# Public demo of the simulation, as deployed on Render (render.yaml). Like prod, every secret comes
+# from the environment. Unlike prod, SMS and email are simulated and the demo users are seeded.
+spring:
+  datasource:
+    # Render gives the database's host, port and name separately rather than as a JDBC URL.
+    url: ${DB_URL:jdbc:postgresql://${DB_HOST}:${DB_PORT:5432}/${DB_NAME}}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    hikari:
+      maximum-pool-size: ${DB_POOL_SIZE:5}
+
+server:
+  # Behind Render's proxy the socket address is the proxy's. Tomcat takes the client's address from
+  # X-Forwarded-For, but only when the connection comes from an internal proxy address.
+  forward-headers-strategy: native
+
+minibank:
+  security:
+    jwt:
+      secret: ${JWT_SECRET}
+    cors:
+      allowed-origins: ${CORS_ALLOWED_ORIGINS}
+  seed:
+    enabled: ${SEED_DEMO_DATA:true}
+
+logging:
+  config: classpath:logback-json.xml
+  level:
+    root: WARN
+    com.minibank: INFO

@@ -21,11 +21,11 @@
         <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <springdoc.version>2.9.0</springdoc.version>
-        <jjwt.version>0.12.7</jjwt.version>
+        <jjwt.version>0.13.0</jjwt.version>
         <logstash-encoder.version>8.1</logstash-encoder.version>
-        <spotbugs-plugin.version>4.9.6.0</spotbugs-plugin.version>
+        <spotbugs-plugin.version>4.10.5.0</spotbugs-plugin.version>
         <checkstyle-plugin.version>3.6.0</checkstyle-plugin.version>
-        <jacoco.version>0.8.13</jacoco.version>
+        <jacoco.version>0.8.16</jacoco.version>
     </properties>
 
     <dependencies>
@@ -152,7 +152,7 @@
         <dependency>
             <groupId>com.github.spotbugs</groupId>
             <artifactId>spotbugs-annotations</artifactId>
-            <version>4.9.6</version>
+            <version>4.10.5</version>
             <optional>true</optional>
         </dependency>
     </dependencies>
